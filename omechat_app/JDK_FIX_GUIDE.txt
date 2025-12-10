@@ -1,0 +1,49 @@
+========================================
+JDK IMAGE TRANSFORM HATASI ÇÖZÜMÜ
+========================================
+
+Bu hata, Android Studio'nun JDK 17 kullanmadığını gösterir.
+Aşağıdaki adımları sırayla uygulayın:
+
+1. JDK KONTROLÜ:
+   - omechat_app\CHECK_JDK.bat dosyasını çalıştırın
+   - Android Studio'nun JDK 17 kullanıp kullanmadığını kontrol edin
+
+2. ANDROID STUDIO'DA JDK AYARI:
+   a) Android Studio'yu açın
+   b) File > Project Structure > SDK Location'a gidin
+   c) "JDK location" kısmını kontrol edin
+   d) Şu yoldan birini seçin:
+      - C:\Program Files\Android\Android Studio\jbr  (Eğer JDK 17 ise)
+      - VEYA başka bir JDK 17 yolu
+
+3. EĞER ANDROID STUDIO JDK 17 KULLANMIYORSA:
+   a) JDK 17 indirin: https://adoptium.net/temurin/releases/
+   b) JDK 17'yi kurun (örnek: C:\Program Files\Java\jdk-17)
+   c) Android Studio > File > Project Structure > SDK Location
+   d) JDK location'ı yeni JDK 17 yoluna ayarlayın
+
+4. GRADLE CACHE TEMİZLİĞİ:
+   PowerShell'de şu komutu çalıştırın:
+   
+   Remove-Item -Recurse -Force "$env:USERPROFILE\.gradle\caches\transforms-3"
+   Remove-Item -Recurse -Force "$env:USERPROFILE\.gradle\caches\modules-2\files-2.1"
+
+5. YENİDEN DERLEME:
+   omechat_app\CLEAN_AND_BUILD.bat dosyasını çalıştırın
+   VEYA
+   PowerShell'de:
+   cd omechat_app
+   flutter clean
+   flutter pub get
+   flutter run
+
+========================================
+ÖNEMLİ NOTLAR:
+========================================
+- Android Studio'nun JDK'sı JDK 17 OLMALIDIR (JDK 8 veya 11 DEĞİL!)
+- Gradle cache'i mutlaka temizleyin
+- Tüm dosyalar zaten Java 17 için yapılandırıldı
+
+Eğer hala çalışmazsa, hatanın tam mesajını paylaşın.
+

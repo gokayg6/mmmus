@@ -1,0 +1,188 @@
+﻿Analyzing omechat_app...                                        
+
+warning - Unused import: 'app_colors.dart' - lib\core\theme\app_gradients.dart:2:8 - unused_import
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\theme\app_shadows.dart:60:24 - undefined_getter
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\theme\app_shadows.dart:81:24 - undefined_getter
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\theme\app_shadows.dart:159:24 - undefined_getter
+  error - Invalid constant value - lib\core\widgets\animated_background.dart:52:23 - invalid_constant
+  error - The getter 'backgroundGradient' isn't defined for the type 'AppColors' - lib\core\widgets\animated_background.dart:52:33 - undefined_getter
+  error - The getter 'meshGradientColors' isn't defined for the type 'AppColors' - lib\core\widgets\animated_background.dart:64:54 - undefined_getter
+  error - The getter 'splashGradient' isn't defined for the type 'AppColors' - lib\core\widgets\animated_background.dart:149:41 - undefined_getter
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\animated_loader.dart:80:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\animated_loader.dart:82:29 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\core\widgets\animated_loader.dart:83:29 - prefer_const_literals_to_create_immutables
+  error - The getter 'fontFamily' isn't defined for the type 'AppTheme' - lib\core\widgets\animated_loader.dart:177:36 - undefined_getter
+warning - Unused import: '../theme/app_theme.dart' - lib\core\widgets\avatar_glow.dart:4:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\avatar_glow.dart:111:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\avatar_glow.dart:180:19 - prefer_const_constructors
+warning - Unused import: '../theme/app_shadows.dart' - lib\core\widgets\buttons.dart:6:8 - unused_import
+  error - The getter 'buttonGradient' isn't defined for the type 'AppColors' - lib\core\widgets\buttons.dart:81:51 - undefined_getter
+warning - Unused import: '../theme/app_theme.dart' - lib\core\widgets\chat_bubble.dart:4:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\glass_container.dart:175:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\glass_container.dart:177:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\glass_container.dart:178:23 - prefer_const_constructors
+  error - The getter 'blurControlPanel' isn't defined for the type 'AppTheme' - lib\core\widgets\glass_dock.dart:34:30 - undefined_getter
+  error - The getter 'blurControlPanel' isn't defined for the type 'AppTheme' - lib\core\widgets\glass_dock.dart:35:30 - undefined_getter
+warning - The value of the field '_isPressed' isn't used - lib\core\widgets\glass_dock.dart:103:8 - unused_field
+  error - The getter 'glassMedium' isn't defined for the type 'AppColors' - lib\core\widgets\online_count_badge.dart:41:30 - undefined_getter
+warning - Unused import: '../theme/app_theme.dart' - lib\core\widgets\orb_animation.dart:4:8 - unused_import
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:81:40 - undefined_getter
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:113:39 - undefined_getter
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:116:80 - undefined_getter
+  error - The getter 'secondary' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:197:21 - undefined_getter
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:198:21 - undefined_getter
+  error - The getter 'accentWarm' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:199:21 - undefined_getter
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:213:21 - undefined_getter
+  error - The getter 'secondary' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:215:21 - undefined_getter
+  error - The getter 'accent' isn't defined for the type 'AppColors' - lib\core\widgets\orb_animation.dart:216:21 - undefined_getter
+warning - Unused import: '../../core/widgets/buttons.dart' - lib\features\auth\auth_gateway_screen.dart:9:8 - unused_import
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\auth\auth_gateway_screen.dart:97:45 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\auth\auth_gateway_screen.dart:141:43 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\auth\login_screen.dart:140:47 - undefined_getter
+  error - Invalid constant value - lib\features\auth\login_screen.dart:236:56 - invalid_constant
+  error - The getter 'info' isn't defined for the type 'AppColors' - lib\features\auth\login_screen.dart:236:66 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\calls\calls_screen.dart:50:45 - undefined_getter
+  error - The getter 'textPrimaryDark' isn't defined for the type 'AppColors' - lib\features\calls\calls_screen.dart:137:39 - undefined_getter
+  error - The getter 'textSecondaryDark' isn't defined for the type 'AppColors' - lib\features\calls\calls_screen.dart:152:41 - undefined_getter
+  error - The getter 'textSecondaryDark' isn't defined for the type 'AppColors' - lib\features\calls\calls_screen.dart:161:42 - undefined_getter
+  error - The getter 'textSecondaryDark' isn't defined for the type 'AppColors' - lib\features\calls\calls_screen.dart:168:44 - undefined_getter
+  error - The getter 'textTertiaryDark' isn't defined for the type 'AppColors' - lib\features\calls\calls_screen.dart:176:46 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\calls\calls_screen.dart:250:42 - undefined_getter
+  error - The getter 'textSecondaryDark' isn't defined for the type 'AppColors' - lib\features\calls\calls_screen.dart:264:56 - undefined_getter
+warning - Unused import: '../../services/api_client.dart' - lib\features\chat\chat_screen.dart:16:8 - unused_import
+warning - The value of the field '_isConnecting' isn't used - lib\features\chat\chat_screen.dart:43:8 - unused_field
+  error - The getter 'durationMedium' isn't defined for the type 'AppTheme' - lib\features\chat\chat_screen.dart:81:26 - undefined_getter
+  error - The getter 'backgroundDark' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:254:34 - undefined_getter
+  error - The getter 'surfaceDark' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:259:30 - undefined_getter
+   info - Use 'const' with the constructor to improve performance - lib\features\chat\chat_screen.dart:276:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\chat\chat_screen.dart:279:34 - prefer_const_constructors
+  error - The getter 'cardDark' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:321:36 - undefined_getter
+  error - The getter 'surfaceDark' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:344:44 - undefined_getter
+  error - The getter 'durationMedium' isn't defined for the type 'AppTheme' - lib\features\chat\chat_screen.dart:360:32 - undefined_getter
+  error - The getter 'buttonGradient' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:407:39 - undefined_getter
+  error - The getter 'blurBottomSheet' isn't defined for the type 'AppTheme' - lib\features\chat\chat_screen.dart:454:28 - undefined_getter
+  error - The getter 'buttonGradient' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:512:37 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:598:49 - undefined_getter
+  error - The getter 'buttonGradient' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:663:47 - undefined_getter
+  error - The getter 'cardDark' isn't defined for the type 'AppColors' - lib\features\chat\chat_screen.dart:664:51 - undefined_getter
+warning - Unused import: '../../core/widgets/glass_container.dart' - lib\features\chat_detail\chat_detail_screen.dart:9:8 - unused_import
+  error - The getter 'backgroundDark' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:86:34 - undefined_getter
+  error - The getter 'backgroundGradient' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:93:37 - undefined_getter
+  error - The method 'radialGlow' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:106:37 - undefined_method
+  error - Invalid constant value - lib\features\chat_detail\chat_detail_screen.dart:183:26 - invalid_constant
+  error - The getter 'textPrimaryDark' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:183:36 - undefined_getter
+  error - The getter 'textTertiaryDark' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:218:41 - undefined_getter
+  error - The getter 'textSecondaryDark' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:282:36 - undefined_getter
+  error - The getter 'textTertiaryDark' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:312:42 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:332:55 - undefined_getter
+  error - The getter 'textTertiaryDark' isn't defined for the type 'AppColors' - lib\features\chat_detail\chat_detail_screen.dart:347:39 - undefined_getter
+warning - The value of the field '_isRefreshing' isn't used - lib\features\chat_list\chat_list_screen.dart:23:8 - unused_field
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:60:45 - undefined_getter
+  error - The getter 'textSecondaryDark' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:91:40 - undefined_getter
+  error - The getter 'textTertiaryDark' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:101:46 - undefined_getter
+  error - The getter 'surfaceDark' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:120:44 - undefined_getter
+  error - The getter 'textPrimaryDark' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:195:46 - undefined_getter
+  error - The getter 'textTertiaryDark' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:206:43 - undefined_getter
+  error - The getter 'textPrimaryDark' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:219:45 - undefined_getter
+  error - The getter 'textSecondaryDark' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:220:45 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\chat_list\chat_list_screen.dart:268:29 - undefined_getter
+  error - The getter 'accentGradient' isn't defined for the type 'AppColors' - lib\features\explore\explore_screen.dart:40:37 - undefined_getter
+  error - The getter 'accentGradient' isn't defined for the type 'AppColors' - lib\features\explore\explore_screen.dart:133:43 - undefined_getter
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\home\home_screen.dart:2:8 - unnecessary_import
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\home\home_screen.dart:132:49 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\home\home_screen.dart:196:51 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\home\home_screen.dart:388:35 - undefined_getter
+   info - Don't invoke 'print' in production code - lib\features\landing\landing_screen.dart:89:7 - avoid_print
+  error - The getter 'fontFamily' isn't defined for the type 'AppTheme' - lib\features\landing\landing_screen.dart:154:46 - undefined_getter
+  error - The getter 'fontFamily' isn't defined for the type 'AppTheme' - lib\features\landing\landing_screen.dart:178:44 - undefined_getter
+  error - The getter 'fontFamily' isn't defined for the type 'AppTheme' - lib\features\landing\landing_screen.dart:200:50 - undefined_getter
+  error - The getter 'fontFamily' isn't defined for the type 'AppTheme' - lib\features\landing\landing_screen.dart:238:42 - undefined_getter
+  error - The getter 'fontFamily' isn't defined for the type 'AppTheme' - lib\features\landing\landing_screen.dart:284:42 - undefined_getter
+warning - Unused import: '../../core/theme/app_colors.dart' - lib\features\matchmaking\matchmaking_screen.dart:5:8 - unused_import
+warning - Unused import: '../../core/theme/app_theme.dart' - lib\features\matchmaking\matchmaking_screen.dart:6:8 - unused_import
+warning - Unused import: '../../services/webrtc_service.dart' - lib\features\matchmaking\matchmaking_screen.dart:15:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\features\matchmaking\matchmaking_screen.dart:122:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\matchmaking\matchmaking_screen.dart:152:7 - avoid_print
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\onboarding\onboarding_screen.dart:30:27 - undefined_getter
+  error - The getter 'accentGradient' isn't defined for the type 'AppColors' - lib\features\onboarding\onboarding_screen.dart:36:27 - undefined_getter
+  error - The getter 'buttonGradient' isn't defined for the type 'AppColors' - lib\features\onboarding\onboarding_screen.dart:42:27 - undefined_getter
+  error - The getter 'durationMedium' isn't defined for the type 'AppTheme' - lib\features\onboarding\onboarding_screen.dart:50:28 - undefined_getter
+   info - Use 'const' with the constructor to improve performance - lib\features\onboarding\onboarding_screen.dart:239:26 - prefer_const_constructors
+  error - The getter 'cardDark' isn't defined for the type 'AppColors' - lib\features\permissions\permissions_screen.dart:111:36 - undefined_getter
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\permissions\permissions_screen.dart:163:45 - undefined_getter
+   info - Use 'const' with the constructor to improve performance - lib\features\permissions\permissions_screen.dart:308:27 - prefer_const_constructors
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\profile\profile_screen.dart:32:27 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\profile\profile_screen.dart:33:34 - use_build_context_synchronously
+  error - The getter 'primaryGradient' isn't defined for the type 'AppColors' - lib\features\profile\profile_screen.dart:118:43 - undefined_getter
+warning - Unused import: 'dart:math' - lib\features\random_connect\random_connect_screen.dart:1:8 - unused_import
+warning - Unused import: '../../core/theme/app_gradients.dart' - lib\features\random_connect\random_connect_screen.dart:5:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:199:23 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\random_connect\random_connect_screen.dart:201:35 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:202:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:204:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:206:27 - prefer_const_constructors
+warning - Unused import: '../../main.dart' - lib\features\settings\settings_screen.dart:11:8 - unused_import
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\settings\settings_screen.dart:125:33 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\features\settings\settings_screen.dart:127:21 - use_build_context_synchronously
+  error - Undefined name 'themeModeProvider' - lib\features\settings\settings_screen.dart:154:33 - undefined_identifier
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:173:13 - prefer_const_constructors
+  error - Undefined name 'themeModeProvider' - lib\features\settings\settings_screen.dart:187:34 - undefined_identifier
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:213:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:265:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:319:13 - prefer_const_constructors
+  error - The getter 'backgroundDark' isn't defined for the type 'AppColors' - lib\features\shell\main_shell.dart:81:34 - undefined_getter
+warning - Unused import: 'package:flutter/services.dart' - lib\features\splash\splash_screen.dart:2:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\features\splash\splash_screen.dart:152:32 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\splash\splash_screen.dart:153:34 - prefer_const_constructors
+warning - Unused import: 'dart:convert' - lib\services\api_client.dart:1:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\services\api_client.dart:38:28 - avoid_print
+   info - The variable name 'Item' isn't a lowerCamelCase identifier - lib\services\api_client.dart:101:33 - non_constant_identifier_names
+   info - The variable name 'Item' isn't a lowerCamelCase identifier - lib\services\api_client.dart:140:33 - non_constant_identifier_names
+   info - The variable name 'Item' isn't a lowerCamelCase identifier - lib\services\api_client.dart:187:33 - non_constant_identifier_names
+   info - Don't invoke 'print' in production code - lib\services\api_client.dart:228:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_client.dart:449:3 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:42:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:45:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:57:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:69:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:78:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:84:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:96:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:99:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:112:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:115:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:127:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:129:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:145:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:147:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:177:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:48:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:62:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:70:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:81:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:90:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:151:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:156:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:162:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:182:7 - avoid_print
+
+flutter : 165 issues 
+found. (ran in 1.9s)
+At line:1 char:1
++ flutter analyze 2>&
+1 | Out-File -FilePat
+h analyze_errors.txt 
+-Encodin ...
++ ~~~~~~~~~~~~~~~~~~~
+~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (165 iss   
+ ues found. (ran     
+in 1.9s):String)     
+[], RemoteExcep    ti
+on
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 

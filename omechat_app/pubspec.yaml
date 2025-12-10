@@ -1,0 +1,81 @@
+name: omechat
+description: OmeChat - Anonymous Video & Text Chat Platform
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+  
+  # Networking
+  dio: ^5.4.0
+  web_socket_channel: ^2.4.0
+  
+  # WebRTC
+  flutter_webrtc: ^0.9.47
+  
+  # UI Components
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
+  flutter_animate: ^4.3.0
+  
+  # Utilities
+  uuid: ^4.2.2
+  shared_preferences: ^2.5.3
+  permission_handler: ^11.1.0
+  connectivity_plus: ^5.0.2
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  riverpod_generator: ^2.3.9
+  build_runner: ^2.4.8
+  flutter_native_splash: ^2.3.8
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+
+# Native Splash Screen Configuration
+flutter_native_splash:
+  # Dark background matching app theme
+  color: "#080404"
+  
+  # Logo image
+  image: assets/images/logo.png
+  
+  # Android 12+ splash
+  android_12:
+    color: "#080404"
+    image: assets/images/logo.png
+  
+  # iOS splash
+  ios: true
+  
+  # Web splash
+  web: true
+  
+  # Fullscreen mode
+  fullscreen: true
+
+# App Launcher Icon Configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"
+  adaptive_icon_background: "#080404"
+  adaptive_icon_foreground: "assets/images/logo.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true

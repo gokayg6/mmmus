@@ -1,0 +1,46 @@
+Testing Database Insertion...
+2025-12-10 00:34:41,302 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-10 00:34:41,304 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_sessions")
+2025-12-10 00:34:41,304 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-10 00:34:41,304 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("connections")
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("reports")
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("bans")
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("admins")
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("daily_metrics")
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-10 00:34:41,306 INFO sqlalchemy.engine.Engine COMMIT
+Database initialized successfully.
+2025-12-10 00:34:41,328 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-10 00:34:41,330 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.email AS users_email, users.username AS users_username, users.password_hash AS users_password_hash, users.avatar_url AS users_avatar_url, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.is_active AS users_is_active 
+FROM users 
+WHERE users.email = ?
+ LIMIT ? OFFSET ?
+2025-12-10 00:34:41,330 INFO sqlalchemy.engine.Engine [generated in 0.00019s] ('test_debug@example.com', 1, 0)
+User already exists, deleting...
+2025-12-10 00:34:41,332 INFO sqlalchemy.engine.Engine DELETE FROM users WHERE users.id = ?
+2025-12-10 00:34:41,332 INFO sqlalchemy.engine.Engine [generated in 0.00016s] ('b3f43aa5ab784cf5b241db5259c73cb4',)
+2025-12-10 00:34:41,334 INFO sqlalchemy.engine.Engine COMMIT
+Attempting to create user...
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "C:\Users\gokay\AppData\Local\Programs\Python\Python312\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2025-12-10 00:34:41,551 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-10 00:34:41,552 INFO sqlalchemy.engine.Engine INSERT INTO users (id, email, username, password_hash, avatar_url, created_at, updated_at, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-10 00:34:41,552 INFO sqlalchemy.engine.Engine [generated in 0.00049s] ('60ccd99ba9644bd48f3e63d92505e74c', 'test_debug@example.com', 'debug_user', '$2b$12$pf741UyeojGWKhQX3wIjzeLpt994ws.MxKURAqTURmmsj/YJBQfuK', None, '2025-12-09 21:34:41.552920', '2025-12-09 21:34:41.552920', 1)
+2025-12-10 00:34:41,554 INFO sqlalchemy.engine.Engine COMMIT
+2025-12-10 00:34:41,558 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-10 00:34:41,558 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.password_hash, users.avatar_url, users.created_at, users.updated_at, users.is_active 
+FROM users 
+WHERE users.id = ?
+2025-12-10 00:34:41,558 INFO sqlalchemy.engine.Engine [generated in 0.00016s] ('60ccd99ba9644bd48f3e63d92505e74c',)
+SUCCESS: User created with ID: 60ccd99b-a964-4bd4-8f3e-63d92505e74c
+2025-12-10 00:34:41,560 INFO sqlalchemy.engine.Engine ROLLBACK

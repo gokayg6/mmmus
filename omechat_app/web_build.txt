@@ -1,0 +1,288 @@
+﻿
+Compiling lib\main.dart for the Web...                          
+flutter : Target dart
+2js failed: ProcessEx
+ception: Process exit
+ed abnormally with ex
+it code 1:
+At line:1 char:1
++ flutter build web 2
+>&1 | Out-File -FileP
+ath web_build.txt -En
+coding u ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Target    
+ dart2js ...th ex    
+it code 1::Strin    g
+) [], RemoteExc    ep
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+../../../AppData/Loca
+l/Pub/Cache/hosted/pu
+b.dev/flutter_webrtc-
+0.9.48+hotfix.1/lib/s
+rc/web/rtc_video_rend
+erer_impl.dart:119:50
+:
+Error: The type 'JSAr
+ray<MediaStreamTrack>
+' used in the 'for' l
+oop must implement 'I
+terable<dynamic>'.
+ - 'Iterable' is from
+ 'dart:core'.
+        for (final tr
+ack in _srcObject!.js
+Stream.getVideoTracks
+()) {
+                     
+                     
+       ^
+../../../AppData/Loca
+l/Pub/Cache/hosted/pu
+b.dev/flutter_webrtc-
+0.9.48+hotfix.1/lib/s
+rc/web/rtc_video_rend
+erer_impl.dart:125:50
+:
+Error: The type 'JSAr
+ray<MediaStreamTrack>
+' used in the 'for' l
+oop must implement 'I
+terable<dynamic>'.
+ - 'Iterable' is from
+ 'dart:core'.
+        for (final tr
+ack in _srcObject!.js
+Stream.getAudioTracks
+()) {
+                     
+                     
+       ^
+../../../AppData/Loca
+l/Pub/Cache/hosted/pu
+b.dev/flutter_webrtc-
+0.9.48+hotfix.1/lib/s
+rc/web/rtc_video_rend
+erer_impl.dart:167:50
+:
+Error: The type 'JSAr
+ray<MediaStreamTrack>
+' used in the 'for' l
+oop must implement 'I
+terable<dynamic>'.
+ - 'Iterable' is from
+ 'dart:core'.
+        for (final tr
+ack in _srcObject!.js
+Stream.getVideoTracks
+()) {
+                     
+                     
+       ^
+../../../AppData/Loca
+l/Pub/Cache/hosted/pu
+b.dev/flutter_webrtc-
+0.9.48+hotfix.1/lib/s
+rc/web/rtc_video_rend
+erer_impl.dart:175:50
+:
+Error: The type 'JSAr
+ray<MediaStreamTrack>
+' used in the 'for' l
+oop must implement 'I
+terable<dynamic>'.
+ - 'Iterable' is from
+ 'dart:core'.
+        for (final tr
+ack in _srcObject!.js
+Stream.getAudioTracks
+()) {
+                     
+                     
+       ^
+Error: Compilation fa
+iled.
+  Command: C:\src\flu
+tter\bin\cache\dart-s
+dk\bin\dart.exe --dis
+able-dart-dev C:\src\
+flutter\bin\cache\dar
+t-sdk\bin\snapshots\d
+art2js.dart.snapshot 
+--platform-binaries=C
+:\src\flutter\bin\cac
+he\flutter_web_sdk\ke
+rnel --invoker=flutte
+r_tool -Ddart.vm.prod
+uct=true -DFLUTTER_WE
+B_AUTO_DETECT=false -
+DFLUTTER_WEB_USE_SKIA
+=true -DFLUTTER_WEB_C
+ANVASKIT_URL=https://
+www.gstatic.com/flutt
+er-canvaskit/a18df97c
+a57a249df5d8d68cd0820
+600223ce262/ --native
+-null-assertions --no
+-source-maps -o C:\Us
+ers\gokay\Desktop\Yen
+i klas├Âr\omechat_app
+\.dart_tool\flutter_b
+uild\4afee95618fbe4fc
+3c64e5ce67030be7\app.
+dill --packages=.dart
+_tool/package_config.
+json --cfe-only C:\Us
+ers\gokay\Desktop\Yen
+i klas├Âr\omechat_app
+\.dart_tool\flutter_b
+uild\4afee95618fbe4fc
+3c64e5ce67030be7\main
+.dart
+#0      RunResult.thr
+owException (package:
+flutter_tools/src/bas
+e/process.dart:122:5)
+#1      _DefaultProce
+ssUtils.run (package:
+flutter_tools/src/bas
+e/process.dart:370:19
+)
+<asynchronous suspens
+ion>
+#2      Dart2JSTarget
+.build (package:flutt
+er_tools/src/build_sy
+stem/targets/web.dart
+:203:5)
+<asynchronous suspens
+ion>
+#3      _BuildInstanc
+e._invokeInternal (pa
+ckage:flutter_tools/s
+rc/build_system/build
+_system.dart:875:9)
+<asynchronous suspens
+ion>
+#4      Future.wait.<
+anonymous closure> (d
+art:async/future.dart
+:534:21)
+<asynchronous suspens
+ion>
+#5      _BuildInstanc
+e.invokeTarget (packa
+ge:flutter_tools/src/
+build_system/build_sy
+stem.dart:813:32)
+<asynchronous suspens
+ion>
+#6      Future.wait.<
+anonymous closure> (d
+art:async/future.dart
+:534:21)
+<asynchronous suspens
+ion>
+#7      _BuildInstanc
+e.invokeTarget (packa
+ge:flutter_tools/src/
+build_system/build_sy
+stem.dart:813:32)
+<asynchronous suspens
+ion>
+#8      FlutterBuildS
+ystem.build (package:
+flutter_tools/src/bui
+ld_system/build_syste
+m.dart:635:16)
+<asynchronous suspens
+ion>
+#9      WebBuilder.bu
+ildWeb (package:flutt
+er_tools/src/web/comp
+ile.dart:92:34)
+<asynchronous suspens
+ion>
+#10     BuildWebComma
+nd.runCommand (packag
+e:flutter_tools/src/c
+ommands/build_web.dar
+t:230:5)
+<asynchronous suspens
+ion>
+#11     FlutterComman
+d.run.<anonymous clos
+ure> (package:flutter
+_tools/src/runner/flu
+tter_command.dart:140
+8:27)
+<asynchronous suspens
+ion>
+#12     AppContext.ru
+n.<anonymous closure>
+ (package:flutter_too
+ls/src/base/context.d
+art:153:19)
+<asynchronous suspens
+ion>
+#13     CommandRunner
+.runCommand (package:
+args/command_runner.d
+art:212:13)
+<asynchronous suspens
+ion>
+#14     FlutterComman
+dRunner.runCommand.<a
+nonymous closure> (pa
+ckage:flutter_tools/s
+rc/runner/flutter_com
+mand_runner.dart:420:
+9)
+<asynchronous suspens
+ion>
+#15     AppContext.ru
+n.<anonymous closure>
+ (package:flutter_too
+ls/src/base/context.d
+art:153:19)
+<asynchronous suspens
+ion>
+#16     FlutterComman
+dRunner.runCommand (p
+ackage:flutter_tools/
+src/runner/flutter_co
+mmand_runner.dart:364
+:5)
+<asynchronous suspens
+ion>
+#17     run.<anonymou
+s closure>.<anonymous
+ closure> (package:fl
+utter_tools/runner.da
+rt:130:9)
+<asynchronous suspens
+ion>
+#18     AppContext.ru
+n.<anonymous closure>
+ (package:flutter_too
+ls/src/base/context.d
+art:153:19)
+<asynchronous suspens
+ion>
+#19     main (package
+:flutter_tools/execut
+able.dart:93:3)
+<asynchronous suspens
+ion>
+
+Error: Failed to comp
+ile application for t
+he Web.
+Compiling lib\main.dart for the Web...                             12,6s

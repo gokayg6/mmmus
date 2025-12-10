@@ -1,0 +1,42 @@
+﻿
+Running Gradle task 'assembleDebug'...                          
+flutter : 
+At line:1 char:1
++ flutter build apk --debug 
+2>&1 | Out-File -FilePath bu
+ild_log.txt -En ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+    + CategoryInfo          
+    : NotSpe    cified: (:St
+ring    ) [], RemoteExce    
+ption
+    + FullyQualified    Erro
+rId : Native    CommandError
+ 
+FAILURE: Build failed with a
+n exception.
+
+* What went wrong:
+Execution failed for task ':
+app:compileFlutterBuildDebug
+'.
+> Cannot invoke "java.io.Fil
+e.exists()" because "parent"
+ is null
+
+* Try:
+> Run with --stacktrace opti
+on to get the stack trace.
+> Run with --info or --debug
+ option to get more log outp
+ut.
+> Run with --scan to get ful
+l insights.
+> Get more help at https://h
+elp.gradle.org.
+
+BU´┐¢LD FAILED in 41s
+Running Gradle task 'assembleDebug'...                             42,1s
+Gradle task assembleDebug fa
+iled with exit code 1

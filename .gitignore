@@ -1,0 +1,41 @@
+# Flutter
+omechat_app/build/
+omechat_app/.dart_tool/
+omechat_app/.packages
+omechat_app/.pub-cache/
+omechat_app/.pub/
+omechat_app/*.iml
+omechat_app/.idea/
+omechat_app/.metadata
+omechat_app/android/.gradle/
+omechat_app/android/local.properties
+omechat_app/android/app/debug/
+omechat_app/android/app/profile/
+omechat_app/android/app/release/
+omechat_app/ios/.symlinks/
+omechat_app/ios/Pods/
+omechat_app/ios/.generated/
+omechat_app/linux/flutter/ephemeral/
+omechat_app/macos/Flutter/ephemeral/
+omechat_app/windows/flutter/ephemeral/
+omechat_app/web/flutter_service_worker.js
+
+# Python/Backend
+backend/__pycache__/
+backend/venv/
+backend/.env
+backend/*.pyc
+backend/*.pyo
+backend/.pytest_cache/
+*.db
+
+# IDE
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# General
+*.log
+.env.local
+.env.*.local
