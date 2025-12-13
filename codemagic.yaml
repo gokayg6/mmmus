@@ -1,5 +1,6 @@
 # Codemagic YAML Configuration for iOS Build
-# Bu dosyayı proje root'una ekleyin: omechat_app/codemagic.yaml
+# Bu dosya repository root'unda (Ome klasöründe)
+# Eğer repository root'u Ome klasörü ise bu yaml'ı kullanın
 
 workflows:
   ios-workflow:
@@ -13,12 +14,14 @@ workflows:
     scripts:
       - name: Get dependencies
         script: |
+          cd omechat_app
           flutter pub get
       - name: Build iOS
         script: |
+          cd omechat_app
           flutter build ipa --release
     artifacts:
-      - build/ios/ipa/*.ipa
+      - omechat_app/build/ios/ipa/*.ipa
     publishing:
       email:
         recipients:
@@ -26,4 +29,3 @@ workflows:
         notify:
           success: true
           failure: false
-

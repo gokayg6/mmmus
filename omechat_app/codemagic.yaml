@@ -1,5 +1,6 @@
 # Codemagic YAML Configuration for iOS Build
-# Bu dosyayı proje root'una ekleyin: omechat_app/codemagic.yaml
+# Bu dosya omechat_app klasörü içinde olduğu için doğrudan çalışır
+# Eğer repository root'u üst klasör ise, Codemagic UI'da Working directory: "omechat_app" ayarlayın
 
 workflows:
   ios-workflow:
@@ -26,4 +27,3 @@ workflows:
         notify:
           success: true
           failure: false
-
