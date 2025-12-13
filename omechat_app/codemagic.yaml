@@ -1,7 +1,5 @@
 # Codemagic YAML Configuration for iOS Build
-# Bu dosya omechat_app klasörü içinde olduğu için doğrudan çalışır
-# Eğer repository root'u üst klasör ise, Codemagic UI'da Working directory: "omechat_app" ayarlayın
-
+# Test için code signing atlandı - Production için Codemagic UI'da credentials ekleyin
 workflows:
   ios-workflow:
     name: iOS Workflow
@@ -11,13 +9,21 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      # Code signing için (Production):
+      # Codemagic UI'da Settings → Code signing identities'den credentials ekleyin
+      # Sonra aşağıdaki yorumu kaldırın ve credentials group adını yazın
+      # groups:
+      #   - app_store_credentials
     scripts:
       - name: Get dependencies
         script: |
           flutter pub get
-      - name: Build iOS
+      - name: Build iOS (Test - No Code Signing)
         script: |
-          flutter build ipa --release
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number=1 \
+            --export-method=development
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
