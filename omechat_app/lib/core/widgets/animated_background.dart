@@ -27,7 +27,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 10),
+      duration: const Duration(milliseconds: 6000),  // 120Hz: ~720 frames
       vsync: this,
     );
     

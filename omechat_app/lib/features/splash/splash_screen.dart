@@ -28,9 +28,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   void initState() {
     super.initState();
     
-    // Logo scale and fade animation
+    // Logo scale and fade animation - 120Hz optimized
     _logoController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1000),  // 120Hz: ~120 frames
       vsync: this,
     );
     
@@ -48,9 +48,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       ),
     );
     
-    // Pulsing glow animation
+    // Pulsing glow animation - 120Hz optimized
     _glowController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1500),  // 120Hz: ~180 frames
       vsync: this,
     );
     
@@ -62,12 +62,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _logoController.forward();
     _glowController.repeat(reverse: true);
     
-    // Navigate after delay
+    // Navigate after delay - 120Hz optimized
     _navigateToNext();
   }
 
   Future<void> _navigateToNext() async {
-    await Future.delayed(const Duration(milliseconds: 2000));
+    await Future.delayed(const Duration(milliseconds: 1500));  // 120Hz: ~180 frames
     if (!mounted) return;
     
     // Check auth state
@@ -107,7 +107,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     });
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.backgroundColor,
       body: Stack(
         children: [
           // Background gradient

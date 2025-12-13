@@ -100,6 +100,9 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
             avatar_url=user.avatar_url,
             created_at=user.created_at,
             is_active=user.is_active,
+            is_premium=user.is_premium,
+            premium_until=user.premium_until,
+            credits=user.credits,
         )
     )
 
@@ -132,6 +135,9 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
             avatar_url=user.avatar_url,
             created_at=user.created_at,
             is_active=user.is_active,
+            is_premium=user.is_premium,
+            premium_until=user.premium_until,
+            credits=user.credits,
         )
     )
 
@@ -150,6 +156,9 @@ def get_me(current_user: User = Depends(get_current_user)):
         avatar_url=current_user.avatar_url,
         created_at=current_user.created_at,
         is_active=current_user.is_active,
+        is_premium=current_user.is_premium,
+        premium_until=current_user.premium_until,
+        credits=current_user.credits,
     )
 
 
@@ -189,4 +198,7 @@ def update_me(
         avatar_url=current_user.avatar_url,
         created_at=current_user.created_at,
         is_active=current_user.is_active,
+        is_premium=current_user.is_premium,
+        premium_until=current_user.premium_until,
+        credits=current_user.credits,
     )

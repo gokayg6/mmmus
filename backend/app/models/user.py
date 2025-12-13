@@ -3,7 +3,7 @@ User Model - Registered user accounts
 """
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Boolean, DateTime, Uuid
+from sqlalchemy import Column, String, Boolean, DateTime, Uuid, Integer
 
 from app.database import Base
 
@@ -21,5 +21,34 @@ class User(Base):
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     is_active = Column(Boolean, default=True, nullable=False)
     
+    # Premium fields
+    is_premium = Column(Boolean, default=False, nullable=False)
+    premium_until = Column(DateTime, nullable=True)
+    credits = Column(Integer, default=0, nullable=False)
+    
+    # Unlocked features (purchased with credits)
+    gender_filter_unlocked = Column(Boolean, default=False, nullable=False)  # 30 credits
+    country_filter_unlocked = Column(Boolean, default=False, nullable=False)  # 20 credits
+    reconnect_unlocked = Column(Boolean, default=False, nullable=False)  # 40 credits
+    hd_quality_unlocked = Column(Boolean, default=False, nullable=False)  # 15 credits
+    face_filters_unlocked = Column(Boolean, default=False, nullable=False)  # 10 credits
+    vip_badge_unlocked = Column(Boolean, default=False, nullable=False)  # 50 credits
+    
+    # Stats
+    last_login_at = Column(DateTime, nullable=True)
+    is_banned = Column(Boolean, default=False, nullable=False)
+    
     def __repr__(self):
         return f"<User {self.email} ({self.username})>"
+    
+    def can_use_gender_filter(self) -> bool:
+        """Check if user can use gender filter (premium or unlocked)"""
+        if self.is_premium and self.premium_until and self.premium_until > datetime.utcnow():
+            return True
+        return self.gender_filter_unlocked
+    
+    def can_use_country_filter(self) -> bool:
+        """Check if user can use country filter (premium or unlocked)"""
+        if self.is_premium and self.premium_until and self.premium_until > datetime.utcnow():
+            return True
+        return self.country_filter_unlocked

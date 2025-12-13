@@ -86,18 +86,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final authState = ref.watch(authProvider);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.backgroundColor,
       body: Stack(
         children: [
-          // Background gradient - warm dark tones
+          // Background gradient - theme-aware
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF0A0506), // Warm almost-black
-                  Color(0xFF050304), // AppColors.background
+                  context.colors.backgroundColor,
+                  context.colors.surfaceColor,
                 ],
               ),
             ),
@@ -213,6 +213,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   Icons.email_outlined,
                                   color: Colors.white.withOpacity(0.5),
                                 ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                                ),
                               ),
                             ),
                             
@@ -240,6 +252,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   onPressed: () {
                                     setState(() => _obscurePassword = !_obscurePassword);
                                   },
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.3)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: AppColors.primary, width: 1.5),
                                 ),
                               ),
                             ),

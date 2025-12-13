@@ -196,7 +196,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                               gradient: AppColors.primaryGradient,
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF0EA5E9).withOpacity(
+                                  color: AppColors.primary.withOpacity(
                                     _isPressed ? 0.6 : 0.4,
                                   ),
                                   blurRadius: _isPressed ? 50 : 40,
@@ -323,12 +323,12 @@ class _FeatureCardState extends State<_FeatureCard> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0EA5E9).withOpacity(0.2),
+                  color: AppColors.primary.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   widget.icon,
-                  color: const Color(0xFF0EA5E9),
+                  color: AppColors.primary,
                   size: 22,
                 ),
               ),

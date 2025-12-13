@@ -29,12 +29,12 @@ class AppTheme {
   static const double blurControlPanel = 20.0;  // Alias
   static const double blurBottomSheet = 25.0;   // Alias
   
-  // Animation Durations
-  static const Duration durationFast = Duration(milliseconds: 150);
-  static const Duration durationNormal = Duration(milliseconds: 250);
-  static const Duration durationSlow = Duration(milliseconds: 400);
-  static const Duration durationVerySlow = Duration(milliseconds: 600);
-  static const Duration durationMedium = Duration(milliseconds: 300);  // Alias
+  // Animation Durations - Optimized for 240Hz (no frame rate limit)
+  static const Duration durationFast = Duration(milliseconds: 50);       // 240Hz: ~12 frames
+  static const Duration durationNormal = Duration(milliseconds: 100);   // 240Hz: ~24 frames
+  static const Duration durationSlow = Duration(milliseconds: 150);     // 240Hz: ~36 frames
+  static const Duration durationVerySlow = Duration(milliseconds: 200); // 240Hz: ~48 frames
+  static const Duration durationMedium = Duration(milliseconds: 125);    // 240Hz: ~30 frames
   
   // Animation Curves
   static const Curve curveDefault = Curves.easeOutCubic;
@@ -187,7 +187,7 @@ class AppTheme {
         ),
       ),
       
-      // Input Decoration - Orange focus
+      // Input Decoration - Orange focus (no borders)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
@@ -195,26 +195,11 @@ class AppTheme {
           horizontal: 20,
           vertical: 16,
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
-          borderSide: const BorderSide(color: AppColors.borderSoft),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
-          borderSide: const BorderSide(color: AppColors.borderSoft),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
-          borderSide: const BorderSide(color: AppColors.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
-        ),
+        border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        focusedErrorBorder: InputBorder.none,
         hintStyle: AppTypography.body(color: AppColors.textHint),
         labelStyle: AppTypography.body(color: AppColors.textSecondary),
         errorStyle: AppTypography.caption1(color: AppColors.error),

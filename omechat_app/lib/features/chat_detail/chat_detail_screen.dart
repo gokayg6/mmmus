@@ -339,39 +339,45 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               Expanded(
                 child: AnimatedContainer(
                   duration: AppTheme.durationFast,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(_isTyping ? 0.1 : 0.08),
+                    color: context.isDarkMode 
+                        ? Colors.white.withOpacity(_isTyping ? 0.12 : 0.08)
+                        : AppColors.surface,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: _isTyping 
-                          ? AppColors.primary.withOpacity(0.5) 
-                          : Colors.white.withOpacity(0.1),
-                      width: _isTyping ? 1.5 : 1,
-                    ),
                     boxShadow: _isTyping ? [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.15),
-                        blurRadius: 8,
+                        color: AppColors.primary.withOpacity(0.2),
+                        blurRadius: 12,
                         spreadRadius: 0,
+                        offset: const Offset(0, 2),
                       ),
-                    ] : null,
+                    ] : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 4,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
                   ),
                   child: TextField(
                     controller: _messageController,
-                    style: AppTypography.body(),
+                    style: AppTypography.body(color: context.colors.textColor),
                     maxLines: 4,
                     minLines: 1,
                     onChanged: (value) {
                       setState(() => _isTyping = value.isNotEmpty);
                     },
                     decoration: InputDecoration(
-                      hintText: 'Type a message...',
+                      hintText: 'Mesaj yaz...',
                       hintStyle: AppTypography.body(
-                        color: AppColors.textMuted,
+                        color: context.colors.textMutedColor,
                       ),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
                   ),
                 ),

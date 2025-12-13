@@ -1,599 +1,816 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_gradients.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_typography.dart';
-import '../../core/widgets/glass_container.dart';
-import '../../core/widgets/glowing_button.dart';
+import '../../core/widgets/tv_static_effect.dart';
+import '../../services/webrtc_service.dart';
+import '../../services/websocket_client.dart';
+import '../../services/api_client.dart';
 
-/// Video Chat Screen - Omegle-style video chat interface
-/// Shows remote video full screen with PiP self-view
-class VideoChatScreen extends StatefulWidget {
-  const VideoChatScreen({super.key});
+/// Video Chat Screen - Omegle-style video chat with real WebRTC
+class VideoChatScreen extends ConsumerStatefulWidget {
+  final bool startConnected;
+  
+  const VideoChatScreen({super.key, this.startConnected = false});
 
   @override
-  State<VideoChatScreen> createState() => _VideoChatScreenState();
+  ConsumerState<VideoChatScreen> createState() => _VideoChatScreenState();
 }
 
-class _VideoChatScreenState extends State<VideoChatScreen>
+class _VideoChatScreenState extends ConsumerState<VideoChatScreen>
     with TickerProviderStateMixin {
   
-  // Connection state
-  ConnectionState _connectionState = ConnectionState.idle;
-  
-  // Controls state
+  bool _isSearching = false;
+  bool _isConnected = false;
   bool _isCameraOn = true;
   bool _isMicOn = true;
-  bool _isChatVisible = false;
+  bool _showChat = false;
+  bool _isConnecting = false;
   
-  // Timer
   int _callDuration = 0;
   Timer? _timer;
   
-  // Animation
   late AnimationController _pulseController;
-  late Animation<double> _pulseAnimation;
   
-  // PiP position
-  Offset _pipPosition = const Offset(16, 100);
+  final List<_ChatMsg> _messages = [];
+  final _chatController = TextEditingController();
   
-  // Chat messages
-  final List<ChatMessage> _messages = [];
-  final TextEditingController _chatController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
+  // WebRTC
+  final _localRenderer = RTCVideoRenderer();
+  final _remoteRenderer = RTCVideoRenderer();
+  StreamSubscription? _wsSubscription;
+  String? _connectionId;
+  bool _isInitiator = false;
 
   @override
   void initState() {
     super.initState();
     
-    
     _pulseController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat(reverse: true);
     
-    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
+    _initRenderers();
     
-    // Auto start searching when screen opens
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startSearch();
-    });
+    if (widget.startConnected) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) _startRealConnection();
+      });
+    }
+  }
+
+  Future<void> _initRenderers() async {
+    await _localRenderer.initialize();
+    await _remoteRenderer.initialize();
   }
 
   @override
   void dispose() {
+    _wsSubscription?.cancel();
     _timer?.cancel();
     _pulseController.dispose();
     _chatController.dispose();
-    _scrollController.dispose();
+    _localRenderer.dispose();
+    _remoteRenderer.dispose();
+    ref.read(webRTCServiceProvider).dispose();
     super.dispose();
   }
 
-  void _startSearch() {
-    HapticFeedback.mediumImpact();
-    setState(() => _connectionState = ConnectionState.searching);
+  Future<void> _startRealConnection() async {
+    // Request permissions first
+    final cameraStatus = await Permission.camera.request();
+    final micStatus = await Permission.microphone.request();
     
-    // Real app: WebSocket connection logic here
-    // For now: Just stay in searching state
-  }
-
-  void _onConnected() {
-    HapticFeedback.heavyImpact();
-    setState(() => _connectionState = ConnectionState.connected);
-    _startTimer();
-    
-    // Simulate receiving a message
-    Future.delayed(const Duration(seconds: 2), () {
+    if (!cameraStatus.isGranted || !micStatus.isGranted) {
       if (mounted) {
-        _addMessage('Merhaba! 👋', false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Kamera ve mikrofon izni gereklidir'),
+            backgroundColor: AppColors.error,
+          ),
+        );
       }
-    });
-  }
-
-  void _onNext() {
-    HapticFeedback.lightImpact();
-    _stopTimer();
+      return;
+    }
+    
     setState(() {
-      _connectionState = ConnectionState.searching;
-      _messages.clear();
-      _callDuration = 0;
+      _isConnecting = true;
+      _isSearching = false;
     });
     
-    // Real app: WebSocket "next" signal here
+    try {
+      final webrtc = ref.read(webRTCServiceProvider);
+      final ws = ref.read(webSocketClientProvider);
+      
+      // Setup stream handlers
+      webrtc.onLocalStream = (stream) {
+        _localRenderer.srcObject = stream;
+        if (mounted) setState(() {});
+      };
+      
+      webrtc.onRemoteStream = (stream) {
+        _remoteRenderer.srcObject = stream;
+        if (mounted) {
+          setState(() {
+            _isConnecting = false;
+            _isConnected = true;
+            _callDuration = 0;
+          });
+          _timer?.cancel();
+          _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+            if (mounted) setState(() => _callDuration++);
+          });
+        }
+      };
+      
+      webrtc.onIceCandidate = (candidate) {
+        if (_connectionId != null) {
+          ws.sendIceCandidate(_connectionId!, {
+            'candidate': candidate.candidate,
+            'sdpMid': candidate.sdpMid,
+            'sdpMLineIndex': candidate.sdpMLineIndex,
+          });
+        }
+      };
+      
+      webrtc.onConnectionStateChange = (state) {
+        if (state == 'disconnected' || state == 'failed' || state == 'closed') {
+          if (mounted) {
+            setState(() => _isConnected = false);
+          }
+        }
+      };
+      
+      // Get ICE servers from session first
+      final apiClient = ref.read(apiClientProvider);
+      List<Map<String, dynamic>> iceServers = [
+        {'urls': 'stun:stun.l.google.com:19302'},
+        {'urls': 'stun:stun1.l.google.com:19302'},
+      ];
+      
+      try {
+        final sessionResponse = await apiClient.startSession(deviceType: 'ANDROID');
+        iceServers = sessionResponse.iceServers;
+        webrtc.setIceServers(iceServers);
+      } catch (e) {
+        print('Using default ICE servers: $e');
+        webrtc.setIceServers(iceServers);
+      }
+      
+      // Initialize local stream AFTER setting ICE servers
+      await webrtc.initLocalStream(video: true, audio: true);
+      
+      // Create peer connection immediately
+      await webrtc.createPeerConnection();
+      
+      // WebSocket listener for signaling
+      _wsSubscription = ws.messages.listen((message) async {
+        final type = message['type'];
+        
+        switch (type) {
+          case 'MATCH_FOUND':
+            _connectionId = message['connection_id'] as String?;
+            _isInitiator = message['is_initiator'] as bool? ?? false;
+            
+            // Peer connection should already be created
+            if (webrtc.peerConnection == null) {
+              await webrtc.createPeerConnection();
+            }
+            
+            if (_isInitiator) {
+              final offer = await webrtc.createOffer();
+              if (_connectionId != null && offer.sdp != null) {
+                ws.sendOffer(_connectionId!, offer.sdp!);
+              }
+            }
+            break;
+            
+          case 'OFFER':
+            await webrtc.setRemoteDescription(message['sdp'], 'offer');
+            final answer = await webrtc.createAnswer();
+            if (_connectionId != null) {
+              ws.sendAnswer(_connectionId!, answer.sdp!);
+            }
+            break;
+            
+          case 'ANSWER':
+            await webrtc.setRemoteDescription(message['sdp'], 'answer');
+            break;
+            
+          case 'ICE_CANDIDATE':
+            await webrtc.addIceCandidate(message['candidate']);
+            break;
+            
+          case 'CHAT_MESSAGE':
+            if (mounted) {
+              setState(() {
+                _messages.add(_ChatMsg(message['text'] ?? '', false));
+              });
+            }
+            break;
+            
+          case 'MATCH_ENDED':
+            _handleMatchEnded();
+            break;
+        }
+      });
+      
+    } catch (e) {
+      print('Connection error: $e');
+      if (mounted) {
+        setState(() {
+          _isConnecting = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Bağlantı hatası: ${e.toString()}'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
-
-  void _onStop() {
-    HapticFeedback.lightImpact();
-    _stopTimer();
-    setState(() {
-      _connectionState = ConnectionState.idle;
-      _messages.clear();
-      _callDuration = 0;
-    });
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() => _callDuration++);
-    });
-  }
-
-  void _stopTimer() {
+  
+  void _handleMatchEnded() {
     _timer?.cancel();
+    if (mounted) {
+      setState(() {
+        _isConnected = false;
+        _messages.clear();
+      });
+      Navigator.pop(context);
+    }
   }
 
-  String _formatDuration(int seconds) {
-    final mins = seconds ~/ 60;
-    final secs = seconds % 60;
-    return '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  void _next() {
+    HapticFeedback.lightImpact();
+    _timer?.cancel();
+    ref.read(webSocketClientProvider).next();
+    _handleMatchEnded();
   }
-
+  
   void _toggleCamera() {
     HapticFeedback.lightImpact();
     setState(() => _isCameraOn = !_isCameraOn);
+    ref.read(webRTCServiceProvider).toggleCamera(_isCameraOn);
   }
-
+  
   void _toggleMic() {
     HapticFeedback.lightImpact();
     setState(() => _isMicOn = !_isMicOn);
+    ref.read(webRTCServiceProvider).toggleMicrophone(_isMicOn);
   }
-
-  void _toggleChat() {
-    HapticFeedback.lightImpact();
-    setState(() => _isChatVisible = !_isChatVisible);
+  
+  void _sendMsg() {
+    if (_chatController.text.trim().isEmpty || _connectionId == null) return;
+    
+    final text = _chatController.text.trim();
+    final ws = ref.read(webSocketClientProvider);
+    ws.sendChatMessage(_connectionId!, text);
+    
+    setState(() {
+      _messages.add(_ChatMsg(text, true));
+      _chatController.clear();
+    });
   }
-
-  void _showReport() {
-    HapticFeedback.lightImpact();
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => _ReportSheet(
-        onReport: (reason) {
-          Navigator.pop(context);
-          _onNext(); // Move to next after reporting
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Bildirim gönderildi', style: AppTypography.body()),
-              backgroundColor: AppColors.success,
-            ),
-          );
-        },
+  
+  void _addFriend() {
+    HapticFeedback.mediumImpact();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Arkadaş eklendi!'),
+        backgroundColor: AppColors.success,
       ),
     );
+    // TODO: Implement add friend API call
   }
 
-  void _addMessage(String text, bool isMe) {
-    setState(() {
-      _messages.add(ChatMessage(text: text, isMe: isMe, time: DateTime.now()));
-    });
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+  void _stop() {
+    _timer?.cancel();
+    Navigator.pop(context);
   }
 
-  void _sendMessage() {
-    if (_chatController.text.trim().isEmpty) return;
-    HapticFeedback.lightImpact();
-    _addMessage(_chatController.text.trim(), true);
-    _chatController.clear();
+  String _formatTime(int sec) {
+    final m = sec ~/ 60;
+    final s = sec % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          // Remote video / placeholder
-          _buildRemoteVideo(),
-          
-          // Top bar
-          _buildTopBar(),
-          
-          // PiP self-view
-          if (_connectionState == ConnectionState.connected)
-            _buildPipView(),
-          
-          // Center content (searching/idle)
-          if (_connectionState != ConnectionState.connected)
-            _buildCenterContent(),
-          
-          // Chat overlay
-          if (_isChatVisible && _connectionState == ConnectionState.connected)
-            _buildChatOverlay(),
-          
-          // Bottom control bar
-          _buildControlBar(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRemoteVideo() {
-    if (_connectionState == ConnectionState.connected) {
-      // Placeholder for remote video
-      return Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFF1a1a2e),
-              AppColors.background,
-            ],
-          ),
-        ),
-        child: Center(
-          child: Icon(
-            Icons.person_rounded,
-            size: 120,
-            color: AppColors.textMuted.withOpacity(0.3),
-          ),
-        ),
-      );
-    }
-    return Container(color: AppColors.background);
-  }
-
-  Widget _buildTopBar() {
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      child: ClipRRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-          child: Container(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 8,
-              left: 16,
-              right: 16,
-              bottom: 12,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.glassDark,
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.white.withOpacity(0.1),
-                  width: 0.5,
-                ),
-              ),
-            ),
-            child: Row(
-              children: [
-                // Logo
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    gradient: AppGradients.button,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.videocam_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-                
-                const SizedBox(width: 12),
-                
-                // Status
-                Expanded(
-                  child: Text(
-                    _getStatusText(),
-                    style: AppTypography.headline(),
-                  ),
-                ),
-                
-                // Timer (when connected)
-                if (_connectionState == ConnectionState.connected)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.success.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: AppColors.success,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          _formatDuration(_callDuration),
-                          style: AppTypography.caption1(color: AppColors.success),
-                        ),
-                      ],
-                    ),
-                  ),
-                
-                const SizedBox(width: 12),
-                
-                // Online count
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.online.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: AppColors.online,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '2.5k',
-                        style: AppTypography.caption1(color: AppColors.online),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  String _getStatusText() {
-    switch (_connectionState) {
-      case ConnectionState.idle:
-        return 'Keşfet';
-      case ConnectionState.searching:
-        return 'Aranıyor...';
-      case ConnectionState.connected:
-        return 'Bağlandı';
-    }
-  }
-
-  Widget _buildPipView() {
-    return Positioned(
-      right: _pipPosition.dx,
-      top: _pipPosition.dy + MediaQuery.of(context).padding.top + 60,
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          setState(() {
-            _pipPosition += details.delta;
-          });
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: 100,
-          height: 140,
-          decoration: BoxDecoration(
-            color: _isCameraOn ? const Color(0xFF2a2a4e) : AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.primary.withOpacity(0.5),
-              width: 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: Stack(
-              children: [
-                if (_isCameraOn)
-                  Center(
-                    child: Icon(
-                      Icons.person_rounded,
-                      size: 40,
-                      color: AppColors.textMuted.withOpacity(0.5),
-                    ),
-                  )
-                else
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.videocam_off_rounded,
-                          size: 28,
-                          color: AppColors.textMuted,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Kamera Kapalı',
-                          style: AppTypography.caption2(color: AppColors.textMuted),
-                        ),
-                      ],
-                    ),
-                  ),
-                
-                // Mic indicator
-                Positioned(
-                  bottom: 8,
-                  right: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: _isMicOn ? AppColors.success : AppColors.error,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _isMicOn ? Icons.mic_rounded : Icons.mic_off_rounded,
-                      size: 12,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCenterContent() {
-    if (_connectionState == ConnectionState.searching) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Pulsing loader
-            AnimatedBuilder(
-              animation: _pulseAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _pulseAnimation.value,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: context.colors.primary.withOpacity(0.5),
-                        width: 3,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: context.colors.primary.withOpacity(0.3),
-                          blurRadius: 30,
-                          spreadRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation(AppColors.primary),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 32),
-            Text('Birisi aranıyor...', style: AppTypography.title2()),
-            const SizedBox(height: 8),
-            Text(
-              'Lütfen bekleyin',
-              style: AppTypography.body(color: context.colors.textSecondaryColor),
-            ),
-          ],
+    // Show TV static when searching
+    if (_isSearching) {
+      return Scaffold(
+        backgroundColor: context.colors.backgroundColor,
+        body: OmegleTvStaticEffect(
+          isSearching: true,
+          onSkip: _stop,
+          statusText: 'Birisi aranıyor',
         ),
       );
     }
     
-    // Idle state - show start button
-    return Center(
+    // Connected view
+    return Scaffold(
+      backgroundColor: context.colors.backgroundColor,
+      body: Stack(
+        children: [
+          // Background
+          _buildBackground(),
+          
+          // Main content
+          SafeArea(
+            child: Column(
+              children: [
+                // Top bar
+                _buildTopBar(),
+                
+                // Center - Remote video placeholder
+                Expanded(child: _buildRemoteView()),
+                
+                // Bottom controls
+                _buildControls(),
+              ],
+            ),
+          ),
+          
+          // Self view (PiP)
+          if (_isConnected) _buildSelfView(),
+          
+          // Chat overlay
+          if (_showChat) _buildChatOverlay(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackground() {
+    return AnimatedBuilder(
+      animation: _pulseController,
+      builder: (context, _) {
+        final pulse = _pulseController.value;
+        return Container(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: const Alignment(0.7, -0.5),
+              radius: 1.5,
+              colors: [
+                AppColors.primary.withOpacity(0.15 * pulse),
+                Colors.transparent,
+              ],
+            ),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: const Alignment(-0.7, 0.8),
+                radius: 1.2,
+                colors: [
+                  AppColors.primary.withOpacity(0.1 * (1 - pulse)),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Builder(
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            // Back button
+            GestureDetector(
+              onTap: _stop,
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: context.colors.textColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(Icons.arrow_back_ios_new, color: context.colors.textColor, size: 20),
+              ),
+            ),
+            const SizedBox(width: 12),
+            
+            // Logo
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.primary.withOpacity(0.3), AppColors.primary.withOpacity(0.1)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.videocam, color: AppColors.primary, size: 20),
+                  const SizedBox(width: 8),
+                  Text('OmeChat', style: TextStyle(color: context.colors.textColor, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            
+            const Spacer(),
+            
+            // Add Friend button (sağ üst köşe)
+            if (_isConnected)
+              GestureDetector(
+                onTap: _addFriend,
+                child: Container(
+                  width: 44,
+                  height: 44,
+                  margin: const EdgeInsets.only(right: 12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [AppColors.primary, AppColors.primary.withOpacity(0.7)]),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 8)],
+                  ),
+                  child: const Icon(Icons.person_add_rounded, color: Colors.white, size: 22),
+                ),
+              ),
+            
+            // Timer
+            if (_isConnected)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(_formatTime(_callDuration), style: const TextStyle(color: Colors.green, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRemoteView() {
+    if (_isConnected && _remoteRenderer.srcObject != null) {
+      // Show real remote video
+      return RTCVideoView(
+        _remoteRenderer,
+        objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+        mirror: false,
+      );
+    }
+    
+    // Show connecting/searching animation
+    return AnimatedBuilder(
+      animation: _pulseController,
+      builder: (context, _) {
+        final pulse = _pulseController.value;
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Pulsing rings
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Ring 3
+                  Transform.scale(
+                    scale: 1.0 + pulse * 0.15,
+                    child: Container(
+                      width: 180,
+                      height: 180,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.primary.withOpacity(0.1), width: 1),
+                      ),
+                    ),
+                  ),
+                  // Ring 2
+                  Transform.scale(
+                    scale: 1.0 + pulse * 0.1,
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.primary.withOpacity(0.15), width: 1.5),
+                      ),
+                    ),
+                  ),
+                  // Ring 1
+                  Transform.scale(
+                    scale: 1.0 + pulse * 0.05,
+                    child: Container(
+                      width: 130,
+                      height: 130,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 2),
+                      ),
+                    ),
+                  ),
+                  // Avatar
+                  Builder(
+                    builder: (context) => Container(
+                      width: 110,
+                      height: 110,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            AppColors.primary.withOpacity(0.25),
+                            AppColors.primary.withOpacity(0.1),
+                            context.colors.surfaceColor,
+                          ],
+                        ),
+                        border: Border.all(color: AppColors.primary.withOpacity(0.5 + pulse * 0.3), width: 3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withOpacity(0.3 * pulse),
+                            blurRadius: 30,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Icon(Icons.person, size: 50, color: context.colors.textMutedColor),
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 28),
+              
+              // Status badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                        boxShadow: [BoxShadow(color: Colors.green.withOpacity(0.5), blurRadius: 8)],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'Yabancı',
+                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 12),
+              
+              // Connection quality
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.signal_cellular_alt, color: Colors.green.withOpacity(0.8), size: 16),
+                  const SizedBox(width: 6),
+                  Text('İyi bağlantı', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12)),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildControls() {
+    return Container(
+      padding: EdgeInsets.only(left: 20, right: 20, top: 16, bottom: MediaQuery.of(context).padding.bottom + 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // Camera
+          _controlBtn(
+            icon: _isCameraOn ? Icons.videocam : Icons.videocam_off,
+            label: 'Kamera',
+            active: _isCameraOn,
+            onTap: _toggleCamera,
+          ),
+          
+          // Mic
+          _controlBtn(
+            icon: _isMicOn ? Icons.mic : Icons.mic_off,
+            label: 'Mikrofon',
+            active: _isMicOn,
+            onTap: _toggleMic,
+          ),
+          
+          // Next button
+          GestureDetector(
+            onTap: _next,
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [AppColors.primary, AppColors.primary.withOpacity(0.7)]),
+                shape: BoxShape.circle,
+                boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 20)],
+              ),
+              child: const Icon(Icons.skip_next, color: Colors.white, size: 36),
+            ),
+          ),
+          
+          // Chat
+          _controlBtn(
+            icon: Icons.chat_bubble,
+            label: 'Sohbet',
+            active: _showChat,
+            onTap: () => setState(() => _showChat = !_showChat),
+          ),
+          
+          // Report
+          _controlBtn(
+            icon: Icons.flag,
+            label: 'Bildir',
+            active: false,
+            danger: true,
+            onTap: _showReportSheet,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _controlBtn({
+    required IconData icon,
+    required String label,
+    required bool active,
+    bool danger = false,
+    VoidCallback? onTap,
+  }) {
+    final color = danger ? Colors.red : (active ? AppColors.primary : Colors.white);
+    return GestureDetector(
+      onTap: onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          GlowingButton(
-            size: 140,
-            showPulse: true,
-            onPressed: _startSearch,
-            child: const Icon(
-              Icons.play_arrow_rounded,
-              color: Colors.white,
-              size: 60,
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: (danger ? Colors.red : (active ? AppColors.primary : Colors.white)).withOpacity(0.15),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withOpacity(0.3), width: 1.5),
             ),
+            child: Icon(icon, color: color.withOpacity(active || danger ? 1 : 0.7), size: 24),
           ),
-          const SizedBox(height: 32),
-          Text('Sohbet Başlat', style: AppTypography.title2()),
-          const SizedBox(height: 8),
-          Text(
-            'Yeni insanlarla tanış',
-            style: AppTypography.body(color: AppColors.textSecondary),
-          ),
+          const SizedBox(height: 6),
+          Text(label, style: TextStyle(color: color.withOpacity(0.7), fontSize: 10, fontWeight: FontWeight.w500)),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSelfView() {
+    return Positioned(
+      right: 16,
+      top: MediaQuery.of(context).padding.top + 80,
+      child: Container(
+        width: 110,
+        height: 150,
+        decoration: BoxDecoration(
+          color: _isCameraOn ? const Color(0xFF1A1A2A) : const Color(0xFF151515),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.primary.withOpacity(0.5), width: 2),
+          boxShadow: [
+            BoxShadow(color: AppColors.primary.withOpacity(0.2), blurRadius: 15),
+            BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 15, offset: const Offset(0, 8)),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Stack(
+            children: [
+              // Real local video or placeholder
+              if (_isCameraOn && _localRenderer.srcObject != null)
+                SizedBox.expand(
+                  child: RTCVideoView(
+                    _localRenderer,
+                    objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                    mirror: true,
+                  ),
+                )
+              else
+                Center(
+                  child: _isCameraOn
+                      ? const Icon(Icons.person, size: 40, color: Colors.white38)
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.videocam_off, size: 28, color: Colors.white.withOpacity(0.5)),
+                            const SizedBox(height: 4),
+                            Text('Kapalı', style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 10)),
+                          ],
+                        ),
+                ),
+              // "Sen" label
+              Positioned(
+                top: 8,
+                left: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text('Sen', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
+                ),
+              ),
+              // Mic indicator
+              Positioned(
+                bottom: 8,
+                right: 8,
+                child: Container(
+                  width: 26,
+                  height: 26,
+                  decoration: BoxDecoration(
+                    color: _isMicOn ? Colors.green : Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(_isMicOn ? Icons.mic : Icons.mic_off, size: 14, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildChatOverlay() {
     return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 100,
+      left: 16,
+      right: 16,
+      bottom: 110,
       child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Container(
             height: 300,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: AppColors.glassDark,
+              color: Colors.black.withOpacity(0.7),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.glassBorder),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
             ),
             child: Column(
               children: [
                 // Header
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: AppColors.borderSoft),
-                    ),
-                  ),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.1)))),
                   child: Row(
                     children: [
-                      Text('Sohbet', style: AppTypography.headline()),
+                      Icon(Icons.chat_bubble, color: AppColors.primary, size: 20),
+                      const SizedBox(width: 10),
+                      const Text('Sohbet', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600)),
                       const Spacer(),
-                      IconButton(
-                        onPressed: _toggleChat,
-                        icon: Icon(
-                          Icons.close_rounded,
-                          color: AppColors.textSecondary,
-                          size: 20,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
+                      GestureDetector(
+                        onTap: () => setState(() => _showChat = false),
+                        child: const Icon(Icons.close, color: Colors.white54, size: 22),
                       ),
                     ],
                   ),
                 ),
-                
                 // Messages
                 Expanded(
                   child: ListView.builder(
-                    controller: _scrollController,
                     padding: const EdgeInsets.all(12),
                     itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final msg = _messages[index];
-                      return _buildMessageBubble(msg);
-                    },
+                    itemBuilder: (_, i) => _msgBubble(_messages[i]),
                   ),
                 ),
-                
                 // Input
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -603,38 +820,32 @@ class _VideoChatScreenState extends State<VideoChatScreen>
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(color: AppColors.borderSoft),
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(25),
                           ),
                           child: TextField(
                             controller: _chatController,
-                            style: AppTypography.body(),
+                            style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               hintText: 'Mesaj yaz...',
-                              hintStyle: AppTypography.body(color: AppColors.textMuted),
+                              hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
                               border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 10),
                             ),
-                            onSubmitted: (_) => _sendMessage(),
+                            onSubmitted: (_) => _sendMsg(),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 10),
                       GestureDetector(
-                        onTap: _sendMessage,
+                        onTap: _sendMsg,
                         child: Container(
-                          width: 44,
-                          height: 44,
+                          width: 46,
+                          height: 46,
                           decoration: BoxDecoration(
-                            gradient: AppGradients.button,
+                            gradient: LinearGradient(colors: [AppColors.primary, AppColors.primary.withOpacity(0.7)]),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
-                            Icons.send_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                          child: const Icon(Icons.send, color: Colors.white, size: 20),
                         ),
                       ),
                     ],
@@ -648,231 +859,60 @@ class _VideoChatScreenState extends State<VideoChatScreen>
     );
   }
 
-  Widget _buildMessageBubble(ChatMessage message) {
+  Widget _msgBubble(_ChatMsg msg) {
     return Align(
-      alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: msg.isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.65,
-        ),
         decoration: BoxDecoration(
-          gradient: message.isMe ? AppGradients.bubbleSent : null,
-          color: message.isMe ? null : AppColors.surface,
+          gradient: msg.isMe ? LinearGradient(colors: [AppColors.primary, AppColors.primary.withOpacity(0.7)]) : null,
+          color: msg.isMe ? null : Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
-          border: message.isMe ? null : Border.all(color: AppColors.borderSoft),
         ),
-        child: Text(
-          message.text,
-          style: AppTypography.body(
-            color: message.isMe ? Colors.white : AppColors.textPrimary,
-          ),
-        ),
+        child: Text(msg.text, style: const TextStyle(color: Colors.white, fontSize: 14)),
       ),
     );
   }
 
-  Widget _buildControlBar() {
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: ClipRRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-          child: Container(
-            padding: EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: 16,
-              bottom: MediaQuery.of(context).padding.bottom + 16,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.glassDark,
-              border: Border(
-                top: BorderSide(
-                  color: Colors.white.withOpacity(0.1),
-                  width: 0.5,
-                ),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Camera toggle
-                _buildControlButton(
-                  icon: _isCameraOn ? Icons.videocam_rounded : Icons.videocam_off_rounded,
-                  isActive: _isCameraOn,
-                  onTap: _toggleCamera,
-                ),
-                
-                // Mic toggle
-                _buildControlButton(
-                  icon: _isMicOn ? Icons.mic_rounded : Icons.mic_off_rounded,
-                  isActive: _isMicOn,
-                  onTap: _toggleMic,
-                ),
-                
-                // Next / Start button
-                if (_connectionState == ConnectionState.connected)
-                  GlowingButton(
-                    size: 64,
-                    onPressed: _onNext,
-                    child: const Icon(
-                      Icons.skip_next_rounded,
-                      color: Colors.white,
-                      size: 32,
-                    ),
-                  )
-                else if (_connectionState == ConnectionState.searching)
-                  _buildControlButton(
-                    icon: Icons.close_rounded,
-                    isActive: false,
-                    isDestructive: true,
-                    onTap: _onStop,
-                  ),
-                
-                // Chat toggle
-                _buildControlButton(
-                  icon: Icons.chat_bubble_rounded,
-                  isActive: _isChatVisible,
-                  onTap: _connectionState == ConnectionState.connected ? _toggleChat : null,
-                  isDisabled: _connectionState != ConnectionState.connected,
-                ),
-                
-                // Report
-                _buildControlButton(
-                  icon: Icons.flag_rounded,
-                  isActive: false,
-                  isDestructive: true,
-                  onTap: _connectionState == ConnectionState.connected ? _showReport : null,
-                  isDisabled: _connectionState != ConnectionState.connected,
-                ),
-              ],
-            ),
-          ),
+  void _showReportSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
-      ),
-    );
-  }
-
-  Widget _buildControlButton({
-    required IconData icon,
-    required bool isActive,
-    VoidCallback? onTap,
-    bool isDestructive = false,
-    bool isDisabled = false,
-  }) {
-    return GestureDetector(
-      onTap: isDisabled ? null : onTap,
-      child: AnimatedContainer(
-        duration: AppTheme.durationFast,
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          color: isDisabled
-              ? AppColors.surface.withOpacity(0.5)
-              : isDestructive
-                  ? AppColors.error.withOpacity(0.2)
-                  : isActive
-                      ? AppColors.primary.withOpacity(0.2)
-                      : AppColors.surface,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isDisabled
-                ? Colors.transparent
-                : isDestructive
-                    ? AppColors.error.withOpacity(0.5)
-                    : isActive
-                        ? AppColors.primary.withOpacity(0.5)
-                        : AppColors.borderSoft,
-            width: 1.5,
-          ),
-        ),
-        child: Icon(
-          icon,
-          color: isDisabled
-              ? AppColors.textMuted
-              : isDestructive
-                  ? AppColors.error
-                  : isActive
-                      ? AppColors.primary
-                      : AppColors.textSecondary,
-          size: 24,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 20),
+            const Text('Sorunu Bildir', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 20),
+            ...['Müstehcen İçerik', 'Taciz / Hakaret', 'Spam', 'Diğer'].map((r) => ListTile(
+              leading: const Icon(Icons.flag, color: Colors.red),
+              title: Text(r, style: const TextStyle(color: Colors.white)),
+              onTap: () {
+                Navigator.pop(context);
+                _next();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: const Text('Bildirim gönderildi'), backgroundColor: Colors.green),
+                );
+              },
+            )),
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+          ],
         ),
       ),
     );
   }
 }
 
-/// Connection state enum
-enum ConnectionState {
-  idle,
-  searching,
-  connected,
-}
-
-/// Chat message model
-class ChatMessage {
+class _ChatMsg {
   final String text;
   final bool isMe;
-  final DateTime time;
-  
-  ChatMessage({required this.text, required this.isMe, required this.time});
-}
-
-/// Report bottom sheet
-class _ReportSheet extends StatelessWidget {
-  final Function(String) onReport;
-  
-  const _ReportSheet({required this.onReport});
-
-  @override
-  Widget build(BuildContext context) {
-    final reasons = [
-      ('Müstehcen İçerik', Icons.no_adult_content_rounded),
-      ('Taciz / Hakaret', Icons.person_off_rounded),
-      ('Spam / Reklam', Icons.block_rounded),
-      ('Bot / Sahte Hesap', Icons.smart_toy_rounded),
-      ('Diğer', Icons.more_horiz_rounded),
-    ];
-    
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceElevated,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.textMuted,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text('Sorunu Bildir', style: AppTypography.title2()),
-              const SizedBox(height: 16),
-              ...reasons.map((r) => ListTile(
-                leading: Icon(r.$2, color: AppColors.error),
-                title: Text(r.$1, style: AppTypography.body()),
-                trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
-                onTap: () => onReport(r.$1),
-              )),
-              SizedBox(height: MediaQuery.of(context).padding.bottom),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  _ChatMsg(this.text, this.isMe);
 }

@@ -47,7 +47,13 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<true/>
-		<key>UIViewControllerBasedStatusBarAppearance</key>
-		<false/>
-	</dict>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Video sohbet için kameraya erişim gereklidir</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Video sohbet için mikrofon erişimi gereklidir</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Profil fotoğrafı seçmek için fotoğraf kütüphanesine erişim gereklidir</string>
+</dict>
 </plist>

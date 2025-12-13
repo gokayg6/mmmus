@@ -8,6 +8,7 @@ class UserModel {
   final String? avatarUrl;
   final bool isGuest;
   final bool isPremium;
+  final int credits;
   final DateTime createdAt;
   final UserStats stats;
 
@@ -18,6 +19,7 @@ class UserModel {
     this.avatarUrl,
     this.isGuest = false,
     this.isPremium = false,
+    this.credits = 0,
     required this.createdAt,
     this.stats = const UserStats(),
   });
@@ -38,6 +40,7 @@ class UserModel {
     String? avatarUrl,
     bool? isGuest,
     bool? isPremium,
+    int? credits,
     DateTime? createdAt,
     UserStats? stats,
   }) {
@@ -48,6 +51,7 @@ class UserModel {
       avatarUrl: avatarUrl ?? this.avatarUrl,
       isGuest: isGuest ?? this.isGuest,
       isPremium: isPremium ?? this.isPremium,
+      credits: credits ?? this.credits,
       createdAt: createdAt ?? this.createdAt,
       stats: stats ?? this.stats,
     );

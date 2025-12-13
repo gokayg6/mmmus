@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme.dart';
 import '../../core/widgets/glass_dock.dart';
 import '../../core/widgets/animated_background.dart';
 import '../random_connect/random_connect_screen.dart';
@@ -79,7 +80,7 @@ class _MainShellState extends ConsumerState<MainShell>
     setState(() => _currentIndex = index);
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 300),
+      duration: AppTheme.durationNormal, // Optimized for 240Hz
       curve: Curves.easeOutCubic,
     );
   }
@@ -98,7 +99,7 @@ class _MainShellState extends ConsumerState<MainShell>
             child: SizedBox.expand(),
           ),
           
-          // Screen content with PageView for smooth transitions
+          // Screen content with PageView for smooth transitions - 120Hz optimized
           PageView(
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(),
@@ -106,6 +107,8 @@ class _MainShellState extends ConsumerState<MainShell>
               setState(() => _currentIndex = index);
             },
             children: _screens,
+            // Optimize for 120Hz
+            allowImplicitScrolling: false,
           ),
           
           // Bottom dock

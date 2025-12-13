@@ -64,9 +64,9 @@ class _GlowingButtonState extends State<GlowingButton>
   void initState() {
     super.initState();
     
-    // Pulse animation for idle state
+    // Pulse animation for idle state - 120Hz optimized
     _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1500),  // 120Hz: ~180 frames
       vsync: this,
     );
     _pulseAnimation = Tween<double>(begin: 0.3, end: 0.7).animate(
@@ -85,9 +85,9 @@ class _GlowingButtonState extends State<GlowingButton>
       CurvedAnimation(parent: _pressController, curve: AppTheme.curveDefault),
     );
     
-    // Loading rotation
+    // Loading rotation - 120Hz optimized
     _rotationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1000),  // 120Hz: ~120 frames
       vsync: this,
     );
     if (widget.isLoading) {

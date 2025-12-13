@@ -126,7 +126,7 @@ class _AnimatedChatBubbleState extends State<AnimatedChatBubble>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 250),  // 120Hz: ~30 frames
       vsync: this,
     );
     

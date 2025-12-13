@@ -251,12 +251,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: context.colors.backgroundColor,
       body: Stack(
         children: [
           // Remote video (full screen) with blur if connecting
           Container(
-            color: AppColors.surfaceDark,
+            color: context.colors.surfaceColor,
             child: _isConnected
                 ? FadeTransition(
                     opacity: _fadeAnimation,
@@ -483,10 +483,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.1),
-                  width: 1,
-                ),
               ),
               child: TextField(
                 controller: _chatController,

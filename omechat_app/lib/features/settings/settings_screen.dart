@@ -122,7 +122,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           iconColor: AppColors.primarySoft,
                           title: 'Dil',
                           subtitle: _language,
-                          onTap: () => _showLanguagePicker(),
                         ),
                       ],
                     ),
@@ -242,6 +241,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
                   
+                  const SizedBox(height: 24),
+                  
+                  // Admin section (only for admin users - you can add role check)
+                  _SectionHeader(title: 'Yönetici'),
+                  const SizedBox(height: 12),
+                  GlassContainer(
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      children: [
+                        _SettingsTile(
+                          icon: Icons.admin_panel_settings_rounded,
+                          iconColor: AppColors.error,
+                          title: 'Admin Paneli',
+                          subtitle: 'Uygulama yönetimi',
+                          onTap: () => Navigator.pushNamed(context, '/admin'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
                   // Bottom padding for dock
                   const SizedBox(height: 120),
                 ]),
@@ -258,7 +277,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surfaceElevated,
+        backgroundColor: context.isDarkMode ? AppColors.surfaceElevated : AppColors.surfaceElevatedLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Çıkış Yap', style: AppTypography.title2()),
         content: Text(
@@ -287,27 +306,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  void _showLanguagePicker() {
-    HapticFeedback.lightImpact();
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _LanguagePickerSheet(
-        currentLanguage: _language,
-        onSelect: (lang) {
-          setState(() => _language = lang);
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
 
   void _showDeleteConfirmation() {
     HapticFeedback.mediumImpact();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surfaceElevated,
+        backgroundColor: context.isDarkMode ? AppColors.surfaceElevated : AppColors.surfaceElevatedLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Verileri Sil?', style: AppTypography.title2()),
         content: Text(
@@ -427,55 +432,3 @@ class _Divider extends StatelessWidget {
   }
 }
 
-class _LanguagePickerSheet extends StatelessWidget {
-  final String currentLanguage;
-  final Function(String) onSelect;
-
-  const _LanguagePickerSheet({
-    required this.currentLanguage,
-    required this.onSelect,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final languages = ['Türkçe', 'English', 'Deutsch', 'Français', 'Español'];
-    
-    return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceElevated,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.textMuted,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text('Dil Seçin', style: AppTypography.title2()),
-              const SizedBox(height: 16),
-              ...languages.map((lang) => ListTile(
-                title: Text(lang, style: AppTypography.body()),
-                trailing: currentLanguage == lang
-                    ? Icon(Icons.check_circle_rounded, color: AppColors.primary)
-                    : null,
-                onTap: () => onSelect(lang),
-              )),
-              SizedBox(height: MediaQuery.of(context).padding.bottom),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

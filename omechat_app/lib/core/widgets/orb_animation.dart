@@ -30,17 +30,17 @@ class _OrbAnimationState extends State<OrbAnimation>
     super.initState();
     
     _rotationController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(milliseconds: 2000),  // 120Hz: ~240 frames
       vsync: this,
     )..repeat();
     
     _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1000),  // 120Hz: ~120 frames
       vsync: this,
     )..repeat(reverse: true);
     
     _particleController = AnimationController(
-      duration: const Duration(seconds: 4),
+      duration: const Duration(milliseconds: 3000),  // 120Hz: ~360 frames
       vsync: this,
     )..repeat();
   }

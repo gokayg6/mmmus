@@ -197,6 +197,9 @@ class _SecondaryButtonState extends State<SecondaryButton>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : AppColors.textPrimaryLight;
+    
     return GestureDetector(
       onTapDown: (_) {
         _controller.forward();
@@ -217,10 +220,10 @@ class _SecondaryButtonState extends State<SecondaryButton>
           width: widget.width,
           height: widget.height,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
+            color: textColor.withOpacity(0.1),
             borderRadius: BorderRadius.circular(AppTheme.radiusPill),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: textColor.withOpacity(0.2),
               width: 1,
             ),
           ),
@@ -231,7 +234,7 @@ class _SecondaryButtonState extends State<SecondaryButton>
                 if (widget.icon != null) ...[
                   Icon(
                     widget.icon,
-                    color: Colors.white.withOpacity(0.9),
+                    color: textColor,
                     size: 18,
                   ),
                   const SizedBox(width: 8),
@@ -239,7 +242,7 @@ class _SecondaryButtonState extends State<SecondaryButton>
                 Text(
                   widget.text,
                   style: AppTypography.buttonMedium(
-                    color: Colors.white.withOpacity(0.9),
+                    color: textColor,
                   ),
                 ),
               ],

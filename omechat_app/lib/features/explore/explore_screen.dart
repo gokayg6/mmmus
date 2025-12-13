@@ -160,6 +160,37 @@ class ExploreScreen extends StatelessWidget {
               ),
             ),
             
+            const SizedBox(height: 24),
+            
+            // CTAs
+            GlassContainer(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  PrimaryButton(
+                    text: 'Premium\'a Geç',
+                    icon: Icons.workspace_premium_rounded,
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pushNamed(context, '/subscription');
+                    },
+                    width: double.infinity,
+                    gradient: AppColors.primaryGradient,
+                  ),
+                  const SizedBox(height: 16),
+                  SecondaryButton(
+                    text: 'Kredi Al',
+                    icon: Icons.account_balance_wallet_rounded,
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      Navigator.pushNamed(context, '/credits');
+                    },
+                    width: double.infinity,
+                  ),
+                ],
+              ),
+            ),
+            
             const SizedBox(height: 32),
             
             // Feature preview cards
@@ -266,12 +297,12 @@ class _ComingSoonCardState extends State<_ComingSoonCard> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0EA5E9).withOpacity(0.2),
+                  color: AppColors.primary.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   widget.icon,
-                  color: const Color(0xFF0EA5E9),
+                  color: AppColors.primary,
                   size: 24,
                 ),
               ),

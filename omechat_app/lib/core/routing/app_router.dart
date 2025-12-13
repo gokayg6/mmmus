@@ -17,6 +17,10 @@ import '../../features/chat_list/chat_list_screen.dart';
 import '../../features/chat_detail/chat_detail_screen.dart';
 import '../../features/random_connect/random_connect_screen.dart';
 import '../../features/calls/calls_screen.dart';
+import '../../features/subscription/subscription_screen.dart';
+import '../../features/payment/credit_store_screen.dart';
+import '../../features/admin/admin_panel_screen.dart';
+import '../../features/admin/admin_login_screen.dart';
 
 /// Route names
 class AppRoutes {
@@ -36,6 +40,9 @@ class AppRoutes {
   static const String randomConnect = '/random-connect';
   static const String calls = '/calls';
   static const String settings = '/settings';
+  static const String subscription = '/subscription';
+  static const String credits = '/credits';
+  static const String adminPanel = '/admin';
   
   // Main app route (alias for shell)
   static const String main = '/shell';
@@ -103,6 +110,15 @@ class AppRouter {
       case AppRoutes.calls:
         return _buildRoute(const CallsScreen(), settings);
       
+      case AppRoutes.subscription:
+        return _buildRoute(const SubscriptionScreen(), settings);
+      
+      case AppRoutes.credits:
+        return _buildRoute(const CreditStoreScreen(), settings);
+      
+      case AppRoutes.adminPanel:
+        return _buildRoute(const AdminLoginScreen(), settings);
+      
       // Legacy route - redirect to shell
       case AppRoutes.landing:
         return _buildRoute(const MainShell(), settings);
@@ -141,7 +157,7 @@ class AppRouter {
           child: child,
         );
       },
-      transitionDuration: const Duration(milliseconds: 300),
+      transitionDuration: const Duration(milliseconds: 100),  // 240Hz: ~24 frames
     );
   }
   
@@ -151,8 +167,8 @@ class AppRouter {
       opaque: false,
       barrierDismissible: true,
       barrierColor: Colors.black54,
-      transitionDuration: const Duration(milliseconds: 250),
-      reverseTransitionDuration: const Duration(milliseconds: 200),
+      transitionDuration: const Duration(milliseconds: 100),  // 240Hz: ~24 frames
+      reverseTransitionDuration: const Duration(milliseconds: 75),  // 240Hz: ~18 frames
       pageBuilder: (context, animation, secondaryAnimation) => sheet,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         final curvedAnimation = CurvedAnimation(

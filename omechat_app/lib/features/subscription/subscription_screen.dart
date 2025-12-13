@@ -19,7 +19,7 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animController;
-  int _selectedPlan = 1; // 0: weekly, 1: monthly, 2: yearly
+  int _selectedPlan = 1; // 0: weekly, 1: monthly, 2: 3-month, 3: yearly
 
   @override
   void initState() {
@@ -39,7 +39,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Stack(
         children: [
           // Animated glow background
@@ -68,23 +76,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
           SafeArea(
             bottom: false,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 120),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
               child: Column(
                 children: [
                   // Header
                   _buildHeader(),
                   
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   
                   // Premium badge
                   _buildPremiumBadge(),
                   
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   
                   // Features
                   _buildFeaturesList(),
                   
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   
                   // Plans
                   _buildPlanSelector(),
@@ -141,7 +149,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
   Widget _buildHeader() {
     return Column(
       children: [
-        Text('Premium', style: AppTypography.largeTitle()),
+        ShaderMask(
+          shaderCallback: (bounds) => AppGradients.button.createShader(bounds),
+          child: Text(
+            'Premium',
+            style: AppTypography.largeTitle(color: Colors.white),
+          ),
+        ),
         const SizedBox(height: 4),
         Text(
           'Sınırsız deneyimin kilidini aç',
@@ -161,8 +175,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
         );
       },
       child: Container(
-        width: 120,
-        height: 120,
+        width: 100,
+        height: 100,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: AppGradients.button,
@@ -177,7 +191,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
         child: const Icon(
           Icons.workspace_premium_rounded,
           color: Colors.white,
-          size: 60,
+          size: 50,
         ),
       ),
     );
@@ -185,12 +199,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
 
   Widget _buildFeaturesList() {
     final features = [
-      _FeatureItem(Icons.block_rounded, 'Reklamsız Deneyim', 'Hiç reklam görme'),
-      _FeatureItem(Icons.bolt_rounded, 'Öncelikli Eşleşme', 'Daha hızlı eşleş'),
-      _FeatureItem(Icons.filter_alt_rounded, 'Gelişmiş Filtreler', 'Cinsiyet, ülke, dil'),
-      _FeatureItem(Icons.visibility_off_rounded, 'Gizli Mod', 'Görünmez ol'),
-      _FeatureItem(Icons.verified_rounded, 'Premium Rozet', 'Profilinde göster'),
-      _FeatureItem(Icons.support_agent_rounded, 'Öncelikli Destek', '7/24 destek'),
+      _FeatureItem(Icons.block_rounded, 'Reklamsız Kullanım', 'Hiç reklam görme'),
+      _FeatureItem(Icons.wc_rounded, 'Cinsiyet Seçme', 'Ücretsiz cinsiyet filtresi'),
+      _FeatureItem(Icons.public_rounded, 'Ülke Seçme', 'İstediğin ülkeyi seç'),
+      _FeatureItem(Icons.hd_rounded, 'HD Görüntü', 'Yüksek kalite video'),
+      _FeatureItem(Icons.star_rounded, 'Öne Çıkarılma', 'Eşleşmede öncelik'),
+      _FeatureItem(Icons.verified_rounded, 'VIP Rozet', 'Haftalık özel rozet'),
+      _FeatureItem(Icons.replay_rounded, 'Sınırsız Reconnect', 'Aynı kişiyle tekrar bağlan'),
+      _FeatureItem(Icons.palette_rounded, 'Özel Tema', 'Gece modu özel teması'),
+      _FeatureItem(Icons.speed_rounded, 'Sınırsız Next', 'Bekleme süresi yok'),
     ];
     
     return GlassContainer(
@@ -198,35 +215,41 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'PREMIUM ÖZELLİKLER',
-            style: AppTypography.caption1(color: AppColors.textMuted),
+          Row(
+            children: [
+              Icon(Icons.diamond_rounded, color: AppColors.warning, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'PREMIUM ÖZELLİKLER',
+                style: AppTypography.caption1(color: AppColors.warning),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           ...features.map((f) => Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(bottom: 12),
             child: Row(
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
                     color: AppColors.primary.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(f.icon, color: AppColors.primary, size: 18),
+                  child: Icon(f.icon, color: AppColors.primary, size: 16),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(f.title, style: AppTypography.headline()),
-                      Text(f.subtitle, style: AppTypography.caption1(color: AppColors.textSecondary)),
+                      Text(f.title, style: AppTypography.subheadlineMedium()),
+                      Text(f.subtitle, style: AppTypography.caption2(color: AppColors.textSecondary)),
                     ],
                   ),
                 ),
-                const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 20),
+                const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 18),
               ],
             ),
           )),
@@ -246,13 +269,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
             style: AppTypography.caption1(color: AppColors.textMuted),
           ),
         ),
+        // First row - Weekly & Monthly
         Row(
           children: [
-            Expanded(child: _buildPlanCard(0, 'Haftalık', '₺29.99', '/hafta')),
+            Expanded(child: _buildPlanCard(0, 'Haftalık', '₺69,99', '/hafta')),
             const SizedBox(width: 8),
-            Expanded(child: _buildPlanCard(1, 'Aylık', '₺79.99', '/ay', isBestValue: true)),
+            Expanded(child: _buildPlanCard(1, 'Aylık', '₺129,99', '/ay', isBestValue: true)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        // Second row - 3 Month & Yearly
+        Row(
+          children: [
+            Expanded(child: _buildPlanCard(2, '3 Aylık', '₺229,99', '/3 ay', savings: '%40')),
             const SizedBox(width: 8),
-            Expanded(child: _buildPlanCard(2, 'Yıllık', '₺499', '/yıl', savings: '%50')),
+            Expanded(child: _buildPlanCard(3, 'Yıllık', '₺599,99', '/yıl', savings: '%60')),
           ],
         ),
       ],
@@ -270,7 +301,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
       },
       child: AnimatedContainer(
         duration: AppTheme.durationFast,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: isSelected ? AppGradients.button : null,
           color: isSelected ? null : AppColors.surface,
@@ -291,11 +322,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
           children: [
             if (isBestValue || savings != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
                   color: isSelected ? Colors.white.withOpacity(0.2) : AppColors.primary.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   isBestValue ? 'EN İYİ' : savings!,
@@ -305,7 +336,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                 ),
               )
             else
-              const SizedBox(height: 22),
+              const SizedBox(height: 24),
             Text(
               title,
               style: AppTypography.caption1(
@@ -333,15 +364,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
 
   void _subscribe() {
     HapticFeedback.mediumImpact();
-    // TODO: Implement in-app purchase
+    final plans = ['Haftalık - ₺69,99', 'Aylık - ₺129,99', '3 Aylık - ₺229,99', 'Yıllık - ₺599,99'];
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.surfaceElevated,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Premium', style: AppTypography.title2()),
+        title: Row(
+          children: [
+            Icon(Icons.workspace_premium_rounded, color: AppColors.warning),
+            const SizedBox(width: 8),
+            Text('Premium', style: AppTypography.title2()),
+          ],
+        ),
         content: Text(
-          'Satın alma özelliği yakında eklenecek!',
+          '${plans[_selectedPlan]} planı seçtiniz.\n\nSatın alma özelliği yakında eklenecek!',
           style: AppTypography.body(color: AppColors.textSecondary),
         ),
         actions: [

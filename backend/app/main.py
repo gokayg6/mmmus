@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
-from app.routes import public, admin, websocket, auth
+from app.routes import public, admin, websocket, auth, features
 from app.database import create_tables
 
 settings = get_settings()
@@ -48,6 +48,7 @@ app.add_middleware(
 app.include_router(public.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(features.router, prefix="/api/v1")
 app.include_router(websocket.router)
 
 

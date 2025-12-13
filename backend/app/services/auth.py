@@ -82,10 +82,15 @@ def authenticate_admin(db: Session, email: str, password: str):
     return admin
 
 
-def get_admin_by_id(db: Session, admin_id: UUID):
+def get_admin_by_id(db: Session, admin_id: str):
     """ID ile admin bul"""
     from app.models.admin import Admin
-    return db.query(Admin).filter(Admin.id == admin_id).first()
+    try:
+        from uuid import UUID
+        admin_uuid = UUID(admin_id) if isinstance(admin_id, str) else admin_id
+        return db.query(Admin).filter(Admin.id == admin_uuid).first()
+    except (ValueError, TypeError):
+        return None
 
 
 def create_admin(db: Session, email: str, password: str, name: str = None, role: str = "MODERATOR"):

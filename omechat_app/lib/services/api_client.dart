@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../core/config/app_config.dart';
 
 /// API client for REST endpoints
 class ApiClient {
@@ -13,6 +14,9 @@ class ApiClient {
 
   /// Get base URL for WebSocket connection
   String get baseUrl => _baseUrl;
+  
+  /// Get Dio instance for direct API calls
+  Dio get dio => _dio;
 
   /// === IMPORTANT ===
   /// REAL PHONE → Use your PC's IPv4: 192.168.1.103
@@ -315,6 +319,8 @@ class UserProfile {
   final String? avatarUrl;
   final DateTime createdAt;
   final bool isActive;
+  final int credits;
+  final bool isPremium;
 
   UserProfile({
     required this.id,
@@ -323,6 +329,8 @@ class UserProfile {
     this.avatarUrl,
     required this.createdAt,
     required this.isActive,
+    this.credits = 0,
+    this.isPremium = false,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -333,6 +341,8 @@ class UserProfile {
       avatarUrl: json['avatar_url'],
       createdAt: DateTime.parse(json['created_at']),
       isActive: json['is_active'],
+      credits: json['credits'] ?? 0,
+      isPremium: json['is_premium'] ?? false,
     );
   }
 
@@ -344,6 +354,8 @@ class UserProfile {
       'avatar_url': avatarUrl,
       'created_at': createdAt.toIso8601String(),
       'is_active': isActive,
+      'credits': credits,
+      'is_premium': isPremium,
     };
   }
 }
@@ -409,10 +421,15 @@ class OnlineCountResponse {
 /// Get backend base URL based on platform
 String _getBackendBaseUrl() {
   // ═══════════════════════════════════════════════════════════
-  // NETWORK CONFIGURATION FOR REAL DEVICES
-  // Your PC's local IP: 192.168.1.103
+  // NETWORK CONFIGURATION
   // ═══════════════════════════════════════════════════════════
   
+  // Production backend (Railway/Render)
+  if (AppConfig.isProduction) {
+    return AppConfig.backendUrl;
+  }
+  
+  // Development backend (local)
   // Web platform
   if (kIsWeb) {
     return 'http://localhost:8000';
@@ -420,19 +437,18 @@ String _getBackendBaseUrl() {
   
   try {
     if (Platform.isAndroid) {
-      // For REAL DEVICES on the same network
-      // Uses your PC's local IP address
-      return 'http://192.168.1.103:8000';
+      // Android Emulator uses 10.0.2.2 to reach host machine
+      return AppConfig.developmentBackendUrl;
     } else if (Platform.isIOS) {
-      // For iOS devices on the same network
-      return 'http://192.168.1.103:8000';
+      // iOS Simulator uses localhost
+      return 'http://localhost:8000';
     }
   } catch (e) {
     // Fallback
   }
   
   // Default fallback
-  return 'http://192.168.1.103:8000';
+  return AppConfig.developmentBackendUrl;
 }
 
 final apiClientProvider = Provider<ApiClient>((ref) {

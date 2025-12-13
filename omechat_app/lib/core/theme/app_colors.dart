@@ -192,7 +192,11 @@ class AppColors {
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [primarySoft, primary, primaryDark],
+    colors: [
+      Color(0xFFFFA94A), // Light Orange
+      Color(0xFFFF7A1A), // Main Orange
+      Color(0xFFCC5C10), // Dark Orange
+    ],
   );
   
   static const LinearGradient buttonGradient = LinearGradient(

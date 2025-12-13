@@ -15,8 +15,8 @@ class ZoomBlurPageRoute<T> extends PageRouteBuilder<T> {
     RouteSettings? settings,
   }) : super(
           settings: settings,
-          transitionDuration: const Duration(milliseconds: 500),
-          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 150),      // 240Hz: ~36 frames
+          reverseTransitionDuration: const Duration(milliseconds: 125), // 240Hz: ~30 frames
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             final curve = CurvedAnimation(
