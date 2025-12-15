@@ -1,0 +1,243 @@
+﻿Analyzing omechat_app...                                        
+
+   info - The import of 'package:flutter/cupertino.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\core\routing\app_router.dart:2:8 - unnecessary_import
+warning - Unused import: '../../features/admin/admin_panel_screen.dart' - lib\core\routing\app_router.dart:22:8 - unused_import
+warning - Unused import: '../theme/app_theme.dart' - lib\core\routing\zoom_blur_route.dart:3:8 - unused_import
+   info - Convert 'settings' to a super parameter - lib\core\routing\zoom_blur_route.dart:13:3 - use_super_parameters
+warning - Unused import: 'app_colors.dart' - lib\core\theme\app_gradients.dart:2:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\core\theme\app_theme.dart:586:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\animated_background.dart:50:27 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\core\widgets\animated_background.dart:53:15 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\animated_loader.dart:80:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\animated_loader.dart:82:29 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\core\widgets\animated_loader.dart:83:29 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\animated_loader.dart:176:20 - prefer_const_constructors
+warning - Unused import: '../theme/app_theme.dart' - lib\core\widgets\avatar_glow.dart:4:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\avatar_glow.dart:111:31 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\avatar_glow.dart:180:19 - prefer_const_constructors
+warning - Unused import: '../theme/app_shadows.dart' - lib\core\widgets\buttons.dart:6:8 - unused_import
+warning - Unused import: '../theme/app_theme.dart' - lib\core\widgets\chat_bubble.dart:4:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\glass_container.dart:178:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\glass_container.dart:180:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\glass_container.dart:181:23 - prefer_const_constructors
+warning - Unused import: '../theme/app_theme.dart' - lib\core\widgets\orb_animation.dart:4:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\orb_animation.dart:194:18 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\core\widgets\orb_animation.dart:195:17 - prefer_const_literals_to_create_immutables
+warning - Unused import: 'dart:ui' - lib\core\widgets\tv_distortion_effect.dart:2:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\tv_distortion_effect.dart:371:27 - prefer_const_constructors
+   info - Use 'const' for final variables initialized to a constant value - lib\core\widgets\tv_distortion_effect.dart:440:5 - prefer_const_declarations
+   info - Use 'const' for final variables initialized to a constant value - lib\core\widgets\tv_static_effect.dart:496:19 - prefer_const_declarations
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\tv_static_effect.dart:558:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\tv_static_effect.dart:598:29 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\core\widgets\tv_static_effect.dart:599:29 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\data\repositories\points_repository.dart:78:7 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\data\repositories\points_repository.dart:84:7 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\data\repositories\points_repository.dart:90:7 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\data\repositories\points_repository.dart:96:7 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\data\repositories\points_repository.dart:102:7 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\data\repositories\points_repository.dart:108:7 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\data\repositories\points_repository.dart:114:7 - prefer_const_constructors
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\admin\admin_login_screen.dart:2:8 - unnecessary_import
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_login_screen.dart:145:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_login_screen.dart:149:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_login_screen.dart:153:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_login_screen.dart:180:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_login_screen.dart:184:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_login_screen.dart:188:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_login_screen.dart:206:31 - prefer_const_constructors
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\admin\admin_panel_screen.dart:1:8 - unnecessary_import
+warning - Unused import: '../../core/theme/app_theme.dart' - lib\features\admin\admin_panel_screen.dart:7:8 - unused_import
+warning - Unused import: '../../core/widgets/glowing_button.dart' - lib\features\admin\admin_panel_screen.dart:10:8 - unused_import
+warning - The value of the field '_error' isn't used - lib\features\admin\admin_panel_screen.dart:33:11 - unused_field
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:189:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:193:54 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:424:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:443:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:462:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:472:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:554:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:614:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:714:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:766:13 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\admin\admin_panel_screen.dart:886:18 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:887:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:887:49 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:888:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:888:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:889:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:889:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:890:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:890:51 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:1110:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\admin\admin_panel_screen.dart:1175:13 - prefer_const_constructors
+warning - Unused import: '../../core/widgets/buttons.dart' - lib\features\auth\auth_gateway_screen.dart:9:8 - unused_import
+warning - Unused import: '../../providers/auth_provider.dart' - lib\features\auth\auth_gateway_screen.dart:11:8 - unused_import
+warning - Unused import: '../../core/theme/app_theme.dart' - lib\features\auth\guest_limit_modal.dart:4:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\guest_limit_modal.dart:114:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\guest_limit_modal.dart:116:24 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\auth\guest_limit_modal.dart:117:29 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\guest_limit_modal.dart:118:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\guest_limit_modal.dart:123:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\guest_limit_modal.dart:128:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\guest_limit_modal.dart:133:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\guest_limit_modal.dart:209:9 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\login_screen.dart:226:47 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\login_screen.dart:266:47 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\auth\register_screen.dart:414:23 - prefer_const_constructors
+warning - Unused import: '../../services/api_client.dart' - lib\features\chat\chat_screen.dart:16:8 - unused_import
+warning - The value of the field '_isConnecting' isn't used - lib\features\chat\chat_screen.dart:43:8 - unused_field
+   info - Use 'const' with the constructor to improve performance - lib\features\chat\chat_screen.dart:276:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\chat\chat_screen.dart:279:34 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\chat\chat_screen.dart:507:27 - prefer_const_constructors
+warning - Unused import: '../../domain/models/chat_models.dart' - lib\features\chat_detail\chat_detail_screen.dart:10:8 - unused_import
+   info - The private field _isOnline could be 'final' - lib\features\chat_detail\chat_detail_screen.dart:36:8 - prefer_final_fields
+   info - Use 'const' with the constructor to improve performance - lib\features\chat_detail\chat_detail_screen.dart:114:82 - prefer_const_constructors
+  error - Too many positional arguments: 0 expected, but 1 found - lib\features\chat_detail\chat_detail_screen.dart:151:43 - extra_positional_arguments_could_be_named
+  error - Undefined name 'zero' - lib\features\chat_detail\chat_detail_screen.dart:151:43 - undefined_identifier
+   info - Use 'const' with the constructor to improve performance - lib\features\chat_detail\chat_detail_screen.dart:323:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\chat_detail\chat_detail_screen.dart:335:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\chat_list\chat_list_screen.dart:322:50 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\chat_list\chat_list_screen.dart:322:64 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\explore\explore_screen.dart:132:33 - prefer_const_constructors
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\home\home_screen.dart:2:8 - unnecessary_import
+   info - Don't invoke 'print' in production code - lib\features\landing\landing_screen.dart:89:7 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\features\landing\landing_screen.dart:151:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\landing\landing_screen.dart:153:30 - prefer_const_constructors
+warning - Unused import: '../../core/theme/app_colors.dart' - lib\features\matchmaking\matchmaking_screen.dart:5:8 - unused_import
+warning - Unused import: '../../core/theme/app_theme.dart' - lib\features\matchmaking\matchmaking_screen.dart:6:8 - unused_import
+warning - Unused import: '../../services/webrtc_service.dart' - lib\features\matchmaking\matchmaking_screen.dart:15:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\features\matchmaking\matchmaking_screen.dart:122:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\matchmaking\matchmaking_screen.dart:152:7 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\features\onboarding\onboarding_screen.dart:239:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\payment\credit_store_screen.dart:102:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\payment\credit_store_screen.dart:154:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\payment\credit_store_screen.dart:334:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\permissions\permissions_screen.dart:308:27 - prefer_const_constructors
+warning - Unused import: '../../core/theme/app_theme.dart' - lib\features\points\points_screen.dart:5:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\features\points\points_screen.dart:400:13 - prefer_const_constructors
+warning - Unused import: '../../services/api_client.dart' - lib\features\profile\profile_screen.dart:12:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\features\profile\profile_screen.dart:190:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\profile\profile_screen.dart:216:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\profile\profile_screen.dart:452:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\profile\profile_screen.dart:460:26 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\profile\profile_screen.dart:469:28 - prefer_const_constructors
+warning - Unused import: 'dart:math' - lib\features\random_connect\random_connect_screen.dart:2:8 - unused_import
+warning - The value of the field '_isConnecting' isn't used - lib\features\random_connect\random_connect_screen.dart:45:8 - unused_field
+   info - Don't invoke 'print' in production code - lib\features\random_connect\random_connect_screen.dart:183:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\random_connect\random_connect_screen.dart:220:7 - avoid_print
+warning - The value of the local variable 'isLoggedIn' isn't used - lib\features\random_connect\random_connect_screen.dart:342:11 - unused_local_variable
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:403:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:544:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:575:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:588:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:677:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:690:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:796:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:823:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:824:36 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:868:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:924:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:952:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:952:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:1065:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:1127:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:1168:22 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:1194:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:1214:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\random_connect\random_connect_screen.dart:1537:21 - prefer_const_constructors
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\settings\settings_screen.dart:1:8 - unnecessary_import
+warning - Unused import: '../../core/theme/app_theme.dart' - lib\features\settings\settings_screen.dart:6:8 - unused_import
+   info - The private field _language could be 'final' - lib\features\settings\settings_screen.dart:25:10 - prefer_final_fields
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:71:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:97:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:133:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:181:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:214:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:220:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:247:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\settings\settings_screen.dart:412:15 - prefer_const_constructors
+   info - The 'children' argument should be last in widget constructor invocations - lib\features\shell\main_shell.dart:109:13 - sort_child_properties_last
+   info - The import of 'package:flutter/services.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\splash\splash_screen.dart:2:8 - unnecessary_import
+   info - The import of 'dart:ui' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\features\subscription\subscription_screen.dart:1:8 - unnecessary_import
+   info - Use 'const' with the constructor to improve performance - lib\features\subscription\subscription_screen.dart:220:15 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\subscription\subscription_screen.dart:375:13 - prefer_const_constructors
+warning - Unused import: 'dart:math' - lib\features\video_chat\video_chat_screen.dart:2:8 - unused_import
+warning - The value of the field '_isConnecting' isn't used - lib\features\video_chat\video_chat_screen.dart:33:8 - unused_field
+   info - Don't invoke 'print' in production code - lib\features\video_chat\video_chat_screen.dart:162:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\features\video_chat\video_chat_screen.dart:225:7 - avoid_print
+   info - Use 'const' with the constructor to improve performance - lib\features\video_chat\video_chat_screen.dart:418:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\video_chat\video_chat_screen.dart:795:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\video_chat\video_chat_screen.dart:902:19 - prefer_const_constructors
+warning - Unused import: 'dart:ui' - lib\main.dart:1:8 - unused_import
+warning - Unused import: 'package:flutter/scheduler.dart' - lib\main.dart:4:8 - unused_import
+  error - Target of URI doesn't exist: 'message.dart' - lib\models\conversation.dart:2:8 - uri_does_not_exist
+  error - Undefined class 'Message' - lib\models\conversation.dart:8:9 - undefined_class
+  error - Undefined class 'Message' - lib\models\conversation.dart:41:5 - undefined_class
+warning - Unused import: 'package:flutter/material.dart' - lib\providers\auth_provider.dart:1:8 - unused_import
+warning - Unused import: '../services/friend_service.dart' - lib\providers\data_providers.dart:3:8 - unused_import
+warning - The value of the local variable 'newMessage' isn't used - lib\providers\data_providers.dart:37:18 - unused_local_variable
+   info - Don't invoke 'print' in production code - lib\providers\data_providers.dart:95:7 - avoid_print
+warning - The value of the field '_ref' isn't used - lib\providers\data_providers.dart:125:13 - unused_field
+warning - Unused import: 'api_client.dart' - lib\services\admin_service.dart:4:8 - unused_import
+warning - Unused import: 'storage_service.dart' - lib\services\admin_service.dart:5:8 - unused_import
+warning - Unused import: 'dart:convert' - lib\services\api_client.dart:1:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\services\api_client.dart:45:28 - avoid_print
+   info - The variable name 'Item' isn't a lowerCamelCase identifier - lib\services\api_client.dart:108:33 - non_constant_identifier_names
+   info - The variable name 'Item' isn't a lowerCamelCase identifier - lib\services\api_client.dart:147:33 - non_constant_identifier_names
+   info - The variable name 'Item' isn't a lowerCamelCase identifier - lib\services\api_client.dart:194:33 - non_constant_identifier_names
+   info - Don't invoke 'print' in production code - lib\services\api_client.dart:235:9 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\api_client.dart:477:3 - avoid_print
+warning - Unused import: 'package:dio/dio.dart' - lib\services\chat_service.dart:1:8 - unused_import
+warning - Unused import: 'api_client.dart' - lib\services\chat_socket_service.dart:5:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:39:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:51:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:54:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:62:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:72:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:76:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:81:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:87:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\chat_socket_service.dart:98:7 - avoid_print
+warning - Unused import: 'package:dio/dio.dart' - lib\services\friend_service.dart:1:8 - unused_import
+  error - Target of URI doesn't exist: '../domain/models/user_models.dart' - lib\services\friend_service.dart:4:8 - uri_does_not_exist
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:42:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:45:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:57:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:69:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:78:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:84:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:96:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:99:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:112:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:115:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:127:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:129:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:145:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:147:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\webrtc_service.dart:177:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:48:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:62:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:70:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:81:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:90:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:151:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:156:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:162:5 - avoid_print
+   info - Don't invoke 'print' in production code - lib\services\websocket_client.dart:182:7 - avoid_print
+
+flutter : 224 issues found
+. (ran in 1.5s)
+At line:1 char:1
++ flutter analyze 2>&1 | O
+ut-File -FilePath final_er
+rors.txt -Encoding  ...
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (2  
+  24 issues found. (ran   
+  in 1.5s):String) [],    
+ RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 

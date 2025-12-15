@@ -17,6 +17,77 @@ router = APIRouter()
 mm_service = get_matchmaking_service()
 
 
+from app.services.auth import get_current_user_ws
+from typing import List
+
+# --- AUTHENTICATED CHAT MANAGER ---
+class ConnectionManager:
+    def __init__(self):
+        # user_id -> List[WebSocket] (support multiple devices)
+        self.active_connections: dict[UUID, List[WebSocket]] = {}
+
+    async def connect(self, user_id: UUID, websocket: WebSocket):
+        await websocket.accept()
+        if user_id not in self.active_connections:
+            self.active_connections[user_id] = []
+        self.active_connections[user_id].append(websocket)
+
+    def disconnect(self, user_id: UUID, websocket: WebSocket):
+        if user_id in self.active_connections:
+            if websocket in self.active_connections[user_id]:
+                self.active_connections[user_id].remove(websocket)
+            if not self.active_connections[user_id]:
+                del self.active_connections[user_id]
+
+    async def send_personal_message(self, message: dict, user_id: UUID):
+        if user_id in self.active_connections:
+            for connection in self.active_connections[user_id]:
+                try:
+                    await connection.send_text(json.dumps(message))
+                except Exception:
+                    pass
+
+manager = ConnectionManager()
+
+@router.websocket("/ws/chat")
+async def chat_websocket_endpoint(websocket: WebSocket, token: str):
+    """
+    Authenticated WebSocket for Friend Chat
+    """
+    try:
+        # Authenticate
+        SessionLocal = get_session_local()
+        db = SessionLocal()
+        user = await get_current_user_ws(token, db)
+        db.close()
+        
+        if not user:
+            await websocket.close(code=4001)
+            return
+            
+        await manager.connect(user.id, websocket)
+        
+        try:
+            while True:
+                data = await websocket.receive_text()
+                message = json.loads(data)
+                
+                # Handle incoming messages specific to chat logic if needed
+                # Ideally, sending messages is done via REST API (/api/v1/chat/send)
+                # and this WebSocket is mainly for RECEIVING real-time updates.
+                # However, if we want to send via WS:
+                if message.get("type") == "CHAT_MESSAGE":
+                     # Process chat message...
+                     pass
+                     
+        except WebSocketDisconnect:
+            manager.disconnect(user.id, websocket)
+            
+    except Exception as e:
+        print(f"Auth WS Error: {e}")
+        await websocket.close()
+
+# --- EXISTING ANONYMOUS MATCHMAKING ---
 @router.websocket("/ws/signaling")
 async def websocket_endpoint(websocket: WebSocket, session_token: str):
     """

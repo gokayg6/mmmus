@@ -6,13 +6,20 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/avatar_glow.dart';
+import '../../core/widgets/network_result_builder.dart';
+import '../../core/network/network_result.dart';
 import '../../domain/models/chat_models.dart';
 import '../../providers/data_providers.dart';
+import '../../services/friend_service.dart';
+import '../../services/chat_socket_service.dart';
+import '../../services/api_client.dart';
+import 'package:dio/dio.dart';
 import '../chat_detail/chat_detail_screen.dart';
+import 'friend_requests_modal.dart';
 
 /// Chat List Screen - Uses ChatRepository for real data
 class ChatListScreen extends ConsumerStatefulWidget {
-  const ChatListScreen({super.key});
+  const ChatListScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<ChatListScreen> createState() => _ChatListScreenState();
@@ -27,6 +34,18 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     final conversationsAsync = ref.watch(conversationsProvider);
+    
+    // Ensure socket connected
+    final apiClient = ref.watch(apiClientProvider);
+    final socketService = ref.watch(chatSocketServiceProvider);
+    
+    // Lazy connect logic
+    if (apiClient.accessToken != null && !socketService.isConnected) {
+       final baseUrl = apiClient.dio.options.baseUrl; 
+       socketService.connect(baseUrl, apiClient.accessToken!);
+    }
+    
+    // Note: Real-time friend event listening moved to initState to avoid memory leaks
     
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -46,11 +65,26 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                     ),
                   ),
                   const Spacer(),
-                  // New chat button
+                  
+                  // Friend Requests Button (New)
+                  IconButton(
+                    onPressed: () => _showFriendRequests(context),
+                    icon: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(Icons.notifications_outlined, color: context.colors.textColor),
+                        // Red dot indicator based on FUTURE state (complex, skipping red dot logic for now to keep it simple or fetch count)
+                        // Ideally we check incoming requests count here.
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // New Chat / Add Friend Button
                   _NewChatButton(
                     onTap: () {
                       HapticFeedback.lightImpact();
-                      // Navigate to random connect
+                      _showNewChatOptions(context);
                     },
                   ),
                 ],
@@ -91,12 +125,30 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
             
             const SizedBox(height: 16),
             
-            // Conversations list
+            // Conversations list - OFFLINE-FIRST (SQLite Stream)
             Expanded(
               child: conversationsAsync.when(
                 loading: () => _buildLoadingState(),
-                error: (error, _) => _buildErrorState(error),
-                data: (conversations) => _buildConversationList(conversations),
+                error: (error, _) {
+                  // This should rarely happen with offline-first, but handle gracefully
+                  return _buildErrorState(error);
+                },
+                data: (conversations) {
+                  if (conversations.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Henüz sohbet yok',
+                            style: AppTypography.headline(color: context.colors.textMutedColor),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return _buildConversationList(conversations);
+                },
               ),
             ),
           ],
@@ -114,19 +166,36 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
   }
 
   Widget _buildErrorState(Object error) {
+    // Check if user is not logged in (401 or no token)
+    final apiClient = ref.read(apiClientProvider);
+    final isLoggedIn = apiClient.accessToken != null;
+    
+    String errorMessage = 'Bir hata oluştu';
+    if (!isLoggedIn) {
+      errorMessage = 'Sohbetleri görüntülemek için giriş yapın';
+    } else if (error.toString().contains('400') || error.toString().contains('401')) {
+      errorMessage = 'Oturum geçersiz. Lütfen tekrar giriş yapın.';
+    } else {
+      errorMessage = 'Hata: ${error.toString()}';
+    }
+    
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.error_outline_rounded,
+            isLoggedIn ? Icons.error_outline_rounded : Icons.login_rounded,
             size: 48,
             color: context.colors.textMutedColor,
           ),
           const SizedBox(height: 16),
-          Text(
-            'Bir hata oluştu',
-            style: AppTypography.headline(color: context.colors.textColor),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              errorMessage,
+              style: AppTypography.headline(color: context.colors.textColor),
+              textAlign: TextAlign.center,
+            ),
           ),
           const SizedBox(height: 8),
           TextButton(
@@ -195,6 +264,252 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
       ),
     );
   }
+
+  void _showFriendRequests(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, 
+      backgroundColor: Colors.transparent,
+      builder: (context) => const FriendRequestsModal(),
+    );
+  }
+
+  void _showNewChatOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: context.colors.surfaceColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Yeni Sohbet', style: AppTypography.headline(color: context.colors.textColor)),
+            const SizedBox(height: 24),
+            _OptionTile(
+              icon: Icons.person_add_rounded,
+              title: 'Arkadaş Ekle',
+              subtitle: 'Kullanıcı adı ile ekle',
+              onTap: () {
+                Navigator.pop(context);
+                _showAddFriendDialog(context);
+              },
+            ),
+            const SizedBox(height: 16),
+            _OptionTile(
+              icon: Icons.chat_bubble_outline_rounded,
+              title: 'Arkadaşlarınla Sohbet',
+              subtitle: 'Arkadaş listenden seç',
+              onTap: () {
+                Navigator.pop(context);
+                _showFriendsList(context);
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddFriendDialog(BuildContext context) {
+    final controller = TextEditingController();
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss',
+      barrierColor: Colors.black.withOpacity(0.8),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (context, _, __) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: GlassContainer(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.all(24),
+            borderRadius: 24,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.person_add_rounded, color: AppColors.primary, size: 32),
+                ),
+                const SizedBox(height: 20),
+                Text('Arkadaş Ekle', style: AppTypography.headline(color: Colors.white)),
+                const SizedBox(height: 8),
+                Text(
+                  'Kullanıcı adı girerek arkadaşlık isteği gönder.',
+                  style: AppTypography.body(color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                
+                // Glassy Input
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: TextField(
+                    controller: controller,
+                    style: const TextStyle(color: Colors.white),
+                    cursorColor: AppColors.primary,
+                    decoration: const InputDecoration(
+                      hintText: 'Kullanıcı adı...',
+                      hintStyle: TextStyle(color: Colors.white30),
+                      border: InputBorder.none,
+                      icon: Icon(Icons.search_rounded, color: Colors.white30),
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        child: const Text('İptal', style: TextStyle(color: Colors.white60)),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColors.buttonGradient,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (controller.text.trim().isEmpty) return;
+                            try {
+                              final friendService = ref.read(friendServiceProvider);
+                              await friendService.sendRequest(controller.text.trim());
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Arkadaşlık isteği gönderildi!')),
+                                );
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                String errorMessage = 'Bir hata oluştu';
+                                if (e is DioException) {
+                                   if (e.response?.data != null && e.response!.data is Map) {
+                                      errorMessage = e.response!.data['detail'] ?? e.message ?? 'Bilinmeyen hata';
+                                   } else {
+                                      errorMessage = e.message ?? 'Sunucu hatası';
+                                   }
+                                } else {
+                                  errorMessage = e.toString();
+                                }
+                                
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(errorMessage),
+                                    backgroundColor: AppColors.error,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          child: const Text('Ekle', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showFriendsList(BuildContext context) {
+     final friendService = ref.read(friendServiceProvider);
+     showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: context.colors.surfaceColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: FutureBuilder(
+            future: friendService.getFriends(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+              if (snapshot.error != null) return Center(child: Text('Hata oluştu'));
+              final friends = snapshot.data as List<dynamic>; 
+              
+              if (friends.isEmpty) {
+                 return const Center(child: Text('Henüz arkadaşın yok.'));
+              }
+
+              return ListView.builder(
+                controller: scrollController,
+                padding: const EdgeInsets.all(24),
+                itemCount: friends.length,
+                itemBuilder: (context, index) {
+                  final friendReq = friends[index]; 
+                  final friend = friendReq.friend;
+
+                  return ListTile(
+                    leading: CircleAvatar(child: Text(friend.username[0].toUpperCase())),
+                    title: Text(friend.username, style: TextStyle(color: context.colors.textColor)),
+                    onTap: () {
+                      Navigator.pop(context);
+                       Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatDetailScreen(
+                            conversationId: friend.id,
+                            otherUsername: friend.username,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ),
+     );
+  }
 }
 
 class _NewChatButton extends StatefulWidget {
@@ -203,6 +518,47 @@ class _NewChatButton extends StatefulWidget {
 
   @override
   State<_NewChatButton> createState() => _NewChatButtonState();
+}
+
+class _OptionTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _OptionTile({required this.icon, required this.title, required this.subtitle, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+              ),
+              child: Icon(icon, color: AppColors.primary),
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: AppTypography.subheadline(color: context.colors.textColor)),
+                Text(subtitle, style: AppTypography.caption1(color: context.colors.textMutedColor)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _NewChatButtonState extends State<_NewChatButton> 
@@ -257,8 +613,9 @@ class _NewChatButtonState extends State<_NewChatButton>
               ),
             ],
           ),
+          // Updated Icon to Person + Add
           child: const Icon(
-            Icons.edit_rounded,
+            Icons.person_add_alt_1_rounded,
             color: Colors.white,
             size: 22,
           ),
@@ -338,7 +695,7 @@ class _ConversationTile extends StatelessWidget {
                             color: conversation.hasUnread 
                                 ? context.colors.textColor
                                 : context.colors.textSecondaryColor,
-                          ),
+                            ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

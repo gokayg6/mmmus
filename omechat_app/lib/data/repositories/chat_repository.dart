@@ -6,10 +6,10 @@ abstract class ChatRepository {
   Future<List<Conversation>> getConversations();
   
   /// Get messages for a specific conversation
-  Future<List<ChatMessage>> getMessages(String conversationId);
+  Future<List<Message>> getMessages(String conversationId);
   
   /// Send a message
-  Future<ChatMessage> sendMessage(String conversationId, String text);
+  Future<Message> sendMessage(String conversationId, String text);
   
   /// Mark conversation as read
   Future<void> markAsRead(String conversationId);
@@ -26,7 +26,6 @@ class MockChatRepository implements ChatRepository {
   final List<Conversation> _conversations = [
     Conversation(
       id: '1',
-      oderId: 'user_1',
       otherUsername: 'Aylin',
       lastMessage: 'Merhaba! Nasılsın?',
       lastActivity: DateTime.now().subtract(const Duration(minutes: 5)),
@@ -35,7 +34,6 @@ class MockChatRepository implements ChatRepository {
     ),
     Conversation(
       id: '2',
-      oderId: 'user_2',
       otherUsername: 'Mehmet',
       lastMessage: 'Görüşürüz 👋',
       lastActivity: DateTime.now().subtract(const Duration(hours: 1)),
@@ -44,7 +42,6 @@ class MockChatRepository implements ChatRepository {
     ),
     Conversation(
       id: '3',
-      oderId: 'user_3',
       otherUsername: 'Zeynep',
       lastMessage: 'Çok güzel bir sohbetti!',
       lastActivity: DateTime.now().subtract(const Duration(hours: 3)),
@@ -53,7 +50,6 @@ class MockChatRepository implements ChatRepository {
     ),
     Conversation(
       id: '4',
-      oderId: 'user_4',
       otherUsername: 'Can',
       lastMessage: 'Yarın tekrar konuşalım mı?',
       lastActivity: DateTime.now().subtract(const Duration(days: 1)),
@@ -62,34 +58,40 @@ class MockChatRepository implements ChatRepository {
     ),
   ];
 
-  final Map<String, List<ChatMessage>> _messages = {
-    '1': [
-      ChatMessage(
+  final Map<String, List<Message>> _messages = {};
+
+  MockChatRepository() {
+    // Initialize with some mock messages
+    _messages['1'] = [
+      Message(
         id: 'm1',
-        conversationId: '1',
         senderId: 'user_1',
-        text: 'Merhaba!',
-        timestamp: DateTime.now().subtract(const Duration(minutes: 10)),
+        receiverId: 'me',
+        content: 'Merhaba!',
+        createdAt: DateTime.now().subtract(const Duration(minutes: 10)),
+        isRead: true,
         isMe: false,
       ),
-      ChatMessage(
+      Message(
         id: 'm2',
-        conversationId: '1',
         senderId: 'me',
-        text: 'Selam! Nasılsın?',
-        timestamp: DateTime.now().subtract(const Duration(minutes: 8)),
+        receiverId: 'user_1',
+        content: 'Selam! Nasılsın?',
+        createdAt: DateTime.now().subtract(const Duration(minutes: 8)),
+        isRead: true,
         isMe: true,
       ),
-      ChatMessage(
+      Message(
         id: 'm3',
-        conversationId: '1',
         senderId: 'user_1',
-        text: 'İyiyim, teşekkürler! Sen nasılsın?',
-        timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
+        receiverId: 'me',
+        content: 'İyiyim, teşekkürler! Sen nasılsın?',
+        createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
+        isRead: false,
         isMe: false,
       ),
-    ],
-  };
+    ];
+  }
 
   @override
   Future<List<Conversation>> getConversations() async {
@@ -98,22 +100,22 @@ class MockChatRepository implements ChatRepository {
   }
 
   @override
-  Future<List<ChatMessage>> getMessages(String conversationId) async {
+  Future<List<Message>> getMessages(String conversationId) async {
     await Future.delayed(const Duration(milliseconds: 200));
     return _messages[conversationId] ?? [];
   }
 
   @override
-  Future<ChatMessage> sendMessage(String conversationId, String text) async {
+  Future<Message> sendMessage(String conversationId, String text) async {
     await Future.delayed(const Duration(milliseconds: 100));
-    final message = ChatMessage(
+    final message = Message(
       id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
-      conversationId: conversationId,
       senderId: 'me',
-      text: text,
-      timestamp: DateTime.now(),
+      receiverId: conversationId,
+      content: text,
+      createdAt: DateTime.now(),
+      isRead: false,
       isMe: true,
-      status: MessageStatus.sent,
     );
     
     _messages.putIfAbsent(conversationId, () => []);
@@ -128,7 +130,6 @@ class MockChatRepository implements ChatRepository {
     if (index != -1) {
       _conversations[index] = Conversation(
         id: _conversations[index].id,
-        oderId: _conversations[index].oderId,
         otherUsername: _conversations[index].otherUsername,
         otherAvatarUrl: _conversations[index].otherAvatarUrl,
         lastMessage: _conversations[index].lastMessage,
@@ -144,7 +145,6 @@ class MockChatRepository implements ChatRepository {
     await Future.delayed(const Duration(seconds: 2)); // Simulate searching
     return Conversation(
       id: 'new_${DateTime.now().millisecondsSinceEpoch}',
-      oderId: 'random_user',
       otherUsername: 'Anonim Kullanıcı',
       lastMessage: '',
       lastActivity: DateTime.now(),

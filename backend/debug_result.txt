@@ -1,46 +1,35 @@
 Testing Database Insertion...
-2025-12-10 00:34:41,302 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2025-12-10 00:34:41,304 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_sessions")
-2025-12-10 00:34:41,304 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-12-10 00:34:41,304 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("connections")
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("reports")
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("bans")
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("admins")
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("daily_metrics")
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
-2025-12-10 00:34:41,305 INFO sqlalchemy.engine.Engine [raw sql] ()
-2025-12-10 00:34:41,306 INFO sqlalchemy.engine.Engine COMMIT
+2025-12-14 00:15:58,869 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:15:58,869 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_sessions")
+2025-12-14 00:15:58,869 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:15:58,870 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("connections")
+2025-12-14 00:15:58,870 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:15:58,870 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("reports")
+2025-12-14 00:15:58,870 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:15:58,870 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("bans")
+2025-12-14 00:15:58,870 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:15:58,870 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("admins")
+2025-12-14 00:15:58,870 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:15:58,871 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("daily_metrics")
+2025-12-14 00:15:58,871 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:15:58,871 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2025-12-14 00:15:58,871 INFO sqlalchemy.engine.Engine [raw sql] ()
+2025-12-14 00:15:58,871 INFO sqlalchemy.engine.Engine COMMIT
 Database initialized successfully.
-2025-12-10 00:34:41,328 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2025-12-10 00:34:41,330 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.email AS users_email, users.username AS users_username, users.password_hash AS users_password_hash, users.avatar_url AS users_avatar_url, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.is_active AS users_is_active 
+2025-12-14 00:15:58,886 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:15:58,888 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.email AS users_email, users.username AS users_username, users.password_hash AS users_password_hash, users.avatar_url AS users_avatar_url, users.created_at AS users_created_at, users.updated_at AS users_updated_at, users.is_active AS users_is_active, users.is_premium AS users_is_premium, users.premium_until AS users_premium_until, users.credits AS users_credits, users.gender_filter_unlocked AS users_gender_filter_unlocked, users.country_filter_unlocked AS users_country_filter_unlocked, users.reconnect_unlocked AS users_reconnect_unlocked, users.hd_quality_unlocked AS users_hd_quality_unlocked, users.face_filters_unlocked AS users_face_filters_unlocked, users.vip_badge_unlocked AS users_vip_badge_unlocked, users.last_login_at AS users_last_login_at, users.is_banned AS users_is_banned 
 FROM users 
 WHERE users.email = ?
  LIMIT ? OFFSET ?
-2025-12-10 00:34:41,330 INFO sqlalchemy.engine.Engine [generated in 0.00019s] ('test_debug@example.com', 1, 0)
-User already exists, deleting...
-2025-12-10 00:34:41,332 INFO sqlalchemy.engine.Engine DELETE FROM users WHERE users.id = ?
-2025-12-10 00:34:41,332 INFO sqlalchemy.engine.Engine [generated in 0.00016s] ('b3f43aa5ab784cf5b241db5259c73cb4',)
-2025-12-10 00:34:41,334 INFO sqlalchemy.engine.Engine COMMIT
+2025-12-14 00:15:58,888 INFO sqlalchemy.engine.Engine [generated in 0.00012s] ('test_debug@example.com', 1, 0)
 Attempting to create user...
-(trapped) error reading bcrypt version
-Traceback (most recent call last):
-  File "C:\Users\gokay\AppData\Local\Programs\Python\Python312\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
-    version = _bcrypt.__about__.__version__
-              ^^^^^^^^^^^^^^^^^
-AttributeError: module 'bcrypt' has no attribute '__about__'
-2025-12-10 00:34:41,551 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2025-12-10 00:34:41,552 INFO sqlalchemy.engine.Engine INSERT INTO users (id, email, username, password_hash, avatar_url, created_at, updated_at, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-2025-12-10 00:34:41,552 INFO sqlalchemy.engine.Engine [generated in 0.00049s] ('60ccd99ba9644bd48f3e63d92505e74c', 'test_debug@example.com', 'debug_user', '$2b$12$pf741UyeojGWKhQX3wIjzeLpt994ws.MxKURAqTURmmsj/YJBQfuK', None, '2025-12-09 21:34:41.552920', '2025-12-09 21:34:41.552920', 1)
-2025-12-10 00:34:41,554 INFO sqlalchemy.engine.Engine COMMIT
-2025-12-10 00:34:41,558 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2025-12-10 00:34:41,558 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.password_hash, users.avatar_url, users.created_at, users.updated_at, users.is_active 
+2025-12-14 00:15:59,089 INFO sqlalchemy.engine.Engine INSERT INTO users (id, email, username, password_hash, avatar_url, created_at, updated_at, is_active, is_premium, premium_until, credits, gender_filter_unlocked, country_filter_unlocked, reconnect_unlocked, hd_quality_unlocked, face_filters_unlocked, vip_badge_unlocked, last_login_at, is_banned) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-14 00:15:59,089 INFO sqlalchemy.engine.Engine [generated in 0.00028s] ('cb4c003371234af5a4d586a1d3af7eff', 'test_debug@example.com', 'debug_user', '$2b$12$japSyoVv4WWgZUOTb7Uslu3gy0eoSNfaOy5n6NiqjJ/VzEYIi44Ri', None, '2025-12-13 21:15:59.089941', '2025-12-13 21:15:59.089941', 1, 0, None, 0, 0, 0, 0, 0, 0, 0, None, 0)
+2025-12-14 00:15:59,091 INFO sqlalchemy.engine.Engine COMMIT
+2025-12-14 00:15:59,094 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2025-12-14 00:15:59,095 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.password_hash, users.avatar_url, users.created_at, users.updated_at, users.is_active, users.is_premium, users.premium_until, users.credits, users.gender_filter_unlocked, users.country_filter_unlocked, users.reconnect_unlocked, users.hd_quality_unlocked, users.face_filters_unlocked, users.vip_badge_unlocked, users.last_login_at, users.is_banned 
 FROM users 
 WHERE users.id = ?
-2025-12-10 00:34:41,558 INFO sqlalchemy.engine.Engine [generated in 0.00016s] ('60ccd99ba9644bd48f3e63d92505e74c',)
-SUCCESS: User created with ID: 60ccd99b-a964-4bd4-8f3e-63d92505e74c
-2025-12-10 00:34:41,560 INFO sqlalchemy.engine.Engine ROLLBACK
+2025-12-14 00:15:59,095 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ('cb4c003371234af5a4d586a1d3af7eff',)
+SUCCESS: User created with ID: cb4c0033-7123-4af5-a4d5-86a1d3af7eff
+2025-12-14 00:15:59,095 INFO sqlalchemy.engine.Engine ROLLBACK

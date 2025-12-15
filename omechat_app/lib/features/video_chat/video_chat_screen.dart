@@ -15,8 +15,17 @@ import '../../services/api_client.dart';
 /// Video Chat Screen - Omegle-style video chat with real WebRTC
 class VideoChatScreen extends ConsumerStatefulWidget {
   final bool startConnected;
+  final String? partnerId;
+  final String? partnerUsername;
+  final String? partnerAvatar;
   
-  const VideoChatScreen({super.key, this.startConnected = false});
+  const VideoChatScreen({
+    Key? key,
+    this.startConnected = false,
+    this.partnerId,
+    this.partnerUsername,
+    this.partnerAvatar,
+  }) : super(key: key);
 
   @override
   ConsumerState<VideoChatScreen> createState() => _VideoChatScreenState();
@@ -280,15 +289,63 @@ class _VideoChatScreenState extends ConsumerState<VideoChatScreen>
     });
   }
   
-  void _addFriend() {
+  Future<void> _addFriend() async {
     HapticFeedback.mediumImpact();
+    
+    if (widget.partnerId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Kullanıcı bilgisi bulunamadı'), backgroundColor: AppColors.error),
+      );
+      return;
+    }
+    
+    // Optimistic UI
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Arkadaş eklendi!'),
-        backgroundColor: AppColors.success,
+        content: Text('Arkadaşlık isteği gönderiliyor...'),
+        backgroundColor: AppColors.primary,
+        duration: Duration(seconds: 1),
       ),
     );
-    // TODO: Implement add friend API call
+    
+    try {
+      // Import FriendService if needed, or use ref.read provider dynamically if not imported at top
+      // Assuming friendServiceProvider is available in data_providers.dart which is usually exported
+      // But looking at imports, we might need to add it.
+      // We will blindly try to read it from database_providers or data_providers.
+      // Checking imports: data_providers is NOT imported using path, but maybe implicitly?
+      // Let's assume we need to import it or rely on global riverpod access.
+      // Since VideoChatScreen imports `../../services/api_client.dart` we can try to find FriendService.
+      // Wait, let's just use ApiClient directly if FriendService isn't handy, OR imports.
+      // I will assume FriendService is available or I will add import in next step if it fails.
+      
+      // Actually, let's add the import to be safe in a separate step? 
+      // No, let's look at `_VideoChatScreenState` imports. 
+      
+      // Using ApiClient directly to send request: POST /api/v1/friends/request/{username}
+      // But we have ID? Typically friend requests are by username in this app based on previous Dialog.
+      // If we only have ID, we might need an endpoint for ID.
+      // Let's assume partnerUsername is available (it should be).
+      
+      if (widget.partnerUsername == null) {
+         throw Exception("Username required");
+      }
+      
+      final apiClient = ref.read(apiClientProvider);
+      await apiClient.dio.post('/api/v1/friends/request/${widget.partnerUsername}');
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Arkadaşlık isteği gönderildi!'), backgroundColor: AppColors.success),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Hata: ${e.toString()}'), backgroundColor: AppColors.error),
+        );
+      }
+    }
   }
 
   void _stop() {
@@ -404,23 +461,35 @@ class _VideoChatScreenState extends ConsumerState<VideoChatScreen>
             ),
             const SizedBox(width: 12),
             
-            // Logo
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.primary.withOpacity(0.3), AppColors.primary.withOpacity(0.1)],
+              // Logo / User Info
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary.withOpacity(0.3), AppColors.primary.withOpacity(0.1)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                borderRadius: BorderRadius.circular(12),
+                child: Row(
+                  children: [
+                    if (widget.partnerAvatar != null)
+                       Padding(
+                         padding: const EdgeInsets.only(right: 8.0),
+                         child: CircleAvatar(
+                           backgroundImage: NetworkImage(widget.partnerAvatar!),
+                           radius: 10,
+                         ),
+                       )
+                    else
+                       Icon(Icons.videocam, color: AppColors.primary, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      widget.partnerUsername ?? 'OmeChat', 
+                      style: TextStyle(color: context.colors.textColor, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  Icon(Icons.videocam, color: AppColors.primary, size: 20),
-                  const SizedBox(width: 8),
-                  Text('OmeChat', style: TextStyle(color: context.colors.textColor, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
             
             const Spacer(),
             
@@ -774,22 +843,31 @@ class _VideoChatScreenState extends ConsumerState<VideoChatScreen>
       right: 16,
       bottom: 110,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
-            height: 300,
+            height: 320,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              color: AppColors.glassDark,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.glassBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+              ],
             ),
             child: Column(
               children: [
                 // Header
                 Container(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.1)))),
+                  decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.1)))
+                  ),
                   child: Row(
                     children: [
                       Icon(Icons.chat_bubble, color: AppColors.primary, size: 20),

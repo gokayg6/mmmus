@@ -1,18 +1,20 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/chat_bubble.dart';
 import '../../core/widgets/avatar_glow.dart';
-import '../../core/widgets/glass_container.dart';
-import '../../models/message.dart';
-import '../../mock/mock_data.dart';
+import '../../core/widgets/network_result_builder.dart';
+import '../../core/network/network_result.dart';
+import '../../domain/models/chat_models.dart';
+import '../../providers/data_providers.dart';
 
 /// Chat Detail Screen
 /// Full chat view with messages and input bar
-class ChatDetailScreen extends StatefulWidget {
+class ChatDetailScreen extends ConsumerStatefulWidget {
   final String conversationId;
   final String otherUsername;
   final String? otherAvatarUrl;
@@ -25,26 +27,15 @@ class ChatDetailScreen extends StatefulWidget {
   });
 
   @override
-  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+  ConsumerState<ChatDetailScreen> createState() => _ChatDetailScreenState();
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  late List<Message> _messages;
   bool _isTyping = false;
-  bool _isOnline = true; // Placeholder
-  
-  @override
-  void initState() {
-    super.initState();
-    _messages = MockData.getMessagesForConversation(widget.conversationId);
-    
-    // Scroll to bottom after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
-  }
+  // TODO: Get online status from provider
+  bool _isOnline = false; 
   
   @override
   void dispose() {
@@ -63,29 +54,76 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     }
   }
   
+  Widget _buildReconnectingUI(Object error) {
+    final errorMessage = error.toString();
+    final showRetrying = errorMessage.contains('503') || 
+                         errorMessage.contains('timeout') || 
+                         errorMessage.contains('network');
+    
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Animated spinner
+            const SizedBox(
+              width: 32,
+              height: 32,
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+                strokeWidth: 3,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              showRetrying ? 'Reconnecting...' : 'Loading messages...',
+              style: AppTypography.headline(color: context.colors.textColor),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              showRetrying 
+                  ? 'Please wait, retrying automatically'
+                  : 'Checking connection',
+              style: AppTypography.body(color: context.colors.textMutedColor),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
   void _sendMessage() {
-    if (_messageController.text.trim().isEmpty) return;
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
     
     HapticFeedback.lightImpact();
     
-    setState(() {
-      _messages.add(Message(
-        id: 'new_${DateTime.now().millisecondsSinceEpoch}',
-        content: _messageController.text.trim(),
-        senderId: 'me',
-        timestamp: DateTime.now(),
-        isMe: true,
-      ));
-    });
-    
+    // Step 1: Clear input immediately (optimistic UI)
     _messageController.clear();
+    setState(() => _isTyping = false);
     
-    // Scroll to show new message
-    Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
+    // Step 2: Send message (ONLY SQLite write, NO API)
+    // Message will appear instantly via stream
+    ref.read(chatControllerProvider(widget.conversationId).notifier).sendMessage(
+      text,
+      receiverName: widget.otherUsername,
+    );
+    
+    // Step 3: Scroll to bottom after brief delay (message should be visible)
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (mounted) {
+        _scrollToBottom();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    // Watch chat state
+    final chatState = ref.watch(chatControllerProvider(widget.conversationId));
+
     return Scaffold(
       backgroundColor: context.colors.backgroundColor,
       body: Stack(
@@ -125,28 +163,63 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               // Top bar
               _buildTopBar(context),
               
-              // Messages
+              // Messages - OFFLINE-FIRST (SQLite Stream)
               Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.only(top: 8, bottom: 8),
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    final message = _messages[index];
-                    final isFirst = index == 0 || 
-                        _messages[index - 1].isMe != message.isMe;
-                    final isLast = index == _messages.length - 1 || 
-                        _messages[index + 1].isMe != message.isMe;
+                child: chatState.when(
+                  loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+                  error: (error, stackTrace) {
+                    // This should never happen with offline-first, but handle gracefully
+                    return Center(
+                      child: Text(
+                        'Loading messages...',
+                        style: AppTypography.body(color: context.colors.textMutedColor),
+                      ),
+                    );
+                  },
+                  data: (messages) {
+                    // Auto scroll to bottom
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_scrollController.hasClients && _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+                        _scrollToBottom();
+                      }
+                    });
                     
-                    return AnimatedChatBubble(
-                      key: ValueKey(message.id),
-                      message: message.content,
-                      isMe: message.isMe,
-                      timestamp: message.timestamp,
-                      isFirst: isFirst,
-                      isLast: isLast,
-                      showTimestamp: isLast,
-                      delay: Duration(milliseconds: index * 50),
+                    if (messages.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Henüz mesaj yok. Merhaba de! 👋",
+                              style: AppTypography.body(color: context.colors.textMutedColor),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final message = messages[index];
+                        final isFirst = index == 0 || 
+                            messages[index - 1].isMe != message.isMe;
+                        final isLast = index == messages.length - 1 || 
+                            (index < messages.length - 1 && messages[index + 1].isMe != message.isMe);
+                        
+                        return AnimatedChatBubble(
+                          key: ValueKey(message.id),
+                          message: message.content,
+                          isMe: message.isMe,
+                          timestamp: message.createdAt,
+                          isFirst: isFirst,
+                          isLast: isLast,
+                          showTimestamp: isLast,
+                          delay: Duration.zero,
+                        );
+                      },
                     );
                   },
                 ),
@@ -231,6 +304,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     ),
                   ],
                 ),
+              ),
+              
+              // Call buttons
+              IconButton(
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sesli arama özelliği yakında!')));
+                },
+                icon: Icon(Icons.phone_rounded, color: context.colors.textColor, size: 22),
+              ),
+              IconButton(
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Görüntülü arama özelliği yakında!')));
+                },
+                icon: Icon(Icons.videocam_rounded, color: context.colors.textColor, size: 24),
               ),
               
               // More options menu (replaced call buttons)

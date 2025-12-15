@@ -1,50 +1,41 @@
-/// Chat message model
-class ChatMessage {
+/// Message model (aligned with backend)
+class Message {
   final String id;
-  final String conversationId;
   final String senderId;
-  final String text;
-  final DateTime timestamp;
-  final bool isMe;
-  final MessageStatus status;
+  final String receiverId;
+  final String content;
+  final DateTime createdAt;
+  final bool isRead;
+  
+  // UI helpers
+  final bool isMe; // Calculated based on current user ID
 
-  const ChatMessage({
+  const Message({
     required this.id,
-    required this.conversationId,
     required this.senderId,
-    required this.text,
-    required this.timestamp,
-    required this.isMe,
-    this.status = MessageStatus.sent,
+    required this.receiverId,
+    required this.content,
+    required this.createdAt,
+    required this.isRead,
+    this.isMe = false,
   });
 
-  ChatMessage copyWith({
-    String? id,
-    String? conversationId,
-    String? senderId,
-    String? text,
-    DateTime? timestamp,
-    bool? isMe,
-    MessageStatus? status,
-  }) {
-    return ChatMessage(
-      id: id ?? this.id,
-      conversationId: conversationId ?? this.conversationId,
-      senderId: senderId ?? this.senderId,
-      text: text ?? this.text,
-      timestamp: timestamp ?? this.timestamp,
-      isMe: isMe ?? this.isMe,
-      status: status ?? this.status,
+  factory Message.fromJson(Map<String, dynamic> json, {String? currentUserId}) {
+    return Message(
+      id: json['id'],
+      senderId: json['sender_id'],
+      receiverId: json['receiver_id'],
+      content: json['content'],
+      createdAt: DateTime.parse(json['created_at']),
+      isRead: json['is_read'],
+      isMe: currentUserId != null ? json['sender_id'] == currentUserId : false,
     );
   }
 }
 
-enum MessageStatus { sending, sent, delivered, read, failed }
-
 /// Conversation model for chat list
 class Conversation {
-  final String id;
-  final String oderId;
+  final String id; // Friend ID usually, or Friendship ID? Backend returns friend details
   final String otherUsername;
   final String? otherAvatarUrl;
   final String lastMessage;
@@ -54,7 +45,6 @@ class Conversation {
 
   const Conversation({
     required this.id,
-    required this.oderId,
     required this.otherUsername,
     this.otherAvatarUrl,
     required this.lastMessage,
@@ -62,6 +52,21 @@ class Conversation {
     this.unreadCount = 0,
     this.isOnline = false,
   });
+
+  factory Conversation.fromJson(Map<String, dynamic> json) {
+    final friend = json['friend'];
+    final lastMsg = json['last_message'];
+    
+    return Conversation(
+      id: friend['id'],
+      otherUsername: friend['username'],
+      otherAvatarUrl: friend['avatar_url'],
+      lastMessage: lastMsg != null ? lastMsg['content'] : '',
+      lastActivity: lastMsg != null ? DateTime.parse(lastMsg['created_at']) : DateTime.now(),
+      unreadCount: json['unread_count'] ?? 0,
+      isOnline: friend['is_online'] ?? false,
+    );
+  }
 
   bool get hasUnread => unreadCount > 0;
 

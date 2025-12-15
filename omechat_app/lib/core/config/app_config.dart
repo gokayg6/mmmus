@@ -9,6 +9,9 @@ class AppConfig {
   static const String productionBackendUrl = 'https://your-backend.railway.app';
   
   /// Development backend URL (local network - accessible from all devices)
+  /// IMPORTANT: Bu IP adresini bilgisayarınızın yerel IP adresiyle güncelleyin
+  /// IP adresinizi öğrenmek için: ipconfig (Windows) veya ifconfig (Mac/Linux)
+  /// Backend başlatıldığında gösterilen "AĞ" IP adresini buraya yazın
   static const String developmentBackendUrl = 'http://192.168.1.103:8001';
   
   /// Use production backend? (true = Railway/Render, false = local)

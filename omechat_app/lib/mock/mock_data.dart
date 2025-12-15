@@ -1,7 +1,23 @@
 import '../models/user.dart';
-import '../models/message.dart';
-import '../models/conversation.dart';
+import '../domain/models/chat_models.dart';
 import '../models/call.dart';
+
+/// Conversation model for mock data (simplified)
+class MockConversation {
+  final String id;
+  final User user;
+  final Message lastMessage;
+  final int unreadCount;
+  final DateTime lastActivity;
+  
+  const MockConversation({
+    required this.id,
+    required this.user,
+    required this.lastMessage,
+    required this.unreadCount,
+    required this.lastActivity,
+  });
+}
 
 /// Mock Data for OmeChat UI
 class MockData {
@@ -51,116 +67,140 @@ class MockData {
       id: 'm1',
       content: 'Hey! How are you doing? 👋',
       senderId: '1',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 45)),
+      receiverId: 'me',
+      createdAt: DateTime.now().subtract(const Duration(minutes: 45)),
+      isRead: true,
       isMe: false,
     ),
     Message(
       id: 'm2',
       content: 'Hi! I\'m doing great, thanks for asking! What about you?',
       senderId: 'me',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 43)),
+      receiverId: '1',
+      createdAt: DateTime.now().subtract(const Duration(minutes: 43)),
+      isRead: true,
       isMe: true,
     ),
     Message(
       id: 'm3',
       content: 'Pretty good! Just finished work. Want to grab coffee sometime this week?',
       senderId: '1',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 40)),
+      receiverId: 'me',
+      createdAt: DateTime.now().subtract(const Duration(minutes: 40)),
+      isRead: true,
       isMe: false,
     ),
     Message(
       id: 'm4',
       content: 'That sounds amazing! I\'m free on Thursday afternoon, does that work for you?',
       senderId: 'me',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 38)),
+      receiverId: '1',
+      createdAt: DateTime.now().subtract(const Duration(minutes: 38)),
+      isRead: true,
       isMe: true,
     ),
     Message(
       id: 'm5',
       content: 'Perfect! Thursday at 3pm? There\'s this new cafe downtown I\'ve been wanting to try.',
       senderId: '1',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 35)),
+      receiverId: 'me',
+      createdAt: DateTime.now().subtract(const Duration(minutes: 35)),
+      isRead: true,
       isMe: false,
     ),
     Message(
       id: 'm6',
       content: 'Sounds perfect! Send me the location 📍',
       senderId: 'me',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 33)),
+      receiverId: '1',
+      createdAt: DateTime.now().subtract(const Duration(minutes: 33)),
+      isRead: true,
       isMe: true,
     ),
     Message(
       id: 'm7',
       content: 'Will do! It\'s called "The Orange Bean" - you\'ll love it! ☕',
       senderId: '1',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 30)),
+      receiverId: 'me',
+      createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
+      isRead: true,
       isMe: false,
     ),
     Message(
       id: 'm8',
       content: 'Can\'t wait! See you then! 😊',
       senderId: 'me',
-      timestamp: DateTime.now().subtract(const Duration(minutes: 28)),
+      receiverId: '1',
+      createdAt: DateTime.now().subtract(const Duration(minutes: 28)),
+      isRead: true,
       isMe: true,
     ),
   ];
   
   // === CONVERSATIONS ===
-  static final List<Conversation> conversations = [
-    Conversation(
+  static final List<MockConversation> conversations = [
+    MockConversation(
       id: 'c1',
       user: users[0],
       lastMessage: sampleConversation.last,
       unreadCount: 2,
       lastActivity: DateTime.now().subtract(const Duration(minutes: 28)),
     ),
-    Conversation(
+    MockConversation(
       id: 'c2',
       user: users[1],
       lastMessage: Message(
         id: 'cm2',
         content: 'That was such a fun game!',
         senderId: '2',
-        timestamp: DateTime.now().subtract(const Duration(hours: 1)),
+        receiverId: 'me',
+        createdAt: DateTime.now().subtract(const Duration(hours: 1)),
+        isRead: true,
         isMe: false,
       ),
       unreadCount: 0,
       lastActivity: DateTime.now().subtract(const Duration(hours: 1)),
     ),
-    Conversation(
+    MockConversation(
       id: 'c3',
       user: users[2],
       lastMessage: Message(
         id: 'cm3',
         content: 'See you tomorrow!',
         senderId: 'me',
-        timestamp: DateTime.now().subtract(const Duration(hours: 3)),
+        receiverId: '3',
+        createdAt: DateTime.now().subtract(const Duration(hours: 3)),
+        isRead: true,
         isMe: true,
       ),
       unreadCount: 0,
       lastActivity: DateTime.now().subtract(const Duration(hours: 3)),
     ),
-    Conversation(
+    MockConversation(
       id: 'c4',
       user: users[3],
       lastMessage: Message(
         id: 'cm4',
         content: 'Thanks for the help! 🙏',
         senderId: '4',
-        timestamp: DateTime.now().subtract(const Duration(days: 1)),
+        receiverId: 'me',
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        isRead: false,
         isMe: false,
       ),
       unreadCount: 1,
       lastActivity: DateTime.now().subtract(const Duration(days: 1)),
     ),
-    Conversation(
+    MockConversation(
       id: 'c5',
       user: users[4],
       lastMessage: Message(
         id: 'cm5',
         content: 'Haha that\'s hilarious! 😂',
         senderId: '5',
-        timestamp: DateTime.now().subtract(const Duration(days: 2)),
+        receiverId: 'me',
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        isRead: true,
         isMe: false,
       ),
       unreadCount: 0,
@@ -226,14 +266,18 @@ class MockData {
         id: 'sample1',
         content: 'Hey there!',
         senderId: 'other',
-        timestamp: DateTime.now().subtract(const Duration(hours: 1)),
+        receiverId: 'me',
+        createdAt: DateTime.now().subtract(const Duration(hours: 1)),
+        isRead: true,
         isMe: false,
       ),
       Message(
         id: 'sample2',
         content: 'Hi! How are you?',
         senderId: 'me',
-        timestamp: DateTime.now().subtract(const Duration(minutes: 55)),
+        receiverId: 'other',
+        createdAt: DateTime.now().subtract(const Duration(minutes: 55)),
+        isRead: true,
         isMe: true,
       ),
     ];

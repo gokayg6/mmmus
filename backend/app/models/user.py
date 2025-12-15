@@ -4,6 +4,7 @@ User Model - Registered user accounts
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Boolean, DateTime, Uuid, Integer
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -37,6 +38,11 @@ class User(Base):
     # Stats
     last_login_at = Column(DateTime, nullable=True)
     is_banned = Column(Boolean, default=False, nullable=False)
+
+    # Relationships
+
+    
+
     
     def __repr__(self):
         return f"<User {self.email} ({self.username})>"

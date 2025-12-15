@@ -14,8 +14,8 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = True
     
-    # Database
-    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/omechat"
+    # Database - SQLite for easy setup (no PostgreSQL required)
+    DATABASE_URL: str = "sqlite:///./omechat.db"
     
     # Redis (optional, for horizontal scaling)
     REDIS_URL: str = "redis://localhost:6379/0"

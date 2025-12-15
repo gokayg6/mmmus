@@ -78,11 +78,7 @@ class _MainShellState extends ConsumerState<MainShell>
   void _onTabTap(int index) {
     HapticFeedback.selectionClick();
     setState(() => _currentIndex = index);
-    _pageController.animateToPage(
-      index,
-      duration: AppTheme.durationNormal, // Optimized for 240Hz
-      curve: Curves.easeOutCubic,
-    );
+    _pageController.jumpToPage(index);
   }
 
   @override

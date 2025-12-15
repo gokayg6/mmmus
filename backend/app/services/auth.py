@@ -68,6 +68,64 @@ def decode_access_token(token: str) -> Optional[dict]:
         return None
 
 
+from app.models.user import User
+from fastapi import WebSocket, WebSocketException
+from sqlalchemy.orm import Session
+
+async def get_current_user_ws(token: str, db: Session) -> Optional[User]:
+    """WebSocket için token doğrulama ve kullanıcı alma"""
+    payload = decode_access_token(token)
+    if payload is None:
+        return None
+    
+    email: str = payload.get("sub")
+    if email is None:
+        return None
+        
+    user = db.query(User).filter(User.email == email).first()
+    return user
+
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from app.database import get_db
+
+security = HTTPBearer()
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db)
+) -> User:
+    """Get current authenticated user from JWT token"""
+    token = credentials.credentials
+    
+    token_data = decode_access_token(token)
+    if token_data is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Geçersiz veya süresi dolmuş token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    user_id = token_data.get("sub")
+    if user_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Geçersiz token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Kullanıcı bulunamadı",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return user
+
+
 def authenticate_admin(db: Session, email: str, password: str):
     """Admin kullanıcısını doğrula"""
     from app.models.admin import Admin

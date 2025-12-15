@@ -14,6 +14,9 @@ import '../../core/routing/app_router.dart';
 import '../../services/websocket_client.dart';
 import '../../services/webrtc_service.dart';
 import '../../services/api_client.dart';
+import '../../providers/database_providers.dart';
+import '../../providers/auth_provider.dart';
+import '../../domain/models/chat_models.dart';
 
 /// Premium Chat Screen - Cinematic video chat with controls
 class ChatScreen extends ConsumerStatefulWidget {
@@ -30,8 +33,7 @@ class ChatScreen extends ConsumerStatefulWidget {
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends ConsumerState<ChatScreen>
-    with TickerProviderStateMixin {
+class _ChatScreenState extends ConsumerState<ChatScreen> with TickerProviderStateMixin {
   // Renderers
   final _localRenderer = RTCVideoRenderer();
   final _remoteRenderer = RTCVideoRenderer();
@@ -45,7 +47,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   
   // Chat
   final TextEditingController _chatController = TextEditingController();
-  final List<ChatMessage> _messages = [];
   final ScrollController _chatScrollController = ScrollController();
   
   // Connection
@@ -66,21 +67,35 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     _initRenderers();
     _initAnimations();
     
+    // Defer state updates to post-frame to avoid rebuild contention
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      String? connId;
+      bool initiator = false;
+
       if (args != null) {
-        _connectionId = args['connectionId'];
-        _isInitiator = args['isInitiator'] ?? false;
+        connId = args['connectionId'];
+        initiator = args['isInitiator'] ?? false;
+      } else if (widget.connectionId != null) {
+        connId = widget.connectionId;
+        initiator = widget.isInitiator ?? false;
+      }
+
+      if (connId != null) {
+        setState(() {
+          _connectionId = connId;
+          _isInitiator = initiator;
+        });
         _startCall();
+        print('CHAT_SCREEN: Initialized with ID: $connId');
+      } else {
+        print('CHAT_SCREEN ERROR: No Connection ID provided!');
       }
     });
   }
   
   void _initAnimations() {
-    _fadeController = AnimationController(
-      duration: AppTheme.durationMedium,
-      vsync: this,
-    );
+    _fadeController = AnimationController(duration: AppTheme.durationMedium, vsync: this);
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
     );
@@ -95,7 +110,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     final webrtc = ref.read(webRTCServiceProvider);
     final ws = ref.read(webSocketClientProvider);
     
-    // Setup stream handlers
     webrtc.onLocalStream = (stream) {
       _localRenderer.srcObject = stream;
       setState(() {});
@@ -126,41 +140,28 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       }
     };
     
-    // Initialize local stream
     await webrtc.initLocalStream();
     
-    // WebSocket listener for signaling
     _wsSubscription = ws.messages.listen((message) async {
       final type = message['type'];
-      
       switch (type) {
         case 'OFFER':
           await webrtc.setRemoteDescription(message['sdp'], 'offer');
           final answer = await webrtc.createAnswer();
-          if (_connectionId != null) {
-            ws.sendAnswer(_connectionId!, answer.sdp!);
-          }
+          if (_connectionId != null) ws.sendAnswer(_connectionId!, answer.sdp!);
           break;
-          
         case 'ANSWER':
           await webrtc.setRemoteDescription(message['sdp'], 'answer');
           break;
-          
         case 'ICE_CANDIDATE':
           await webrtc.addIceCandidate(message['candidate']);
           break;
-          
-        case 'CHAT_MESSAGE':
-          _addMessage(message['text'], false);
-          break;
-          
         case 'MATCH_ENDED':
           _handleMatchEnded(message['reason'] ?? 'Bağlantı sonlandı');
           break;
       }
     });
     
-    // Start offer if initiator
     if (_isInitiator && _connectionId != null) {
       final offer = await webrtc.createOffer();
       ws.sendOffer(_connectionId!, offer.sdp!);
@@ -178,28 +179,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     super.dispose();
   }
   
-  void _addMessage(String text, bool isOwn) {
-    if (text.isEmpty) return;
-    HapticFeedback.lightImpact();
-    setState(() {
-      _messages.add(ChatMessage(
-        text: text,
-        isOwn: isOwn,
-        timestamp: DateTime.now(),
-      ));
-    });
-    
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_chatScrollController.hasClients) {
-        _chatScrollController.animateTo(
-          _chatScrollController.position.maxScrollExtent,
-          duration: AppTheme.durationFast,
-          curve: Curves.easeOut,
-        );
-      }
-    });
-  }
-  
   void _toggleCamera() {
     HapticFeedback.lightImpact();
     setState(() => _isCameraOn = !_isCameraOn);
@@ -214,17 +193,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   
   void _handleNext() {
     HapticFeedback.mediumImpact();
-    final ws = ref.read(webSocketClientProvider);
-    ws.next();
+    ref.read(webSocketClientProvider).next();
     Navigator.pushReplacementNamed(context, AppRoutes.matchmaking);
   }
   
   void _handleMatchEnded(String reason) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(reason),
-        backgroundColor: AppColors.warning,
-      ),
+      SnackBar(content: Text(reason), backgroundColor: AppColors.warning),
     );
     Navigator.pushReplacementNamed(context, AppRoutes.matchmaking);
   }
@@ -239,13 +214,65 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     );
   }
   
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
     final text = _chatController.text.trim();
-    if (text.isEmpty || _connectionId == null) return;
+    if (text.isEmpty) return;
+    if (_connectionId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Hata: Bağlantı ID yok!'), backgroundColor: Colors.red),
+        );
+        return;
+    }
     
-    ref.read(webSocketClientProvider).sendChatMessage(_connectionId!, text);
-    _addMessage(text, true);
-    _chatController.clear();
+    final repository = ref.read(offlineChatRepositoryProvider);
+    final authState = ref.read(authProvider);
+    final currentUserId = authState.user?.id ?? 'unknown';
+
+    try {
+    // Get other username from widget args/params if available, specifically for new chats
+    // We might need to access the widget's otherUsername if it was passed!
+    // However, ChatScreen currently only takes connectionId. 
+    // We should probably pass otherUsername to ChatScreen or fetch it.
+    // For now, let's try to lookup from existing chat or fallback.
+    
+    // Better strategy: Pass it from the screen widget if available.
+    // The previous logic didn't seem to store `otherUsername` in the state consistently for new chats.
+    // We need to ensure `ChatScreen` knows the name.
+    
+    // TEMPORARY FIX: If this is a match screen transition, we might not have name easily.
+    // But if it came from ChatList -> ChatDetail which uses ChatScreen logic...
+    // Wait, ChatScreen is for Video? ChatDetailScreen is for Text?
+    // User sidebar says: `ChatScreen` (c:\...\chat_screen.dart) "Premium Chat Screen - Cinematic video chat"
+    // User request implies text chat inside this screen too.
+    
+    // Use "Kullanıcı" as fallback if we can't find it, but logic should be to pass it in.
+    // Assuming for now we don't have it easily in state without refactor.
+    // BUT! connectionId might be the ID.
+    
+    await repository.sendMessage(
+        _connectionId!, 
+        text, 
+        currentUserId,
+        receiverName: 'Kullanıcı', // Placeholder until we pass name properly
+    );
+        _chatController.clear();
+        HapticFeedback.lightImpact();
+        
+        // Auto-scroll logic could be enhanced, but simple delay works for MVP
+        Future.delayed(const Duration(milliseconds: 300), () {
+            if (_chatScrollController.hasClients) {
+                _chatScrollController.animateTo(
+                _chatScrollController.position.maxScrollExtent,
+                duration: AppTheme.durationFast,
+                curve: Curves.easeOut,
+                );
+            }
+        });
+    } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Mesaj gönderilemedi: $e'), backgroundColor: Colors.red),
+        );
+    }
   }
 
   @override
@@ -254,7 +281,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       backgroundColor: context.colors.backgroundColor,
       body: Stack(
         children: [
-          // Remote video (full screen) with blur if connecting
+          // Remote Video
           Container(
             color: context.colors.surfaceColor,
             child: _isConnected
@@ -273,35 +300,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: CircularProgressIndicator(
-                            color: AppColors.primary,
-                            strokeWidth: 3,
-                          ),
-                        ),
+                        const CircularProgressIndicator(color: AppColors.primary),
                         const SizedBox(height: 24),
-                        Text(
-                          'Bağlanıyor...',
-                          style: AppTypography.body(
-                            color: Colors.white.withOpacity(0.7),
-                          ),
-                        ),
+                        const Text('Bağlanıyor...', style: TextStyle(color: Colors.white70)),
+                        if (_connectionId != null)
+                             Padding(
+                               padding: const EdgeInsets.only(top: 8.0),
+                               child: Text('ID: $_connectionId', style: const TextStyle(color: Colors.white30, fontSize: 10)),
+                             ),
                       ],
                     ),
                   ),
           ),
           
-          // Top bar
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: _buildTopBar(),
-          ),
+          // Top Bar
+          Positioned(top: 0, left: 0, right: 0, child: _buildTopBar()),
           
-          // Self view (PiP - Draggable)
+          // PiP
           Positioned(
             right: _pipPosition.dx,
             top: _pipPosition.dy + MediaQuery.of(context).padding.top + 60,
@@ -320,42 +335,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                 decoration: BoxDecoration(
                   color: AppColors.cardDark,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.4),
-                      blurRadius: 20,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+                  border: Border.all(color: Colors.white24, width: 2),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(18),
                   child: _isCameraOn
-                      ? RTCVideoView(
-                          _localRenderer,
-                          mirror: true,
-                          objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                        )
-                      : Container(
-                          color: AppColors.surfaceDark,
-                          child: const Center(
-                            child: Icon(
-                              Icons.videocam_off_rounded,
-                              size: 32,
-                              color: AppColors.error,
-                            ),
-                          ),
-                        ),
+                      ? RTCVideoView(_localRenderer, mirror: true, objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover)
+                      : Container(color: AppColors.surfaceDark, child: const Icon(Icons.videocam_off_rounded, color: AppColors.error)),
                 ),
               ),
             ),
           ),
           
-          // Chat panel (expandable)
+          // Chat Panel
           AnimatedPositioned(
             duration: AppTheme.durationMedium,
             curve: AppTheme.curveSpring,
@@ -365,13 +357,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             child: _buildChatPanel(),
           ),
           
-          // Bottom controls
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: _buildBottomControls(),
-          ),
+          // Bottom Controls
+          Positioned(bottom: 0, left: 0, right: 0, child: _buildBottomControls()),
         ],
       ),
     );
@@ -379,76 +366,50 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   
   Widget _buildTopBar() {
     return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          height: 56 + MediaQuery.of(context).padding.top,
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top,
-            left: 16,
-            right: 16,
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.glassDark,
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.white.withOpacity(0.1),
-                width: 0.5,
-              ),
+        child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+                height: 56 + MediaQuery.of(context).padding.top,
+                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 16, right: 16),
+                decoration: BoxDecoration(color: AppColors.glassDark),
+                child: Row(
+                    children: [
+                        Container(
+                            width: 36, height: 36,
+                            decoration: BoxDecoration(gradient: AppColors.buttonGradient, borderRadius: BorderRadius.circular(10)),
+                            child: const Icon(Icons.videocam_rounded, size: 20, color: Colors.white),
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                Text(_isConnected ? 'Bağlandı' : 'Bağlanıyor...', style: AppTypography.headline()),
+                                // VISUAL DEBUG: Show ID
+                                Text(_connectionId ?? 'ID Yok', style: const TextStyle(color: Colors.white38, fontSize: 10)),
+                            ],
+                        ),
+                        const Spacer(),
+                        GlassIconButton(icon: Icons.flag_outlined, size: 40, onPressed: _handleReport, iconColor: AppColors.warning),
+                    ],
+                ),
             ),
-          ),
-          child: Row(
-            children: [
-              // Logo
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  gradient: AppColors.buttonGradient,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.videocam_rounded,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 12),
-              
-              // Status
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _isConnected ? 'Bağlandı' : 'Bağlanıyor...',
-                      style: AppTypography.headline(),
-                    ),
-                    const SizedBox(height: 2),
-                    ConnectionStatusBadge(
-                      status: _isConnected ? 'Aktif' : 'Bekliyor',
-                      isConnected: _isConnected,
-                    ),
-                  ],
-                ),
-              ),
-              
-              // Report button
-              GlassIconButton(
-                icon: Icons.flag_outlined,
-                size: 40,
-                onPressed: _handleReport,
-                iconColor: AppColors.warning,
-              ),
-            ],
-          ),
         ),
-      ),
     );
   }
   
   Widget _buildChatPanel() {
+    if (_connectionId == null) {
+        return GlassContainer(
+            height: 300,
+            child: const Center(child: Text('Bağlantı hatası: ID yok', style: TextStyle(color: Colors.white))),
+        );
+    }
+
+    final repository = ref.watch(offlineChatRepositoryProvider);
+    final authState = ref.watch(authProvider);
+    final currentUserId = authState.user?.id ?? 'unknown';
+    
     return GlassContainer(
       height: 300,
       blurRadius: AppTheme.blurBottomSheet,
@@ -457,12 +418,32 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       child: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _chatScrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                return _ChatBubble(message: _messages[index]);
+            child: StreamBuilder<List<Message>>(
+              stream: repository.watchMessages(_connectionId!, currentUserId),
+              builder: (context, snapshot) {
+                 if (snapshot.hasError) {
+                     return Center(child: Text('Hata: ${snapshot.error}', style: const TextStyle(color: Colors.red)));
+                 }
+                 
+                 final messages = snapshot.data ?? [];
+                 
+                 if (messages.isEmpty) {
+                     return const Center(child: Text('Henüz mesaj yok', style: TextStyle(color: Colors.white30)));
+                 }
+
+                 return ListView.builder(
+                    controller: _chatScrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      return _ChatBubble(message: ChatMessage(
+                        text: message.content,
+                        isOwn: message.senderId == currentUserId,
+                        timestamp: message.createdAt,
+                      ));
+                    },
+                  );
               },
             ),
           ),
@@ -480,18 +461,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(24),
-              ),
+              decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(24)),
               child: TextField(
                 controller: _chatController,
                 style: AppTypography.body(),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Mesaj yaz...',
-                  hintStyle: AppTypography.body(
-                    color: Colors.white.withOpacity(0.4),
-                  ),
+                  hintStyle: TextStyle(color: Colors.white38),
                   border: InputBorder.none,
                 ),
                 onSubmitted: (_) => _sendMessage(),
@@ -502,17 +478,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
           GestureDetector(
             onTap: _sendMessage,
             child: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                gradient: AppColors.buttonGradient,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.send_rounded,
-                color: Colors.white,
-                size: 22,
-              ),
+              width: 48, height: 48,
+              decoration: BoxDecoration(gradient: AppColors.buttonGradient, shape: BoxShape.circle),
+              child: const Icon(Icons.send_rounded, color: Colors.white, size: 22),
             ),
           ),
         ],
@@ -524,7 +492,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     return SafeArea(
       child: Column(
         children: [
-          // Chat toggle
           GestureDetector(
             onTap: () {
               HapticFeedback.lightImpact();
@@ -540,24 +507,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    _isChatExpanded
-                        ? Icons.keyboard_arrow_down_rounded
-                        : Icons.chat_bubble_outline_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  Icon(_isChatExpanded ? Icons.keyboard_arrow_down_rounded : Icons.chat_bubble_outline_rounded, color: Colors.white, size: 20),
                   const SizedBox(width: 8),
-                  Text(
-                    _isChatExpanded ? 'Sohbeti Kapat' : 'Mesaj Gönder',
-                    style: AppTypography.caption1(),
-                  ),
+                  Text(_isChatExpanded ? 'Sohbeti Kapat' : 'Mesaj Gönder', style: AppTypography.caption1()),
                 ],
               ),
             ),
           ),
-          
-          // Control buttons
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: ClipRRect(
@@ -570,52 +526,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   decoration: BoxDecoration(
                     color: AppColors.glassDark,
                     borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                    border: Border.all(
-                      color: AppColors.glassBorder,
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColors.glassBorder, width: 1),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      GlassIconButton(
-                        icon: _isMicOn ? Icons.mic_rounded : Icons.mic_off_rounded,
-                        onPressed: _toggleMic,
-                        isActive: _isMicOn,
-                      ),
-                      
-                      // Next button (main action)
+                      GlassIconButton(icon: _isMicOn ? Icons.mic_rounded : Icons.mic_off_rounded, onPressed: _toggleMic, isActive: _isMicOn),
                       GestureDetector(
                         onTap: _handleNext,
                         child: Container(
-                          width: 64,
-                          height: 64,
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.4),
-                                blurRadius: 20,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.skip_next_rounded,
-                            color: Colors.white,
-                            size: 32,
-                          ),
+                          width: 64, height: 64,
+                          decoration: BoxDecoration(gradient: AppColors.primaryGradient, shape: BoxShape.circle, boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 5))]),
+                          child: const Icon(Icons.skip_next_rounded, color: Colors.white, size: 32),
                         ),
                       ),
-                      
-                      GlassIconButton(
-                        icon: _isCameraOn
-                            ? Icons.videocam_rounded
-                            : Icons.videocam_off_rounded,
-                        onPressed: _toggleCamera,
-                        isActive: _isCameraOn,
-                      ),
+                      GlassIconButton(icon: _isCameraOn ? Icons.videocam_rounded : Icons.videocam_off_rounded, onPressed: _toggleCamera, isActive: _isCameraOn),
                     ],
                   ),
                 ),

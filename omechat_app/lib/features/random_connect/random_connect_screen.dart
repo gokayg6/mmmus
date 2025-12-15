@@ -18,7 +18,7 @@ import '../video_chat/video_chat_screen.dart';
 
 /// Random Connect Screen - Full-featured Omegle-style matching hub
 class RandomConnectScreen extends ConsumerStatefulWidget {
-  const RandomConnectScreen({super.key});
+  const RandomConnectScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<RandomConnectScreen> createState() => _RandomConnectScreenState();
@@ -120,9 +120,16 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
       final wsClient = ref.read(webSocketClientProvider);
       
       // Start session
+      String? backendGender;
+      if (_selectedGender == 'Kadın') {
+        backendGender = 'FEMALE';
+      } else if (_selectedGender == 'Erkek') {
+        backendGender = 'MALE';
+      }
+
       final sessionResponse = await apiClient.startSession(
         deviceType: 'ANDROID',
-        gender: _selectedGender != 'Herkes' ? _selectedGender : null,
+        gender: backendGender,
       );
       
       // Connect to WebSocket
@@ -136,6 +143,11 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
         if (type == 'MATCH_FOUND') {
           HapticFeedback.mediumImpact();
           if (mounted) {
+            final partnerData = message['partner'];
+            final pName = partnerData != null ? partnerData['username']?.toString() ?? 'Yabancı' : 'Yabancı';
+            final pAvatar = partnerData != null ? partnerData['avatar_url']?.toString() : null;
+            final pId = partnerData != null ? partnerData['id']?.toString() : null;
+
             setState(() {
               _isSearching = false;
               _isConnecting = false;
@@ -143,7 +155,12 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             Navigator.push(
               context,
               PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => const VideoChatScreen(startConnected: true),
+                pageBuilder: (context, animation, secondaryAnimation) => VideoChatScreen(
+                  startConnected: true,
+                  partnerUsername: pName,
+                  partnerAvatar: pAvatar,
+                  partnerId: pId,
+                ),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) {
                   return FadeTransition(opacity: animation, child: child);
                 },

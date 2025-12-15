@@ -22,14 +22,22 @@ def get_engine():
     if _engine is None:
         from app.config import get_settings
         settings = get_settings()
-        _engine = create_engine(
-            settings.DATABASE_URL,
-            pool_pre_ping=True,
-            pool_size=10,
-            max_overflow=20,
-            echo=settings.DEBUG,
-            connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
-        )
+        # SQLite için özel ayarlar
+        if "sqlite" in settings.DATABASE_URL:
+            _engine = create_engine(
+                settings.DATABASE_URL,
+                connect_args={"check_same_thread": False},
+                echo=settings.DEBUG,
+            )
+        else:
+            # PostgreSQL için
+            _engine = create_engine(
+                settings.DATABASE_URL,
+                pool_pre_ping=True,
+                pool_size=10,
+                max_overflow=20,
+                echo=settings.DEBUG,
+            )
     return _engine
 
 
@@ -58,5 +66,5 @@ def get_db():
 def create_tables():
     """Tüm tabloları oluştur (development için)"""
     # Tüm modelleri import et ki Base.metadata dolu olsun
-    from app.models import user_session, connection, report, ban, admin, metrics, user
+    from app.models import user_session, connection, report, ban, admin, metrics, user, message, friendship
     Base.metadata.create_all(bind=get_engine())

@@ -265,7 +265,7 @@ class AppTheme {
       ),
       
       // Dialog
-      dialogTheme: DialogThemeData(
+      dialogTheme: DialogTheme(
         backgroundColor: AppColors.surfaceElevated,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -355,7 +355,7 @@ class AppTheme {
       ),
       
       // Tab Bar - Orange
-      tabBarTheme: TabBarThemeData(
+      tabBarTheme: TabBarTheme(
         labelColor: AppColors.primary,
         unselectedLabelColor: AppColors.textMuted,
         indicatorColor: AppColors.primary,
@@ -384,7 +384,7 @@ class AppTheme {
       ),
       
       // Card
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: AppColors.card,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -573,7 +573,7 @@ class AppTheme {
         ),
       ),
       
-      dialogTheme: DialogThemeData(
+      dialogTheme: DialogTheme(
         backgroundColor: AppColors.surfaceElevatedLight,
         elevation: 8,
         shape: RoundedRectangleBorder(
@@ -611,7 +611,7 @@ class AppTheme {
         linearTrackColor: Color(0xFFE0D5C8),
       ),
       
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: AppColors.cardLight,
         elevation: 2,
         shape: RoundedRectangleBorder(

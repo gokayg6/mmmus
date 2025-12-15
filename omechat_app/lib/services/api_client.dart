@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../core/config/app_config.dart';
+import '../core/network/production_dio_interceptor.dart';
 
 /// API client for REST endpoints
 class ApiClient {
@@ -14,6 +15,9 @@ class ApiClient {
 
   /// Get base URL for WebSocket connection
   String get baseUrl => _baseUrl;
+  
+  /// Get access token
+  String? get accessToken => _accessToken;
   
   /// Get Dio instance for direct API calls
   Dio get dio => _dio;
@@ -54,6 +58,9 @@ class ApiClient {
         },
       ),
     );
+    
+    /// PRODUCTION: Add error interceptor with retry logic and circuit breaker
+    _dio.interceptors.add(ProductionDioInterceptor());
   }
 
   void setSessionToken(String token) {
@@ -432,16 +439,22 @@ String _getBackendBaseUrl() {
   // Development backend (local)
   // Web platform
   if (kIsWeb) {
-    return 'http://localhost:8000';
+    // For Web on physical device, we MUST use the PC's IP, not localhost
+    // Localhost on a phone browser refers to the phone itself.
+    return AppConfig.developmentBackendUrl;
   }
   
   try {
     if (Platform.isAndroid) {
-      // Android Emulator uses 10.0.2.2 to reach host machine
+      // Android: Check if running on emulator or real device
+      // Emulator uses 10.0.2.2 to reach host machine
+      // Real device uses local network IP (192.168.1.103)
+      // For now, use local network IP for both (real device)
       return AppConfig.developmentBackendUrl;
     } else if (Platform.isIOS) {
-      // iOS Simulator uses localhost
-      return 'http://localhost:8000';
+      // iOS: Use local network IP for real devices, localhost for simulator
+      // Real device needs PC's IP address (192.168.1.103)
+      return AppConfig.developmentBackendUrl;
     }
   } catch (e) {
     // Fallback
