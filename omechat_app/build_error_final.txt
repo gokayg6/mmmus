@@ -1,0 +1,71 @@
+﻿Running Gradle task 'assembleRelease'...                        
+flutter : Warning: Flutter support for your project's Gradle version (8.5.0) will soon be dropped. Please upgrade your Gradle vers
+ion to a version of at least 8.7.0 soon.
+At line:1 char:1
++ flutter build apk --release 2>&1 | Out-File -FilePath "build_error_fi ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Warning: Flutte...ast 8.7.0 soon.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+
+Potential fix: Your project's gradle version is typically defined in the gradle wrapper file. By default, this can be found at C:\
+Users\gokay\Desktop\Ome\omechat_app\android/gradle/wrapper/gradle-wrapper.properties. 
+For more information, see https://docs.gradle.org/current/userguide/gradle_wrapper.html.
+
+Warning: Flutter support for your project's Android Gradle Plugin version (Android Gradle Plugin version 8.3.0) will soon be dropp
+ed. Please upgrade your Android Gradle Plugin version to a version of at least Android Gradle Plugin version 8.6.0 soon.
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+
+Potential fix: Your project's AGP version is typically defined in the plugins block of the `settings.gradle` file (C:\Users\gokay\
+Desktop\Ome\omechat_app\android/settings.gradle), by a plugin with the id of com.android.application. 
+If you don't see a plugins block, your project was likely created with an older template version. In this case it is most likely d
+efined in the top-level build.gradle file (C:\Users\gokay\Desktop\Ome\omechat_app\android/build.gradle) by the following line in t
+he dependencies block of the buildscript: "classpath 'com.android.tools.build:gradle:<version>'".
+
+Warning: Flutter support for your project's Kotlin version (1.9.0) will soon be dropped. Please upgrade your Kotlin version to a v
+ersion of at least 2.1.0 soon.
+Alternatively, use the flag "--android-skip-build-dependency-validation" to bypass this check.
+
+Potential fix: Your project's KGP version is typically defined in the plugins block of the `settings.gradle` file (C:\Users\gokay\
+Desktop\Ome\omechat_app\android/settings.gradle), by a plugin with the id of org.jetbrains.kotlin.android. 
+If you don't see a plugins block, your project was likely created with an older template version, in which case it is most likely 
+defined in the top-level build.gradle file (C:\Users\gokay\Desktop\Ome\omechat_app\android/build.gradle) by the ext.kotlin_version
+ property.
+
+Warning: The plugin flutter_webrtc requires Android SDK version 36 or higher.
+For more information about build configuration, see https://flutter.dev/to/review-gradle-config.
+Your project is configured to compile against Android SDK 35, but the following plugin(s) require to be compiled against a higher 
+Android SDK version:
+- flutter_webrtc compiles against Android SDK 36
+Fix this issue by compiling against the highest Android SDK version (they are backward compatible).
+Add the following to C:\Users\gokay\Desktop\Ome\omechat_app\android\app\build.gradle:
+
+    android {
+        compileSdk = 36
+        ...
+    }
+lib/core/widgets/ios_liquid_navbar.dart:232:48: Error: The argument type 'BorderRadius' can't be assigned to the parameter type 'd
+ouble'.
+ - 'BorderRadius' is from 'package:flutter/src/painting/border_radius.dart' ('/C:/src/flutter/packages/flutter/lib/src/painting/bo
+rder_radius.dart').
+                    borderRadius: BorderRadius.circular(28),
+                                               ^
+Target kernel_snapshot_program failed: Exception
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildRelease'.
+> Process 'command 'C:\src\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BU´┐¢LD FAILED in 11s
+Running Gradle task 'assembleRelease'...                           11,8s
+Gradle task assembleRelease failed with exit code 1

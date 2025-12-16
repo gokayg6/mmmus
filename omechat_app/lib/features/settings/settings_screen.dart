@@ -6,9 +6,12 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/glass_container.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 import '../../core/routing/app_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../providers/language_provider.dart';
+import 'language_settings_screen.dart';
 
 /// Settings Screen - App configuration with theme toggle and logout
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -22,13 +25,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _notifications = true;
   bool _soundEffects = true;
   bool _haptics = true;
-  String _language = 'Türkçe';
+
 
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
     final authState = ref.watch(authProvider);
+    final languageState = ref.watch(languageProvider);
     final isDarkMode = themeMode == ThemeMode.dark;
+    
+    // Get current language display name
+    final currentLang = SupportedLanguage.fromCode(languageState.locale.languageCode);
+    
+    // Get localized strings
+    final l10n = AppLocalizations.of(context);
     
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -44,14 +54,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ayarlar', 
+                      l10n?.settings ?? 'Settings', 
                       style: AppTypography.largeTitle(
                         color: isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryLight,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Uygulama tercihlerini özelleştir',
+                      l10n?.customizePreferences ?? 'Customize app preferences',
                       style: AppTypography.footnote(
                         color: isDarkMode ? AppColors.textSecondary : AppColors.textSecondaryLight,
                       ),
@@ -68,7 +78,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 delegate: SliverChildListDelegate([
                   // User section (if logged in)
                   if (authState.isAuthenticated) ...[
-                    _SectionHeader(title: 'Hesap'),
+                    _SectionHeader(title: l10n?.account ?? 'Account'),
                     const SizedBox(height: 12),
                     GlassContainer(
                       padding: EdgeInsets.zero,
@@ -84,8 +94,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           _SettingsTile(
                             icon: Icons.logout_rounded,
                             iconColor: AppColors.error,
-                            title: 'Çıkış Yap',
-                            onTap: () => _showLogoutConfirmation(),
+                            title: l10n?.logout ?? 'Logout',
+                            onTap: () => _showLogoutConfirmation(l10n),
                           ),
                         ],
                       ),
@@ -94,7 +104,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ],
                   
                   // Appearance section
-                  _SectionHeader(title: 'Görünüm'),
+                  _SectionHeader(title: l10n?.appearance ?? 'Appearance'),
                   const SizedBox(height: 12),
                   GlassContainer(
                     padding: EdgeInsets.zero,
@@ -103,8 +113,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _SettingsTile(
                           icon: isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
                           iconColor: isDarkMode ? AppColors.primary : AppColors.warning,
-                          title: 'Karanlık Mod',
-                          subtitle: isDarkMode ? 'Koyu tema aktif' : 'Açık tema aktif',
+                          title: l10n?.darkMode ?? 'Dark Mode',
+                          subtitle: isDarkMode ? (l10n?.darkThemeActive ?? 'Dark theme active') : (l10n?.lightThemeActive ?? 'Light theme active'),
                           trailing: Switch(
                             value: isDarkMode,
                             onChanged: (v) {
@@ -120,8 +130,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _SettingsTile(
                           icon: Icons.language_rounded,
                           iconColor: AppColors.primarySoft,
-                          title: 'Dil',
-                          subtitle: _language,
+                          title: l10n?.language ?? 'Language',
+                          subtitle: currentLang.displayName,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LanguageSettingsScreen(),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -130,7 +148,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: 24),
                   
                   // Notifications section
-                  _SectionHeader(title: 'Bildirimler'),
+                  _SectionHeader(title: l10n?.notificationsSection ?? 'Notifications'),
                   const SizedBox(height: 12),
                   GlassContainer(
                     padding: EdgeInsets.zero,
@@ -139,8 +157,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _SettingsTile(
                           icon: Icons.notifications_rounded,
                           iconColor: AppColors.warning,
-                          title: 'Bildirimler',
-                          subtitle: 'Push bildirimleri al',
+                          title: l10n?.notifications ?? 'Notifications',
+                          subtitle: l10n?.pushNotifications ?? 'Push notifications',
                           trailing: Switch(
                             value: _notifications,
                             onChanged: (v) => setState(() => _notifications = v),
@@ -151,8 +169,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _SettingsTile(
                           icon: Icons.volume_up_rounded,
                           iconColor: AppColors.success,
-                          title: 'Ses Efektleri',
-                          subtitle: 'Uygulama sesleri',
+                          title: l10n?.soundEffects ?? 'Sound Effects',
+                          subtitle: l10n?.appSounds ?? 'App sounds',
                           trailing: Switch(
                             value: _soundEffects,
                             onChanged: (v) => setState(() => _soundEffects = v),
@@ -163,8 +181,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _SettingsTile(
                           icon: Icons.vibration_rounded,
                           iconColor: AppColors.primary,
-                          title: 'Titreşim',
-                          subtitle: 'Dokunsal geri bildirim',
+                          title: l10n?.vibration ?? 'Vibration',
+                          subtitle: l10n?.hapticFeedback ?? 'Haptic feedback',
                           trailing: Switch(
                             value: _haptics,
                             onChanged: (v) => setState(() => _haptics = v),
@@ -178,7 +196,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: 24),
                   
                   // Privacy section
-                  _SectionHeader(title: 'Gizlilik'),
+                  _SectionHeader(title: l10n?.privacy ?? 'Privacy'),
                   const SizedBox(height: 12),
                   GlassContainer(
                     padding: EdgeInsets.zero,
@@ -187,22 +205,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _SettingsTile(
                           icon: Icons.shield_rounded,
                           iconColor: AppColors.success,
-                          title: 'Gizlilik Politikası',
+                          title: l10n?.privacyPolicy ?? 'Privacy Policy',
                           onTap: () {},
                         ),
                         _Divider(),
                         _SettingsTile(
                           icon: Icons.description_rounded,
                           iconColor: AppColors.textSecondary,
-                          title: 'Kullanım Koşulları',
+                          title: l10n?.termsOfService ?? 'Terms of Service',
                           onTap: () {},
                         ),
                         _Divider(),
                         _SettingsTile(
                           icon: Icons.delete_outline_rounded,
                           iconColor: AppColors.error,
-                          title: 'Verilerimi Sil',
-                          onTap: () => _showDeleteConfirmation(),
+                          title: l10n?.deleteMyData ?? 'Delete My Data',
+                          onTap: () => _showDeleteConfirmation(l10n),
                         ),
                       ],
                     ),
@@ -211,7 +229,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: 24),
                   
                   // About section
-                  _SectionHeader(title: 'Hakkında'),
+                  _SectionHeader(title: l10n?.about ?? 'About'),
                   const SizedBox(height: 12),
                   GlassContainer(
                     padding: EdgeInsets.zero,
@@ -220,21 +238,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _SettingsTile(
                           icon: Icons.info_outline_rounded,
                           iconColor: AppColors.primary,
-                          title: 'Uygulama Versiyonu',
+                          title: l10n?.appVersion ?? 'App Version',
                           subtitle: '1.0.0 (Build 1)',
                         ),
                         _Divider(),
                         _SettingsTile(
                           icon: Icons.star_outline_rounded,
                           iconColor: AppColors.warning,
-                          title: 'Uygulamayı Değerlendir',
+                          title: l10n?.rateApp ?? 'Rate App',
                           onTap: () {},
                         ),
                         _Divider(),
                         _SettingsTile(
                           icon: Icons.share_rounded,
                           iconColor: AppColors.primarySoft,
-                          title: 'Arkadaşlarına Öner',
+                          title: l10n?.shareWithFriends ?? 'Share with Friends',
                           onTap: () {},
                         ),
                       ],
@@ -243,8 +261,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   
                   const SizedBox(height: 24),
                   
-                  // Admin section (only for admin users - you can add role check)
-                  _SectionHeader(title: 'Yönetici'),
+                  // Admin section
+                  _SectionHeader(title: l10n?.admin ?? 'Admin'),
                   const SizedBox(height: 12),
                   GlassContainer(
                     padding: EdgeInsets.zero,
@@ -253,8 +271,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         _SettingsTile(
                           icon: Icons.admin_panel_settings_rounded,
                           iconColor: AppColors.error,
-                          title: 'Admin Paneli',
-                          subtitle: 'Uygulama yönetimi',
+                          title: l10n?.adminPanel ?? 'Admin Panel',
+                          subtitle: l10n?.appManagement ?? 'App management',
                           onTap: () => Navigator.pushNamed(context, '/admin'),
                         ),
                       ],
@@ -272,22 +290,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  void _showLogoutConfirmation() {
+  void _showLogoutConfirmation(AppLocalizations? l10n) {
     HapticFeedback.mediumImpact();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: context.isDarkMode ? AppColors.surfaceElevated : AppColors.surfaceElevatedLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Çıkış Yap', style: AppTypography.title2()),
+        title: Text(l10n?.logoutConfirmTitle ?? 'Logout', style: AppTypography.title2()),
         content: Text(
-          'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+          l10n?.logoutConfirmMessage ?? 'Are you sure you want to logout from your account?',
           style: AppTypography.body(color: context.colors.textSecondaryColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('İptal', style: AppTypography.buttonMedium(color: context.colors.textSecondaryColor)),
+            child: Text(l10n?.cancel ?? 'Cancel', style: AppTypography.buttonMedium(color: context.colors.textSecondaryColor)),
           ),
           TextButton(
             onPressed: () {
@@ -299,7 +317,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 (route) => false,
               );
             },
-            child: Text('Çıkış Yap', style: AppTypography.buttonMedium(color: AppColors.error)),
+            child: Text(l10n?.logout ?? 'Logout', style: AppTypography.buttonMedium(color: AppColors.error)),
           ),
         ],
       ),
@@ -307,22 +325,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
 
-  void _showDeleteConfirmation() {
+  void _showDeleteConfirmation(AppLocalizations? l10n) {
     HapticFeedback.mediumImpact();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: context.isDarkMode ? AppColors.surfaceElevated : AppColors.surfaceElevatedLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Verileri Sil?', style: AppTypography.title2()),
+        title: Text(l10n?.deleteDataTitle ?? 'Delete Data?', style: AppTypography.title2()),
         content: Text(
-          'Tüm verileriniz kalıcı olarak silinecek. Bu işlem geri alınamaz.',
+          l10n?.deleteDataMessage ?? 'All your data will be permanently deleted. This action cannot be undone.',
           style: AppTypography.body(color: context.colors.textSecondaryColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('İptal', style: AppTypography.buttonMedium(color: context.colors.textSecondaryColor)),
+            child: Text(l10n?.cancel ?? 'Cancel', style: AppTypography.buttonMedium(color: context.colors.textSecondaryColor)),
           ),
           TextButton(
             onPressed: () {
@@ -334,7 +352,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 (route) => false,
               );
             },
-            child: Text('Sil', style: AppTypography.buttonMedium(color: AppColors.error)),
+            child: Text(l10n?.delete ?? 'Delete', style: AppTypography.buttonMedium(color: AppColors.error)),
           ),
         ],
       ),

@@ -14,6 +14,7 @@ import '../../features/permissions/permissions_screen.dart';
 import '../../features/matchmaking/matchmaking_screen.dart';
 import '../../features/chat/chat_screen.dart';
 import '../../features/chat_list/chat_list_screen.dart';
+import '../../features/chat_list/chat_list_screen_glassmorphic.dart';
 import '../../features/chat_detail/chat_detail_screen.dart';
 import '../../features/random_connect/random_connect_screen.dart';
 import '../../features/calls/calls_screen.dart';
@@ -89,7 +90,7 @@ class AppRouter {
         return _buildRoute(const ChatScreen(), settings);
       
       case AppRoutes.chatList:
-        return _buildRoute(const ChatListScreen(), settings);
+        return _buildRoute(const GlassmorphicChatListScreen(), settings);
       
       case AppRoutes.chatDetail:
         final args = settings.arguments as Map<String, dynamic>?;

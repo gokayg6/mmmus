@@ -8,6 +8,7 @@ import '../../core/widgets/glass_container.dart';
 import '../../domain/models/points_models.dart';
 import '../../data/repositories/points_repository.dart';
 import '../../providers/data_providers.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
 /// Points Screen - Real gamification with PointsRepository
 class PointsScreen extends ConsumerWidget {
@@ -28,12 +29,12 @@ class PointsScreen extends ConsumerWidget {
             children: [
               // Header
               Text(
-                'Puanlarım',
+                AppLocalizations.of(context)?.credits ?? 'My Credits',
                 style: AppTypography.largeTitle(color: context.colors.textColor),
               ),
               const SizedBox(height: 8),
               Text(
-                'Sohbet ederek puan kazan!',
+                'Earn points by chatting!',
                 style: AppTypography.body(color: context.colors.textSecondaryColor),
               ),
               
@@ -50,7 +51,7 @@ class PointsScreen extends ConsumerWidget {
               
               // How to earn
               Text(
-                'Nasıl Puan Kazanılır?',
+                'How to Earn Points?',
                 style: AppTypography.title2(color: context.colors.textColor),
               ),
               const SizedBox(height: 16),
@@ -61,7 +62,7 @@ class PointsScreen extends ConsumerWidget {
               
               // Recent activity
               Text(
-                'Son Aktiviteler',
+                'Recent Activity',
                 style: AppTypography.title2(color: context.colors.textColor),
               ),
               const SizedBox(height: 16),
@@ -110,7 +111,7 @@ class PointsScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(24),
       child: Center(
         child: Text(
-          'Yüklenemedi',
+          'Failed to load',
           style: AppTypography.body(color: context.colors.textMutedColor),
         ),
       ),
@@ -148,7 +149,7 @@ class _PointsCard extends StatelessWidget {
               ],
             ),
             child: Text(
-              'Seviye ${points.level}',
+              'Level ${points.level}',
               style: AppTypography.headline(color: Colors.white),
             ),
           ),
@@ -162,11 +163,11 @@ class _PointsCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Sonraki seviyeye',
+                    'To next level',
                     style: AppTypography.caption1(color: context.colors.textSecondaryColor),
                   ),
                   Text(
-                    '${points.pointsToNextLevel} puan',
+                    '${points.pointsToNextLevel} points',
                     style: AppTypography.caption1(color: AppColors.primary),
                   ),
                 ],
@@ -269,7 +270,7 @@ class _AnimatedPointsDisplayState extends State<_AnimatedPointsDisplay>
             style: AppTypography.extraLargeTitle(color: context.colors.textColor),
           ),
           Text(
-            'Toplam Puan',
+            'Total Points',
             style: AppTypography.caption1(color: context.colors.textSecondaryColor),
           ),
         ],
@@ -365,12 +366,12 @@ class _RecentActivityList extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'Henüz aktivite yok',
+                'No activity yet',
                 style: AppTypography.body(color: context.colors.textMutedColor),
               ),
               const SizedBox(height: 4),
               Text(
-                'Sohbet ederek puan kazanmaya başla!',
+                'Start chatting to earn points!',
                 style: AppTypography.caption1(color: context.colors.textMutedColor),
               ),
             ],

@@ -57,19 +57,19 @@ class PointsConfig {
   static String getActionDescription(PointsActionType type) {
     switch (type) {
       case PointsActionType.messageSent:
-        return 'Mesaj gönder';
+        return 'Send message';
       case PointsActionType.chatStarted:
-        return 'Sohbet başlat';
+        return 'Start chat';
       case PointsActionType.chatCompleted:
-        return 'Sohbet tamamla';
+        return 'Complete chat';
       case PointsActionType.dailyLogin:
-        return 'Günlük giriş';
+        return 'Daily login';
       case PointsActionType.profileCompleted:
-        return 'Profili tamamla';
+        return 'Complete profile';
       case PointsActionType.minuteChatted:
-        return '1 dakika sohbet';
+        return '1 minute chatted';
       case PointsActionType.connectionMade:
-        return 'Yeni bağlantı';
+        return 'New connection';
     }
   }
 }

@@ -111,3 +111,6 @@ class NetworkResultWidget<T> extends StatelessWidget {
   }
 }
 
+
+
+

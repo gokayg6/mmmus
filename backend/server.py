@@ -20,7 +20,7 @@ from contextlib import asynccontextmanager
 # Local imports
 try:
     from app.config import get_settings
-    from app.routes import public, admin, websocket, auth, features, chat, friends
+    from app.routes import public, admin, websocket, auth, features, chat, friends, settings
     from app.database import create_tables, get_db
 except ImportError as e:
     print(f"CRITICAL ERROR: Import failed - {e}")
@@ -121,6 +121,7 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(features.router, prefix="/api/v1")
 app.include_router(chat.router, prefix="/api/v1")
 app.include_router(friends.router, prefix="/api/v1")
+app.include_router(settings.router, prefix="/api/v1")
 app.include_router(websocket.router)
 
 @app.get("/")

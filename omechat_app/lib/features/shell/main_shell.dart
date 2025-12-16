@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/widgets/glass_dock.dart';
+import '../../core/widgets/liquid_glass_navbar.dart';
 import '../../core/widgets/animated_background.dart';
 import '../random_connect/random_connect_screen.dart';
 import '../chat_list/chat_list_screen.dart';
 import '../profile/profile_screen.dart';
 import '../settings/settings_screen.dart';
 import '../points/points_screen.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
-/// Main Shell with bottom glass dock navigation
-/// 5 tabs: Keşfet, Mesajlar, Profil, Puan, Ayarlar
+/// Main Shell with floating glass navbar
+/// 
+/// Structure follows Stack pattern with background under glass
 class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
 
@@ -20,8 +21,7 @@ class MainShell extends ConsumerStatefulWidget {
   ConsumerState<MainShell> createState() => _MainShellState();
 }
 
-class _MainShellState extends ConsumerState<MainShell> 
-    with SingleTickerProviderStateMixin {
+class _MainShellState extends ConsumerState<MainShell> {
   int _currentIndex = 0;
   late PageController _pageController;
   
@@ -32,35 +32,6 @@ class _MainShellState extends ConsumerState<MainShell>
     ProfileScreen(),        // User profile
     PointsScreen(),         // Points/gamification
     SettingsScreen(),       // App settings
-  ];
-  
-  // 5 dock items with proper icons
-  final List<GlassDockItem> _dockItems = const [
-    GlassDockItem(
-      icon: Icons.explore_outlined,
-      activeIcon: Icons.explore_rounded,
-      label: 'Keşfet',
-    ),
-    GlassDockItem(
-      icon: Icons.chat_bubble_outline_rounded,
-      activeIcon: Icons.chat_bubble_rounded,
-      label: 'Mesajlar',
-    ),
-    GlassDockItem(
-      icon: Icons.person_outline_rounded,
-      activeIcon: Icons.person_rounded,
-      label: 'Profil',
-    ),
-    GlassDockItem(
-      icon: Icons.stars_outlined,
-      activeIcon: Icons.stars_rounded,
-      label: 'Puan',
-    ),
-    GlassDockItem(
-      icon: Icons.settings_outlined,
-      activeIcon: Icons.settings_rounded,
-      label: 'Ayarlar',
-    ),
   ];
   
   @override
@@ -84,39 +55,64 @@ class _MainShellState extends ConsumerState<MainShell>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
+    
+    // Build navbar items with localized labels
+    final navbarItems = [
+      NavbarItem(
+        icon: Icons.explore_outlined,
+        activeIcon: Icons.explore_rounded,
+        label: l10n?.discover ?? 'Discover',
+      ),
+      NavbarItem(
+        icon: Icons.chat_bubble_outline_rounded,
+        activeIcon: Icons.chat_bubble_rounded,
+        label: l10n?.chat ?? 'Chat',
+      ),
+      NavbarItem(
+        icon: Icons.person_outline_rounded,
+        activeIcon: Icons.person_rounded,
+        label: l10n?.profile ?? 'Profile',
+      ),
+      NavbarItem(
+        icon: Icons.stars_outlined,
+        activeIcon: Icons.stars_rounded,
+        label: l10n?.credits ?? 'Credits',
+      ),
+      NavbarItem(
+        icon: Icons.settings_outlined,
+        activeIcon: Icons.settings_rounded,
+        label: l10n?.settings ?? 'Settings',
+      ),
+    ];
     
     return Scaffold(
-      backgroundColor: isDark ? AppColors.background : AppColors.backgroundLight,
+      // Omechat dark background: #0B0F1A
+      backgroundColor: isDark ? const Color(0xFF0B0F1A) : AppColors.backgroundLight,
       body: Stack(
         children: [
-          // Background
+          // 1) MANDATORY: Background content FIRST (glass refracts these pixels)
           const AnimatedBackground(
             animate: false,
             child: SizedBox.expand(),
           ),
           
-          // Screen content with PageView for smooth transitions - 120Hz optimized
+          // 2) Screen content with PageView
           PageView(
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(),
+            allowImplicitScrolling: false,
             onPageChanged: (index) {
               setState(() => _currentIndex = index);
             },
             children: _screens,
-            // Optimize for 120Hz
-            allowImplicitScrolling: false,
           ),
           
-          // Bottom dock
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: GlassDock(
-              currentIndex: _currentIndex,
-              onTap: _onTabTap,
-              items: _dockItems,
-            ),
+          // 3) iOS 26-style Liquid Glass Navbar with animated blob
+          LiquidGlassNavbar(
+            currentIndex: _currentIndex,
+            onTap: _onTabTap,
+            items: navbarItems,
           ),
         ],
       ),

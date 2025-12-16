@@ -27,6 +27,9 @@ class User(Base):
     premium_until = Column(DateTime, nullable=True)
     credits = Column(Integer, default=0, nullable=False)
     
+    # User preferences
+    language_code = Column(String(5), default='en', nullable=False)  # ISO 639-1 language code
+    
     # Unlocked features (purchased with credits)
     gender_filter_unlocked = Column(Boolean, default=False, nullable=False)  # 30 credits
     country_filter_unlocked = Column(Boolean, default=False, nullable=False)  # 20 credits

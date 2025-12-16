@@ -10,6 +10,7 @@ import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/buttons.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_client.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
 /// Profile Screen - User profile and statistics
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -33,7 +34,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Profil güncellendi'),
+              content: Text('Profile updated'),
               backgroundColor: AppColors.success,
             ),
           );
@@ -73,7 +74,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             const SizedBox(height: 24),
             SecondaryButton(
-              text: 'Tamam',
+              text: 'OK',
               onPressed: () => Navigator.pop(context),
               width: double.infinity,
             ),
@@ -99,7 +100,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           children: [
             // Title
             Text(
-              'Profil',
+              AppLocalizations.of(context)?.profile ?? 'Profile',
               style: AppTypography.largeTitle(color: context.colors.textColor),
             ),
             
@@ -136,7 +137,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   
                   // Username
                   Text(
-                    isGuest ? 'Misafir' : (user?.username ?? 'Kullanıcı'),
+                    isGuest ? (AppLocalizations.of(context)?.guestMode ?? 'Guest') : (user?.username ?? 'User'),
                     style: AppTypography.title2(color: context.colors.textColor),
                   ),
                   
@@ -152,7 +153,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      isGuest ? 'Misafir' : 'Kayıtlı Üye',
+                      isGuest ? (AppLocalizations.of(context)?.guestMode ?? 'Guest') : 'Registered',
                       style: AppTypography.caption1(
                         color: isGuest ? AppColors.warning : AppColors.success,
                       ),
@@ -163,7 +164,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   
                   // Edit profile button
                   SecondaryButton(
-                    text: 'Profili Düzenle',
+                    text: AppLocalizations.of(context)?.editProfile ?? 'Edit Profile',
                     icon: Icons.edit_rounded,
                     onPressed: _showEditProfileSheet,
                     width: double.infinity,
@@ -194,7 +195,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             style: AppTypography.headline(color: context.colors.textColor),
                           ),
                           Text(
-                            'Yükselt',
+                            'Upgrade',
                             style: AppTypography.caption1(color: AppColors.warning),
                           ),
                         ],
@@ -220,7 +221,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             style: AppTypography.headline(color: context.colors.textColor),
                           ),
                           Text(
-                            'Kredi Al',
+                            'Buy Credits',
                             style: AppTypography.caption1(color: AppColors.success),
                           ),
                         ],
@@ -235,7 +236,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             
             // Statistics
             Text(
-              'İstatistikler',
+              'Statistics',
               style: AppTypography.headline(color: context.colors.textColor),
             ),
             
@@ -247,10 +248,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: _StatCard(
                     icon: Icons.chat_rounded,
                     value: '0',
-                    label: 'Sohbet',
+                    label: 'Chats',
                     onTap: () => _showStatSheet(
-                      'Sohbet Sayısı',
-                      'Toplam gerçekleştirdiğiniz sohbet sayısı. Her yeni eşleşme sayılır.',
+                      'Chat Count',
+                      'Total number of chats you have completed. Each new match counts.',
                     ),
                   ),
                 ),
@@ -259,10 +260,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: _StatCard(
                     icon: Icons.timer_rounded,
                     value: '0',
-                    label: 'Dakika',
+                    label: 'Minutes',
                     onTap: () => _showStatSheet(
-                      'Toplam Süre',
-                      'Toplam sohbet süreniz dakika cinsinden. Aktif bağlantılar sayılır.',
+                      'Total Time',
+                      'Your total chat time in minutes. Active connections count.',
                     ),
                   ),
                 ),
@@ -271,10 +272,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: _StatCard(
                     icon: Icons.people_rounded,
                     value: '0',
-                    label: 'Tanışma',
+                    label: 'Meetings',
                     onTap: () => _showStatSheet(
-                      'Tanışma Sayısı',
-                      'Farklı kişilerle gerçekleştirdiğiniz tanışma sayısı.',
+                      'Meeting Count',
+                      'Number of people you have met so far.',
                     ),
                   ),
                 ),
@@ -285,7 +286,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             
             // Achievements section
             Text(
-              'Başarılar',
+              'Achievements',
               style: AppTypography.headline(color: context.colors.textColor),
             ),
             
@@ -302,12 +303,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Yakında',
+                    'Coming Soon',
                     style: AppTypography.headline(color: context.colors.textColor),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Başarılar sistemi üzerinde çalışıyoruz',
+                    'We are working on the achievements system',
                     style: AppTypography.body(
                       color: context.colors.textSecondaryColor,
                     ),
@@ -395,7 +396,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
   final _usernameController = TextEditingController();
   final _bioController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  String _selectedGender = 'Belirtilmedi';
+  String _selectedGender = 'Not specified';
   File? _selectedImage;
   bool _isLoading = false;
   
@@ -420,7 +421,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fotoğraf seçilirken hata: $e')),
+          SnackBar(content: Text('Error selecting photo: $e')),
         );
       }
     }
@@ -450,7 +451,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               const SizedBox(height: 20),
               ListTile(
                 leading: Icon(Icons.camera_alt_rounded, color: AppColors.primary),
-                title: Text('Kamera', style: AppTypography.body(color: context.colors.textColor)),
+                title: Text('Camera', style: AppTypography.body(color: context.colors.textColor)),
                 onTap: () {
                   Navigator.pop(ctx);
                   _pickImage(ImageSource.camera);
@@ -458,7 +459,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               ),
               ListTile(
                 leading: Icon(Icons.photo_library_rounded, color: AppColors.primary),
-                title: Text('Galeri', style: AppTypography.body(color: context.colors.textColor)),
+                title: Text('Gallery', style: AppTypography.body(color: context.colors.textColor)),
                 onTap: () {
                   Navigator.pop(ctx);
                   _pickImage(ImageSource.gallery);
@@ -467,7 +468,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               if (_selectedImage != null)
                 ListTile(
                   leading: Icon(Icons.delete_outline_rounded, color: AppColors.error),
-                  title: Text('Fotoğrafı Kaldır', style: AppTypography.body(color: AppColors.error)),
+                  title: Text('Remove Photo', style: AppTypography.body(color: AppColors.error)),
                   onTap: () {
                     Navigator.pop(ctx);
                     setState(() => _selectedImage = null);
@@ -512,7 +513,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   // Title
                   Center(
                     child: Text(
-                      'Profili Düzenle',
+                      'Edit Profile',
                       style: AppTypography.title1(color: context.colors.textColor),
                     ),
                   ),
@@ -595,7 +596,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   
                   Center(
                     child: Text(
-                      'Fotoğrafa dokunarak değiştir',
+                      'Tap photo to change',
                       style: AppTypography.caption1(color: context.colors.textMutedColor),
                     ),
                   ),
@@ -605,7 +606,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   // Username Field
                   _buildStyledTextField(
                     controller: _usernameController,
-                    hintText: 'Kullanıcı adı',
+                    hintText: 'Username',
                     icon: Icons.person_outline_rounded,
                     context: context,
                   ),
@@ -615,7 +616,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   // Bio Field
                   _buildStyledTextField(
                     controller: _bioController,
-                    hintText: 'Kendinden bahset...',
+                    hintText: 'Tell us about yourself...',
                     icon: Icons.edit_note_rounded,
                     context: context,
                     maxLines: 3,
@@ -630,7 +631,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   
                   // Save Button
                   PrimaryButton(
-                    text: 'Kaydet',
+                    text: 'Save',
                     icon: Icons.check_rounded,
                     isLoading: _isLoading,
                     onPressed: () async {
@@ -651,7 +652,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   
                   // Cancel Button
                   SecondaryButton(
-                    text: 'İptal',
+                    text: 'Cancel',
                     onPressed: () => Navigator.pop(context),
                     width: double.infinity,
                   ),
@@ -706,15 +707,15 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
           dropdownColor: isDark ? AppColors.surfaceElevated : AppColors.surfaceElevatedLight,
           icon: Icon(Icons.arrow_drop_down_rounded, color: context.colors.textSecondaryColor),
           style: AppTypography.body(color: context.colors.textColor),
-          items: ['Belirtilmedi', 'Erkek', 'Kadın', 'Diğer'].map((String value) {
+          items: ['Not specified', 'Male', 'Female', 'Other'].map((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Row(
                 children: [
                   Icon(
-                    value == 'Erkek' ? Icons.male_rounded :
-                    value == 'Kadın' ? Icons.female_rounded :
-                    value == 'Diğer' ? Icons.transgender_rounded :
+                    value == 'Male' ? Icons.male_rounded :
+                    value == 'Female' ? Icons.female_rounded :
+                    value == 'Other' ? Icons.transgender_rounded :
                     Icons.person_outline_rounded,
                     color: AppColors.primary,
                     size: 20,

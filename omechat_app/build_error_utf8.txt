@@ -1,0 +1,230 @@
+﻿Running Gradle task 'assembleDebug'...                          
+flutter : Warning: Fl
+utter support for you
+r project's Gradle ve
+rsion (8.5.0) will so
+on be dropped. Please
+ upgrade your Gradle 
+version to a version 
+of at least 8.7.0 soo
+n.
+At line:1 char:1
++ flutter build apk -
+-debug > build_error.
+log 2>&1
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Warning   
+ : Flutte...ast 8    
+.7.0 soon.:Strin    g
+) [], RemoteExc    ep
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+Alternatively, use th
+e flag "--android-ski
+p-build-dependency-va
+lidation" to bypass t
+his check.
+
+Potential fix: Your p
+roject's gradle versi
+on is typically defin
+ed in the gradle wrap
+per file. By default,
+ this can be found at
+ C:\Users\gokay\Deskt
+op\Ome\omechat_app\an
+droid/gradle/wrapper/
+gradle-wrapper.proper
+ties. 
+For more information,
+ see https://docs.gra
+dle.org/current/userg
+uide/gradle_wrapper.h
+tml.
+
+Warning: Flutter supp
+ort for your project'
+s Android Gradle Plug
+in version (Android G
+radle Plugin version 
+8.3.0) will soon be d
+ropped. Please upgrad
+e your Android Gradle
+ Plugin version to a 
+version of at least A
+ndroid Gradle Plugin 
+version 8.6.0 soon.
+Alternatively, use th
+e flag "--android-ski
+p-build-dependency-va
+lidation" to bypass t
+his check.
+
+Potential fix: Your p
+roject's AGP version 
+is typically defined 
+in the plugins block 
+of the `settings.grad
+le` file (C:\Users\go
+kay\Desktop\Ome\omech
+at_app\android/settin
+gs.gradle), by a plug
+in with the id of com
+.android.application.
+ 
+If you don't see a pl
+ugins block, your pro
+ject was likely creat
+ed with an older temp
+late version. In this
+ case it is most like
+ly defined in the top
+-level build.gradle f
+ile (C:\Users\gokay\D
+esktop\Ome\omechat_ap
+p\android/build.gradl
+e) by the following l
+ine in the dependenci
+es block of the build
+script: "classpath 'c
+om.android.tools.buil
+d:gradle:<version>'".
+
+Warning: Flutter supp
+ort for your project'
+s Kotlin version (1.9
+.0) will soon be drop
+ped. Please upgrade y
+our Kotlin version to
+ a version of at leas
+t 2.1.0 soon.
+Alternatively, use th
+e flag "--android-ski
+p-build-dependency-va
+lidation" to bypass t
+his check.
+
+Potential fix: Your p
+roject's KGP version 
+is typically defined 
+in the plugins block 
+of the `settings.grad
+le` file (C:\Users\go
+kay\Desktop\Ome\omech
+at_app\android/settin
+gs.gradle), by a plug
+in with the id of org
+.jetbrains.kotlin.and
+roid. 
+If you don't see a pl
+ugins block, your pro
+ject was likely creat
+ed with an older temp
+late version, in whic
+h case it is most lik
+ely defined in the to
+p-level build.gradle 
+file (C:\Users\gokay\
+Desktop\Ome\omechat_a
+pp\android/build.grad
+le) by the ext.kotlin
+_version property.
+
+warning: [options] so
+urce value 8 is obsol
+ete and will be remov
+ed in a future releas
+e
+warning: [options] ta
+rget value 8 is obsol
+ete and will be remov
+ed in a future releas
+e
+warning: [options] To
+ suppress warnings ab
+out obsolete options,
+ use -Xlint:-options.
+C:\Users\gokay\AppDat
+a\Local\Pub\Cache\hos
+ted\pub.dev\flutter_w
+ebrtc-0.9.48+hotfix.1
+\android\src\main\jav
+a\com\cloudwebrtc\web
+rtc\FlutterWebRTCPlug
+in.java:25: error: ca
+nnot find symbol
+import io.flutter.plu
+gin.common.PluginRegi
+stry.Registrar;
+                     
+                     
+    ^
+  symbol:   class Reg
+istrar
+  location: interface
+ PluginRegistry
+C:\Users\gokay\AppDat
+a\Local\Pub\Cache\hos
+ted\pub.dev\flutter_w
+ebrtc-0.9.48+hotfix.1
+\android\src\main\jav
+a\com\cloudwebrtc\web
+rtc\FlutterWebRTCPlug
+in.java:49: error: ca
+nnot find symbol
+    public static voi
+d registerWith(Regist
+rar registrar) {
+                     
+               ^
+  symbol:   class Reg
+istrar
+  location: class Flu
+tterWebRTCPlugin
+Note: Some input file
+s use or override a d
+eprecated API.
+Note: Recompile with 
+-Xlint:deprecation fo
+r details.
+Note: Some input file
+s use unchecked or un
+safe operations.
+Note: Recompile with 
+-Xlint:unchecked for 
+details.
+2 errors
+3 warnings
+
+FAILURE: Build failed
+ with an exception.
+
+* What went wrong:
+Execution failed for 
+task ':flutter_webrtc
+:compileDebugJavaWith
+Javac'.
+> Compilation failed;
+ see the compiler err
+or output for details
+.
+
+* Try:
+> Run with --info opt
+ion to get more log o
+utput.
+> Run with --scan to 
+get full insights.
+
+BU´┐¢LD FAILED in 16s
+Running Gradle task 'assembleDebug'...                             17,4s
+Gradle task assembleD
+ebug failed with exit
+ code 1

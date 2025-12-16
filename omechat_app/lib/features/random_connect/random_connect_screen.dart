@@ -15,6 +15,7 @@ import '../../services/features_service.dart';
 import '../../services/api_client.dart';
 import '../../services/websocket_client.dart';
 import '../video_chat/video_chat_screen.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
 /// Random Connect Screen - Full-featured Omegle-style matching hub
 class RandomConnectScreen extends ConsumerStatefulWidget {
@@ -34,9 +35,9 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
   late Animation<double> _bgAnimation;
   late Animation<double> _pulseAnimation;
   
-  // Filter states
-  String _selectedGender = 'Herkes';
-  String _selectedCountry = 'Tüm Dünya';
+  // Filter states (will be replaced with l10n values in build)
+  String _selectedGender = 'everyone';
+  String _selectedCountry = 'worldwide';
   String _selectedChatMode = 'video';
   final Set<String> _selectedInterests = {};
   
@@ -53,9 +54,9 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
   
   // Available interests
   final List<String> _availableInterests = [
-    'Müzik', 'Oyun', 'Spor', 'Film', 'Teknoloji', 
-    'Seyahat', 'Yemek', 'Sanat', 'Kitap', 'Moda',
-    'Fitness', 'Fotoğraf', 'Dans', 'Komedi', 'Bilim'
+    'Music', 'Gaming', 'Sports', 'Movies', 'Technology', 
+    'Travel', 'Food', 'Art', 'Books', 'Fashion',
+    'Fitness', 'Photography', 'Dance', 'Comedy', 'Science'
   ];
 
   @override
@@ -361,9 +362,9 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Keşfet', style: AppTypography.largeTitle(color: context.colors.textColor)),
+                Text(AppLocalizations.of(context)?.discover ?? 'Discover', style: AppTypography.largeTitle(color: context.colors.textColor)),
                 const SizedBox(height: 4),
-                Text('Yeni insanlarla tanış', style: AppTypography.footnote(color: context.colors.textSecondaryColor)),
+                Text(AppLocalizations.of(context)?.findPartner ?? 'Meet new people', style: AppTypography.footnote(color: context.colors.textSecondaryColor)),
               ],
             ),
           ),
@@ -389,7 +390,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
                   children: [
                     Icon(Icons.login_rounded, color: context.colors.textColor, size: 16),
                     const SizedBox(width: 6),
-                    Text('Giriş Yap', style: AppTypography.caption1(color: context.colors.textColor)),
+                    Text(AppLocalizations.of(context)?.login ?? 'Login', style: AppTypography.caption1(color: context.colors.textColor)),
                   ],
                 ),
               ),
@@ -432,13 +433,13 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            _buildStatItem(Icons.chat_bubble_rounded, '$_totalChats', 'Sohbet', AppColors.primary),
+            _buildStatItem(Icons.chat_bubble_rounded, '$_totalChats', AppLocalizations.of(context)?.chat ?? 'Chat', AppColors.primary),
             _buildStatDivider(),
-            _buildStatItem(Icons.timer_rounded, '$_totalMinutes', 'Dakika', AppColors.success),
+            _buildStatItem(Icons.timer_rounded, '$_totalMinutes', 'min', AppColors.success),
             _buildStatDivider(),
-            _buildStatItem(Icons.local_fire_department_rounded, '$_streakDays', 'Seri', AppColors.warning),
+            _buildStatItem(Icons.local_fire_department_rounded, '$_streakDays', 'Streak', AppColors.warning),
             _buildStatDivider(),
-            _buildStatItem(Icons.favorite_rounded, '23', 'Beğeni', AppColors.error),
+            _buildStatItem(Icons.favorite_rounded, '23', 'Likes', AppColors.error),
           ],
         ),
       ),
@@ -493,31 +494,31 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
                     size: 44,
                   ),
                   const SizedBox(height: 4),
-                  Text('BAŞLAT', style: AppTypography.caption1(color: context.colors.textColor)),
+                  Text(AppLocalizations.of(context)?.startMatching?.toUpperCase() ?? 'START', style: AppTypography.caption1(color: context.colors.textColor)),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            _selectedChatMode == 'video' ? 'Görüntülü Sohbet' : 
-            _selectedChatMode == 'text' ? 'Yazılı Sohbet' : 'Sesli Sohbet',
+            _selectedChatMode == 'video' ? (AppLocalizations.of(context)?.videoChat ?? 'Video Chat') : 
+            _selectedChatMode == 'text' ? (AppLocalizations.of(context)?.textChat ?? 'Text Chat') : (AppLocalizations.of(context)?.voiceChat ?? 'Voice Chat'),
             style: AppTypography.title3(color: context.colors.textColor),
           ),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (_selectedGender != 'Herkes') ...[
+              if (_selectedGender != 'everyone') ...[
                 _buildActiveFilter(_selectedGender, Icons.person_rounded),
                 const SizedBox(width: 8),
               ],
-              if (_selectedCountry != 'Tüm Dünya') ...[
+              if (_selectedCountry != 'worldwide') ...[
                 _buildActiveFilter(_selectedCountry, Icons.public_rounded),
                 const SizedBox(width: 8),
               ],
               if (_selectedInterests.isNotEmpty)
-                _buildActiveFilter('${_selectedInterests.length} İlgi', Icons.interests_rounded),
+                _buildActiveFilter('${_selectedInterests.length} ${AppLocalizations.of(context)?.interests ?? "Interests"}', Icons.interests_rounded),
             ],
           ),
         ],
@@ -553,7 +554,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             children: [
               Icon(Icons.tune_rounded, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
-              Text('FİLTRELER', style: AppTypography.caption1(color: context.colors.textMutedColor)),
+              Text(AppLocalizations.of(context)?.filters?.toUpperCase() ?? 'FILTERS', style: AppTypography.caption1(color: context.colors.textMutedColor)),
             ],
           ),
           const SizedBox(height: 12),
@@ -584,7 +585,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
               children: [
                 Icon(Icons.wc_rounded, color: AppColors.primary, size: 16),
                 const SizedBox(width: 6),
-                Text('Cinsiyet', style: AppTypography.caption1(color: context.colors.textSecondaryColor)),
+                Text(AppLocalizations.of(context)?.gender ?? 'Gender', style: AppTypography.caption1(color: context.colors.textSecondaryColor)),
                 const Spacer(),
                 if (!canUseGenderFilter)
                   Container(
@@ -614,8 +615,8 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
               child: Row(
                 children: [
                   Icon(
-                    _selectedGender == 'Kadın' ? Icons.female_rounded : 
-                    _selectedGender == 'Erkek' ? Icons.male_rounded : Icons.people_rounded,
+                    _selectedGender == 'female' ? Icons.female_rounded : 
+                    _selectedGender == 'male' ? Icons.male_rounded : Icons.people_rounded,
                     color: AppColors.primary,
                     size: 18,
                   ),
@@ -634,10 +635,11 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
   }
 
   void _showGenderPicker(bool canUseGenderFilter) {
+    final l10n = AppLocalizations.of(context);
     final genders = [
-      ('Herkes', Icons.people_rounded, false),
-      ('Kadın', Icons.female_rounded, true),
-      ('Erkek', Icons.male_rounded, true),
+      ('everyone', l10n?.everyone ?? 'Everyone', Icons.people_rounded, false),
+      ('female', l10n?.female ?? 'Female', Icons.female_rounded, true),
+      ('male', l10n?.male ?? 'Male', Icons.male_rounded, true),
     ];
     
     showModalBottomSheet(
@@ -645,22 +647,22 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (ctx) => _GlassBottomSheet(
-        title: 'Cinsiyet Seç',
+        title: l10n?.selectGender ?? 'Select Gender',
         icon: Icons.wc_rounded,
         children: genders.map((gender) {
           final isSelected = _selectedGender == gender.$1;
-          final needsUnlock = gender.$3 && !canUseGenderFilter;
+          final needsUnlock = gender.$4 && !canUseGenderFilter;
           
           return _GlassOptionTile(
-            icon: gender.$2,
-            title: gender.$1,
+            icon: gender.$3,
+            title: gender.$2,
             isSelected: isSelected,
             isLocked: needsUnlock,
             lockCost: 30,
             onTap: () {
               Navigator.pop(ctx);
               if (needsUnlock) {
-                _showUnlockDialog('gender_filter', 'Cinsiyet Filtresi', FeatureCosts.genderFilter);
+                _showUnlockDialog('gender_filter', l10n?.gender ?? 'Gender Filter', FeatureCosts.genderFilter);
               } else {
                 setState(() => _selectedGender = gender.$1);
               }
@@ -686,7 +688,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
               children: [
                 Icon(Icons.public_rounded, color: AppColors.primary, size: 16),
                 const SizedBox(width: 6),
-                Text('Ülke', style: AppTypography.caption1(color: context.colors.textSecondaryColor)),
+                Text(AppLocalizations.of(context)?.country ?? 'Country', style: AppTypography.caption1(color: context.colors.textSecondaryColor)),
                 const Spacer(),
                 if (!canUseCountryFilter)
                   Container(
@@ -805,12 +807,12 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             children: [
               Icon(Icons.interests_rounded, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
-              Text('İLGİ ALANLARI', style: AppTypography.caption1(color: context.colors.textMutedColor)),
+              Text(AppLocalizations.of(context)?.interests?.toUpperCase() ?? 'INTERESTS', style: AppTypography.caption1(color: context.colors.textMutedColor)),
               const Spacer(),
               if (_selectedInterests.isNotEmpty)
                 GestureDetector(
                   onTap: () => setState(() => _selectedInterests.clear()),
-                  child: Text('Temizle', style: AppTypography.caption1(color: AppColors.primary)),
+                  child: Text(AppLocalizations.of(context)?.clearAll ?? 'Clear', style: AppTypography.caption1(color: AppColors.primary)),
                 ),
             ],
           ),
@@ -831,7 +833,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('En fazla 5 ilgi alanı seçebilirsiniz'),
+                          content: Text('Max 5 interests allowed'),
                           backgroundColor: AppColors.warning,
                         ),
                       );
@@ -858,7 +860,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
           if (_selectedInterests.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
-              'Seçilen ilgi alanlarına göre eşleşme yapılacak',
+              'Matching based on selected interests',
               style: AppTypography.caption2(color: AppColors.success),
             ),
           ],
@@ -877,7 +879,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             children: [
               Icon(Icons.switch_video_rounded, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
-              Text('SOHBET MODU', style: AppTypography.caption1(color: context.colors.textMutedColor)),
+              Text(AppLocalizations.of(context)?.chatMode?.toUpperCase() ?? 'CHAT MODE', style: AppTypography.caption1(color: context.colors.textMutedColor)),
             ],
           ),
           const SizedBox(height: 12),
@@ -885,9 +887,9 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             padding: const EdgeInsets.all(6),
             child: Row(
               children: [
-                _buildModeOption('video', Icons.videocam_rounded, 'Video'),
-                _buildModeOption('text', Icons.chat_rounded, 'Yazı'),
-                _buildModeOption('voice', Icons.mic_rounded, 'Ses'),
+                _buildModeOption('video', Icons.videocam_rounded, AppLocalizations.of(context)?.videoChatMode ?? 'Video'),
+                _buildModeOption('text', Icons.chat_rounded, AppLocalizations.of(context)?.textChatMode ?? 'Text'),
+                _buildModeOption('voice', Icons.mic_rounded, AppLocalizations.of(context)?.voiceChatMode ?? 'Voice'),
               ],
             ),
           ),
@@ -933,7 +935,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             children: [
               Icon(Icons.flash_on_rounded, color: AppColors.primary, size: 20),
               const SizedBox(width: 8),
-              Text('HIZLI İŞLEMLER', style: AppTypography.caption1(color: context.colors.textMutedColor)),
+              Text(AppLocalizations.of(context)?.quickActions?.toUpperCase() ?? 'QUICK ACTIONS', style: AppTypography.caption1(color: context.colors.textMutedColor)),
             ],
           ),
           const SizedBox(height: 12),
@@ -942,8 +944,8 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
               Expanded(
                 child: _buildQuickActionCard(
                   icon: Icons.speed_rounded,
-                  title: 'Hızlı Eşleşme',
-                  subtitle: '15 sn sohbet',
+                  title: 'Speed Match',
+                  subtitle: '15 sec chat',
                   color: AppColors.warning,
                   onTap: () {
                     // TODO: Speed dating mode
@@ -954,12 +956,12 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
               Expanded(
                 child: _buildQuickActionCard(
                   icon: Icons.group_rounded,
-                  title: 'Grup Sohbet',
-                  subtitle: '3+ kişi',
+                  title: 'Group Chat',
+                  subtitle: '3+ people',
                   color: AppColors.success,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Yakında!'), backgroundColor: AppColors.primary),
+                      SnackBar(content: Text('Coming soon!'), backgroundColor: AppColors.primary),
                     );
                   },
                 ),
@@ -1045,9 +1047,9 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Premium\'a Geç', style: AppTypography.headline(color: context.colors.textColor)),
+                    Text(AppLocalizations.of(context)?.getPremium ?? 'Get Premium', style: AppTypography.headline(color: context.colors.textColor)),
                     Text(
-                      'Sınırsız filtre, reklamsız, HD kalite',
+                      AppLocalizations.of(context)?.premiumDescription ?? 'Unlimited filters, no ads, HD quality',
                       style: AppTypography.caption1(color: context.colors.textSecondaryColor),
                     ),
                   ],
@@ -1078,7 +1080,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
                 ),
               ),
               const SizedBox(width: 8),
-              Text('CANLI AKTİVİTE', style: AppTypography.caption1(color: AppColors.textMuted)),
+              Text(AppLocalizations.of(context)?.liveActivity?.toUpperCase() ?? 'LIVE ACTIVITY', style: AppTypography.caption1(color: AppColors.textMuted)),
             ],
           ),
           const SizedBox(height: 12),
@@ -1086,11 +1088,11 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildActivityItem('Türkiye\'den 2 kişi eşleşti', '1 dk önce', Icons.favorite_rounded, AppColors.error),
+                _buildActivityItem('2 people matched from Turkey', '1 min ago', Icons.favorite_rounded, AppColors.error),
                 const SizedBox(height: 12),
-                _buildActivityItem('12 yeni kullanıcı katıldı', '3 dk önce', Icons.person_add_rounded, AppColors.success),
+                _buildActivityItem('12 new users joined', '3 min ago', Icons.person_add_rounded, AppColors.success),
                 const SizedBox(height: 12),
-                _buildActivityItem('Toplam 156 aktif sohbet', 'Şu an', Icons.chat_bubble_rounded, AppColors.primary),
+                _buildActivityItem('156 active chats right now', 'Now', Icons.chat_bubble_rounded, AppColors.primary),
               ],
             ),
           ),
@@ -1121,10 +1123,11 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
   }
 
   Widget _buildSafetyTips() {
+    final l10n = AppLocalizations.of(context);
     final tips = [
-      ('Kişisel bilgilerinizi paylaşmayın', Icons.security_rounded),
-      ('Uygunsuz içerik görürseniz bildirin', Icons.flag_rounded),
-      ('Güvenliğiniz için kameranızı kapatabilirsiniz', Icons.videocam_off_rounded),
+      (l10n?.safetyTip1 ?? 'Never share personal information', Icons.security_rounded),
+      (l10n?.safetyTip2 ?? 'Report inappropriate behavior', Icons.flag_rounded),
+      ('You can turn off your camera for safety', Icons.videocam_off_rounded),
     ];
     
     return Padding(
@@ -1136,7 +1139,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             children: [
               Icon(Icons.shield_rounded, color: AppColors.success, size: 20),
               const SizedBox(width: 8),
-              Text('GÜVENLİK İPUÇLARI', style: AppTypography.caption1(color: AppColors.textMuted)),
+              Text(l10n?.safetyTips?.toUpperCase() ?? 'SAFETY TIPS', style: AppTypography.caption1(color: AppColors.textMuted)),
             ],
           ),
           const SizedBox(height: 12),

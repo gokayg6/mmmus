@@ -16,6 +16,7 @@ import '../../services/api_client.dart';
 import 'package:dio/dio.dart';
 import '../chat_detail/chat_detail_screen.dart';
 import 'friend_requests_modal.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
 /// Chat List Screen - Uses ChatRepository for real data
 class ChatListScreen extends ConsumerStatefulWidget {
@@ -59,7 +60,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
               child: Row(
                 children: [
                   Text(
-                    'Mesajlar',
+                    AppLocalizations.of(context)?.messages ?? 'Messages',
                     style: AppTypography.largeTitle(
                       color: context.colors.textColor,
                     ),
@@ -109,7 +110,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                       child: TextField(
                         style: AppTypography.body(color: context.colors.textColor),
                         decoration: InputDecoration(
-                          hintText: 'Sohbet ara...',
+                          hintText: AppLocalizations.of(context)?.searchChat ?? 'Search chat...',
                           hintStyle: AppTypography.body(
                             color: context.colors.textMutedColor,
                           ),
@@ -140,7 +141,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Henüz sohbet yok',
+                            AppLocalizations.of(context)?.noMessages ?? 'No chats yet',
                             style: AppTypography.headline(color: context.colors.textMutedColor),
                           ),
                         ],
@@ -170,13 +171,13 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
     final apiClient = ref.read(apiClientProvider);
     final isLoggedIn = apiClient.accessToken != null;
     
-    String errorMessage = 'Bir hata oluştu';
+    String errorMessage = 'An error occurred';
     if (!isLoggedIn) {
-      errorMessage = 'Sohbetleri görüntülemek için giriş yapın';
+      errorMessage = 'Please log in to view chats';
     } else if (error.toString().contains('400') || error.toString().contains('401')) {
-      errorMessage = 'Oturum geçersiz. Lütfen tekrar giriş yapın.';
+      errorMessage = 'Session invalid. Please log in again.';
     } else {
-      errorMessage = 'Hata: ${error.toString()}';
+      errorMessage = 'Error: ${error.toString()}';
     }
     
     return Center(
@@ -200,7 +201,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
           const SizedBox(height: 8),
           TextButton(
             onPressed: _onRefresh,
-            child: Text('Tekrar dene', style: AppTypography.body(color: AppColors.primary)),
+            child: Text('Try again', style: AppTypography.body(color: AppColors.primary)),
           ),
         ],
       ),
@@ -220,12 +221,12 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Henüz sohbet yok',
+              'No chats yet',
               style: AppTypography.headline(color: context.colors.textSecondaryColor),
             ),
             const SizedBox(height: 8),
             Text(
-              'Keşfet sekmesinden yeni insanlarla tanış!',
+              'Meet new people from the Discover tab!',
               style: AppTypography.body(color: context.colors.textMutedColor),
             ),
           ],
@@ -287,12 +288,12 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Yeni Sohbet', style: AppTypography.headline(color: context.colors.textColor)),
+            Text('New Chat', style: AppTypography.headline(color: context.colors.textColor)),
             const SizedBox(height: 24),
             _OptionTile(
               icon: Icons.person_add_rounded,
-              title: 'Arkadaş Ekle',
-              subtitle: 'Kullanıcı adı ile ekle',
+              title: 'Add Friend',
+              subtitle: 'Add by username',
               onTap: () {
                 Navigator.pop(context);
                 _showAddFriendDialog(context);
@@ -301,8 +302,8 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
             const SizedBox(height: 16),
             _OptionTile(
               icon: Icons.chat_bubble_outline_rounded,
-              title: 'Arkadaşlarınla Sohbet',
-              subtitle: 'Arkadaş listenden seç',
+              title: 'Chat with Friends',
+              subtitle: 'Select from friend list',
               onTap: () {
                 Navigator.pop(context);
                 _showFriendsList(context);
@@ -342,10 +343,10 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                   child: const Icon(Icons.person_add_rounded, color: AppColors.primary, size: 32),
                 ),
                 const SizedBox(height: 20),
-                Text('Arkadaş Ekle', style: AppTypography.headline(color: Colors.white)),
+                Text('Add Friend', style: AppTypography.headline(color: Colors.white)),
                 const SizedBox(height: 8),
                 Text(
-                  'Kullanıcı adı girerek arkadaşlık isteği gönder.',
+                  'Send a friend request by entering username.',
                   style: AppTypography.body(color: Colors.white70),
                   textAlign: TextAlign.center,
                 ),
@@ -364,7 +365,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                     style: const TextStyle(color: Colors.white),
                     cursorColor: AppColors.primary,
                     decoration: const InputDecoration(
-                      hintText: 'Kullanıcı adı...',
+                      hintText: 'Username...',
                       hintStyle: TextStyle(color: Colors.white30),
                       border: InputBorder.none,
                       icon: Icon(Icons.search_rounded, color: Colors.white30),
@@ -383,7 +384,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),
-                        child: const Text('İptal', style: TextStyle(color: Colors.white60)),
+                        child: const Text('Cancel', style: TextStyle(color: Colors.white60)),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -409,17 +410,17 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                               if (context.mounted) {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Arkadaşlık isteği gönderildi!')),
+                                  const SnackBar(content: Text('Friend request sent!')),
                                 );
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                String errorMessage = 'Bir hata oluştu';
+                                String errorMessage = 'An error occurred';
                                 if (e is DioException) {
                                    if (e.response?.data != null && e.response!.data is Map) {
-                                      errorMessage = e.response!.data['detail'] ?? e.message ?? 'Bilinmeyen hata';
+                                      errorMessage = e.response!.data['detail'] ?? e.message ?? 'Unknown error';
                                    } else {
-                                      errorMessage = e.message ?? 'Sunucu hatası';
+                                      errorMessage = e.message ?? 'Server error';
                                    }
                                 } else {
                                   errorMessage = e.toString();
@@ -440,7 +441,7 @@ class _ChatListScreenState extends ConsumerState<ChatListScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           ),
-                          child: const Text('Ekle', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          child: const Text('Add', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ),

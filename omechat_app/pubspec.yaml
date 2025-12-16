@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   
   # State Management
   flutter_riverpod: ^2.4.9
@@ -19,7 +22,7 @@ dependencies:
   web_socket_channel: ^2.4.0
   
   # WebRTC
-  flutter_webrtc: ^0.9.47
+  flutter_webrtc: ^1.2.1
   
   # UI Components
   cupertino_icons: ^1.0.6
@@ -37,6 +40,8 @@ dependencies:
   connectivity_plus: ^5.0.2
   image_picker: ^1.0.7
   
+  # Liquid Glass Effect (Impeller only - iOS/Android)
+  liquid_glass_renderer: ^0.2.0-dev.4
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +53,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.13.1
 
 flutter:
+  generate: true
   uses-material-design: true
   
   assets:

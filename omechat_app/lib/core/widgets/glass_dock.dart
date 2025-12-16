@@ -182,6 +182,9 @@ class _DockItemWidgetState extends State<_DockItemWidget>
 
   @override
   Widget build(BuildContext context) {
+    // Radius adjusted to be concentric with navbar (24 - padding ~4 = 20)
+    final borderRadius = BorderRadius.circular(20);
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -210,72 +213,88 @@ class _DockItemWidgetState extends State<_DockItemWidget>
           },
           child: AnimatedContainer(
             duration: AppTheme.durationFast,
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
             margin: const EdgeInsets.symmetric(horizontal: 2),
+            // Padding moved inside to allow glass background to fill
             decoration: BoxDecoration(
-              color: widget.isSelected
-                  ? AppColors.primary.withOpacity(widget.isDarkMode ? 0.15 : 0.12)
-                  : (_isHovered || _isPressed)
-                      ? AppColors.primary.withOpacity(widget.isDarkMode ? 0.08 : 0.06)
-                      : Colors.transparent,
-              borderRadius: BorderRadius.circular(21),
+              borderRadius: borderRadius,
               border: widget.isSelected ? Border.all(
                 color: AppColors.primary.withOpacity(widget.isDarkMode ? 0.3 : 0.25),
                 width: 1,
               ) : null,
+              // No color here, handled inside for glass effect
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Icon with glow
-                AnimatedContainer(
-                  duration: AppTheme.durationNormal,
-                  curve: AppTheme.curveSpring,
-                  transform: Matrix4.identity()
-                    ..scale(widget.isSelected ? 1.1 : 1.0),
-                  transformAlignment: Alignment.center,
-                  child: Stack(
-                    alignment: Alignment.center,
+            child: ClipRRect(
+              borderRadius: borderRadius,
+              child: BackdropFilter(
+                // Only blur when selected to avoid performance hit and visual noise
+                filter: ImageFilter.blur(
+                  sigmaX: widget.isSelected ? 8.0 : 0.0,
+                  sigmaY: widget.isSelected ? 8.0 : 0.0,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                  decoration: BoxDecoration(
+                    color: widget.isSelected
+                        ? AppColors.primary.withOpacity(widget.isDarkMode ? 0.15 : 0.12)
+                        : (_isHovered || _isPressed)
+                            ? AppColors.primary.withOpacity(widget.isDarkMode ? 0.08 : 0.06)
+                            : Colors.transparent,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Glow effect for selected item
-                      if (widget.isSelected)
-                        Container(
-                          width: 28,
-                          height: 28,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(widget.isDarkMode ? 0.6 : 0.4),
-                                blurRadius: 14,
-                                spreadRadius: 3,
+                      // Icon with glow
+                      AnimatedContainer(
+                        duration: AppTheme.durationNormal,
+                        curve: AppTheme.curveSpring,
+                        transform: Matrix4.identity()
+                          ..scale(widget.isSelected ? 1.1 : 1.0),
+                        transformAlignment: Alignment.center,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Glow effect for selected item
+                            if (widget.isSelected)
+                              Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primary.withOpacity(widget.isDarkMode ? 0.6 : 0.4),
+                                      blurRadius: 14,
+                                      spreadRadius: 3,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                            Icon(
+                              widget.isSelected 
+                                  ? (widget.item.activeIcon ?? widget.item.icon)
+                                  : widget.item.icon,
+                              size: 22,
+                              color: _getIconColor(),
+                            ),
+                          ],
                         ),
-                      Icon(
-                        widget.isSelected 
-                            ? (widget.item.activeIcon ?? widget.item.icon)
-                            : widget.item.icon,
-                        size: 22,
-                        color: _getIconColor(),
+                      ),
+                      
+                      const SizedBox(height: 2),
+                      
+                      // Label
+                      AnimatedDefaultTextStyle(
+                        duration: AppTheme.durationNormal,
+                        style: AppTypography.tabLabel(
+                          color: _getLabelColor(),
+                        ),
+                        child: Text(widget.item.label),
                       ),
                     ],
                   ),
                 ),
-                
-                const SizedBox(height: 2),
-                
-                // Label
-                AnimatedDefaultTextStyle(
-                  duration: AppTheme.durationNormal,
-                  style: AppTypography.tabLabel(
-                    color: _getLabelColor(),
-                  ),
-                  child: Text(widget.item.label),
-                ),
-              ],
+              ),
             ),
           ),
         ),

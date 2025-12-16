@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
 
 /// OmeChat Gradient System
 /// All gradients use warm orange tones - NO blue
@@ -146,6 +145,20 @@ class AppGradients {
       Color(0x1AFFFFFF),
       Color(0x0DFFFFFF),
     ],
+  );
+  
+  /// Liquid blob shimmer (animated during movement)
+  /// Used for light refraction simulation in iOS 26-style liquid glass
+  static LinearGradient liquidShimmer(double angle) => LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: const [
+      Color(0x33FFFFFF),
+      Color(0x1AFFFFFF),
+      Color(0x0DFFFFFF),
+    ],
+    stops: const [0.0, 0.5, 1.0],
+    transform: GradientRotation(angle),
   );
 
   // ═══════════════════════════════════════════════════════════

@@ -9,6 +9,9 @@ import 'core/theme/app_colors.dart';
 import 'core/routing/app_router.dart';
 import 'services/storage_service.dart';
 import 'providers/theme_provider.dart';
+import 'providers/language_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,17 +48,44 @@ void main() async {
 }
 
 /// OmeChat Application - Dark Orange Theme with Light Mode Support
-class OmeChatApp extends ConsumerWidget {
-  const OmeChatApp({super.key});
+class OmeChatApp extends ConsumerStatefulWidget {
+  const OmeChatApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<OmeChatApp> createState() => _OmeChatAppState();
+}
+
+class _OmeChatAppState extends ConsumerState<OmeChatApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize language on app startup
+    Future.microtask(() {
+      ref.read(languageProvider.notifier).initializeLanguage();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Watch theme mode from provider
     final themeMode = ref.watch(themeProvider);
     
     return MaterialApp(
       title: 'OmeChat',
       debugShowCheckedModeBanner: false,
+      
+      // Locale and localization
+      locale: ref.watch(languageProvider).locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('tr'),
+      ],
       
       // Theme with light mode support
       theme: AppTheme.lightTheme,

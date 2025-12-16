@@ -87,3 +87,6 @@ Background: Queue for API sync
 - **After**: < 200ms (immediate emit)
 - **Improvement**: 5x faster
 
+
+
+

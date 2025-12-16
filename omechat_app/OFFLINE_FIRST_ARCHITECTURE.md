@@ -329,3 +329,6 @@ final result = await repository.sendMessage(conversationId, content, currentUser
 
 **NO ERROR CAN BREAK THIS APP** ✅
 
+
+
+
