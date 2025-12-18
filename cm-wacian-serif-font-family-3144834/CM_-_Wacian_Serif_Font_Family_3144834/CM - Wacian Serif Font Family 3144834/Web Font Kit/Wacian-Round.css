@@ -1,0 +1,12 @@
+/* Webfont: Wacian-Round */@font-face {
+    font-family: 'WacianRound';
+    src: url('Wacian-Round.eot'); /* IE9 Compat Modes */
+    src: url('Wacian-Round.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('Wacian-Round.woff') format('woff'), /* Modern Browsers */
+         url('Wacian-Round.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('Wacian-Round.svg#Wacian-Round') format('svg'); /* Legacy iOS */
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

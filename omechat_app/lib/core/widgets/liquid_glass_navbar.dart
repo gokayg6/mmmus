@@ -52,7 +52,7 @@ class _LiquidGlassNavbarState extends State<LiquidGlassNavbar>
   double _blobScaleFactor = 1.0; // New: blob scale during transition
   bool _isDragging = false;
   
-  // Blob dimensions (iOS 26 accurate proportions)
+
   static const double _blobBaseWidth = 70.0;  // 64-76px range
   static const double _blobBaseHeight = 45.0; // 42-48px range
   static const double _navbarHeight = 56.0;
@@ -66,13 +66,14 @@ class _LiquidGlassNavbarState extends State<LiquidGlassNavbar>
     
     // Movement animation controller (tab change)
     _moveController = AnimationController(
-      duration: const Duration(milliseconds: 550),
+      duration: const Duration(milliseconds: 350),
       vsync: this,
     );
     
     // Shimmer animation (light refraction during movement)
     _shimmerController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      // Synced with movement for unified feel
+      duration: const Duration(milliseconds: 350),
       vsync: this,
     );
     
@@ -91,7 +92,8 @@ class _LiquidGlassNavbarState extends State<LiquidGlassNavbar>
     
     // White glow animation (during tab change)
     _glowController = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 200),
+      reverseDuration: const Duration(milliseconds: 150), // Faster fade out
       vsync: this,
     );
     _glowAnimation = Tween<double>(
@@ -339,13 +341,14 @@ class _LiquidGlassNavbarState extends State<LiquidGlassNavbar>
     
     // Movement-based glow intensity (fades when motion stops)
     final isMoving = _moveController.isAnimating || _isDragging;
-    final glowIntensity = isMoving ? (1.0 + _movementVelocity * 0.3).clamp(1.0, 1.6) : 0.0;
+    // velocity-based only, no artificial "1.0" floor to prevent lingering during ease-out tail
+    final glowIntensity = isMoving ? (_movementVelocity * 0.8).clamp(0.0, 1.6) : 0.0;
     
     return LiquidGlassLayer(
       settings: LiquidGlassSettings(
         thickness: 12, // Increased for more glass depth
         glassColor: const Color(0x14FFFFFF), // 8% tint - true glass-liquid (not flat)
-        lightIntensity: 1.0 + (glowIntensity * 0.4), // Boost during movement
+        lightIntensity: 1.0 + (glowIntensity * 0.5), // Boost during movement
       ),
       child: LiquidGlassBlendGroup(
         blend: 42, // Blend intensity (35-50 range)
@@ -355,7 +358,7 @@ class _LiquidGlassNavbarState extends State<LiquidGlassNavbar>
             AnimatedPositioned(
               duration: _isDragging 
                   ? Duration.zero 
-                  : const Duration(milliseconds: 550),
+                  : const Duration(milliseconds: 350),
               curve: Curves.easeOutExpo,
               left: _blobCenterX - (blobWidth / 2),
               top: (_navbarHeight - blobHeight) / 2, // Perfect vertical center

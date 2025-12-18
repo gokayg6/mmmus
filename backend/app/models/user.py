@@ -30,6 +30,12 @@ class User(Base):
     # User preferences
     language_code = Column(String(5), default='en', nullable=False)  # ISO 639-1 language code
     
+    # Profile fields (Real-time updates)
+    bio = Column(String(500), nullable=True)
+    gender = Column(String(20), nullable=True)
+    birthdate = Column(DateTime, nullable=True)
+    location = Column(String(100), nullable=True)
+    
     # Unlocked features (purchased with credits)
     gender_filter_unlocked = Column(Boolean, default=False, nullable=False)  # 30 credits
     country_filter_unlocked = Column(Boolean, default=False, nullable=False)  # 20 credits
@@ -43,9 +49,7 @@ class User(Base):
     is_banned = Column(Boolean, default=False, nullable=False)
 
     # Relationships
-
-    
-
+    points_history = relationship("PointsHistory", back_populates="user", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<User {self.email} ({self.username})>"

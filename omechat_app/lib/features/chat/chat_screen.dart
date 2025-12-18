@@ -11,6 +11,10 @@ import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/buttons.dart';
 import '../../core/widgets/online_count_badge.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/haptics/haptic_engine.dart';
+import 'widgets/glass_message_bubble.dart';
+import 'widgets/liquid_input_bar.dart';
+import 'widgets/telegram_style_widgets.dart';
 import '../../services/websocket_client.dart';
 import '../../services/webrtc_service.dart';
 import '../../services/api_client.dart';
@@ -431,17 +435,23 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with TickerProviderStat
                      return const Center(child: Text('Henüz mesaj yok', style: TextStyle(color: Colors.white30)));
                  }
 
-                 return ListView.builder(
+                   return ListView.builder(
                     controller: _chatScrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
-                      return _ChatBubble(message: ChatMessage(
+                      final isLast = index == messages.length - 1 || 
+                          messages[index + 1].senderId != message.senderId;
+                      
+                      return TelegramBubble(
                         text: message.content,
                         isOwn: message.senderId == currentUserId,
                         timestamp: message.createdAt,
-                      ));
+                        showTail: isLast,
+                        isRead: true,
+                        onLongPress: () => HapticEngine.longPress(),
+                      );
                     },
                   );
               },
@@ -454,37 +464,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with TickerProviderStat
   }
   
   Widget _buildChatInput() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.1), borderRadius: BorderRadius.circular(24)),
-              child: TextField(
-                controller: _chatController,
-                style: AppTypography.body(),
-                decoration: const InputDecoration(
-                  hintText: 'Mesaj yaz...',
-                  hintStyle: TextStyle(color: Colors.white38),
-                  border: InputBorder.none,
-                ),
-                onSubmitted: (_) => _sendMessage(),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: _sendMessage,
-            child: Container(
-              width: 48, height: 48,
-              decoration: BoxDecoration(gradient: AppColors.buttonGradient, shape: BoxShape.circle),
-              child: const Icon(Icons.send_rounded, color: Colors.white, size: 22),
-            ),
-          ),
-        ],
-      ),
+    return LiquidInputBar(
+      controller: _chatController,
+      hintText: 'Mesaj yaz...',
+      onSend: _sendMessage,
+      onVoice: () {
+        HapticEngine.buttonPress();
+        // TODO: Implement voice recording
+      },
+      onAttachment: () {
+        HapticEngine.buttonPress();
+        // TODO: Implement attachment picker
+      },
     );
   }
   

@@ -159,6 +159,42 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(errorMessage: null);
   }
   
+  /// Update user profile
+  Future<bool> updateProfile({
+    String? username,
+    String? avatarUrl,
+    String? bio,
+    String? gender,
+    String? location,
+  }) async {
+    try {
+      final user = await _api.updateProfile(
+        username: username,
+        avatarUrl: avatarUrl,
+        bio: bio,
+        gender: gender,
+        location: location,
+      );
+      
+      // Update storage
+      await _storage.saveUserInfo(
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+      );
+      
+      state = state.copyWith(user: user);
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(errorMessage: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(errorMessage: 'Güncelleme başarısız: $e');
+      return false;
+    }
+  }
+
   /// Refresh user profile
   Future<void> refreshProfile() async {
     if (state.status != AuthStatus.authenticated) return;

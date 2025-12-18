@@ -96,7 +96,6 @@ class OfflineChatRepository {
             'chats',
             {
               'id': conversationId,
-              'other_user_id': conversationId, // Temporary: Assume 1-1 logic where convId is otherId
               'other_username': receiverName ?? 'User', // Fix: Use actual name
               'other_avatar_url': receiverAvatar,
               'last_message_content': content,
@@ -208,6 +207,7 @@ class OfflineChatRepository {
   Conversation _conversationFromRow(Map<String, dynamic> row) {
     return Conversation(
       id: row['id'] as String,
+      otherUserId: row['id'] as String, // FIX: Added otherUserId
       otherUsername: row['other_username'] as String,
       otherAvatarUrl: row['other_avatar_url'] as String?,
       lastMessage: row['last_message_content'] as String? ?? '',

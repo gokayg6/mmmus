@@ -1,0 +1,12 @@
+/* Webfont: Wacian-Bold */@font-face {
+    font-family: 'Wacian';
+    src: url('Wacian-Bold.eot'); /* IE9 Compat Modes */
+    src: url('Wacian-Bold.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('Wacian-Bold.woff') format('woff'), /* Modern Browsers */
+         url('Wacian-Bold.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('Wacian-Bold.svg#Wacian-Bold') format('svg'); /* Legacy iOS */
+    font-style: normal;
+    font-weight: bold;
+    text-rendering: optimizeLegibility;
+}
+

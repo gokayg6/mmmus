@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:ui'; // For ImageFilter
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
@@ -8,6 +9,7 @@ import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/buttons.dart';
 import '../../core/routing/app_router.dart';
 import '../../providers/auth_provider.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
 /// Login Screen
 class LoginScreen extends ConsumerStatefulWidget {
@@ -50,18 +52,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'E-posta gerekli';
+      return AppLocalizations.of(context)?.authEmailRequired ?? 'E-posta gerekli';
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Geçerli bir e-posta girin';
+      return AppLocalizations.of(context)?.authEmailInvalid ?? 'Geçerli bir e-posta girin';
     }
     return null;
   }
   
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Şifre gerekli';
+      return AppLocalizations.of(context)?.authPasswordRequired ?? 'Şifre gerekli';
     }
     return null;
   }
@@ -84,6 +86,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
+    final l10n = AppLocalizations.of(context);
     
     return Scaffold(
       backgroundColor: context.colors.backgroundColor,
@@ -156,24 +159,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       const SizedBox(height: 60),
                       
                       // Logo
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.5),
-                              blurRadius: 40,
-                              spreadRadius: 8,
+                      SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          clipBehavior: Clip.none, // Allow glow to bleed out
+                          children: [
+                            // Layer 1: The Glow (Blurred Image)
+                            Positioned.fill(
+                              child: Transform.scale(
+                                scale: 1.3, // Scale up to create the "fade up" spread
+                                child: ImageFiltered(
+                                  imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    clipBehavior: Clip.hardEdge,
+                                    child: Image.asset(
+                                      'assets/images/logo.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Layer 2: The Sharp Logo
+                            Container(
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: ClipOval(
+                                child: Image.asset(
+                                  'assets/images/logo.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                           ],
-                        ),
-                        child: const Icon(
-                          Icons.chat_bubble_rounded,
-                          size: 40,
-                          color: Colors.white,
                         ),
                       ),
                       
@@ -181,14 +205,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       
                       // Title
                       Text(
-                        'Tekrar Hoş Geldin',
-                        style: AppTypography.largeTitle(),
+                        l10n?.authWelcomeBack ?? 'Tekrar Hoş Geldin',
+                        style: AppTypography.serifTitle(),
                       ),
                       
                       const SizedBox(height: 8),
                       
                       Text(
-                        'Hesabına giriş yap',
+                        l10n?.authLoginToAccount ?? 'Hesabına giriş yap',
                         style: AppTypography.body(
                           color: Colors.white.withOpacity(0.6),
                         ),
@@ -208,7 +232,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               validator: _validateEmail,
                               style: AppTypography.body(),
                               decoration: InputDecoration(
-                                hintText: 'E-posta',
+                                hintText: l10n?.authEmail ?? 'E-posta',
                                 prefixIcon: Icon(
                                   Icons.email_outlined,
                                   color: Colors.white.withOpacity(0.5),
@@ -237,7 +261,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               validator: _validatePassword,
                               style: AppTypography.body(),
                               decoration: InputDecoration(
-                                hintText: 'Şifre',
+                                hintText: l10n?.authPassword ?? 'Şifre',
                                 prefixIcon: Icon(
                                   Icons.lock_outline_rounded,
                                   color: Colors.white.withOpacity(0.5),
@@ -274,12 +298,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextLinkButton(
-                                text: 'Şifremi Unuttum',
+                                text: l10n?.authForgotPassword ?? 'Şifremi Unuttum',
                                 onPressed: () {
                                   // TODO: Implement forgot password
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Bu özellik yakında eklenecek'),
+                                    SnackBar(
+                                      content: Text(l10n?.authFeatureComingSoon ?? 'Bu özellik yakında eklenecek'),
                                       backgroundColor: AppColors.info,
                                     ),
                                   );
@@ -305,7 +329,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       
                       // Login button
                       PrimaryButton(
-                        text: 'Giriş Yap',
+                        text: l10n?.authLogin ?? 'Giriş Yap',
                         icon: Icons.login_rounded,
                         onPressed: authState.isLoading ? null : _handleLogin,
                         isLoading: authState.isLoading,
@@ -319,11 +343,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Hesabın yok mu? ',
+                            l10n?.authNoAccount ?? 'Hesabın yok mu? ',
                             style: AppTypography.footnote(),
                           ),
                           TextLinkButton(
-                            text: 'Kayıt Ol',
+                            text: l10n?.authRegister ?? 'Kayıt Ol',
                             onPressed: () {
                               Navigator.pushReplacementNamed(context, AppRoutes.register);
                             },

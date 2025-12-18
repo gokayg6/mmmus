@@ -362,9 +362,9 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(AppLocalizations.of(context)?.discover ?? 'Discover', style: AppTypography.largeTitle(color: context.colors.textColor)),
+                Text(AppLocalizations.of(context)?.discover ?? 'Discover', style: AppTypography.serifTitle(color: context.colors.textColor)),
                 const SizedBox(height: 4),
-                Text(AppLocalizations.of(context)?.findPartner ?? 'Meet new people', style: AppTypography.footnote(color: context.colors.textSecondaryColor)),
+                Text(AppLocalizations.of(context)?.findPartner ?? 'Meet new people', style: AppTypography.serifTitle(fontSize: 15, color: context.colors.textSecondaryColor, fontWeight: FontWeight.w400)),
               ],
             ),
           ),
@@ -510,11 +510,11 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (_selectedGender != 'everyone') ...[
-                _buildActiveFilter(_selectedGender, Icons.person_rounded),
+                _buildActiveFilter(_getGenderLabel(_selectedGender), Icons.person_rounded),
                 const SizedBox(width: 8),
               ],
               if (_selectedCountry != 'worldwide') ...[
-                _buildActiveFilter(_selectedCountry, Icons.public_rounded),
+                _buildActiveFilter(_getCountryLabel(_selectedCountry), Icons.public_rounded),
                 const SizedBox(width: 8),
               ],
               if (_selectedInterests.isNotEmpty)
@@ -622,7 +622,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(_selectedGender, style: AppTypography.body(color: context.colors.textColor)),
+                    child: Text(_getGenderLabel(_selectedGender), style: AppTypography.body(color: context.colors.textColor)),
                   ),
                   Icon(Icons.keyboard_arrow_down_rounded, color: context.colors.textSecondaryColor, size: 20),
                 ],
@@ -671,6 +671,27 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
         }).toList(),
       ),
     );
+  }
+
+  String _getGenderLabel(String gender) {
+    final l10n = AppLocalizations.of(context);
+    switch (gender) {
+      case 'male':
+        return l10n?.male ?? 'Male';
+      case 'female':
+        return l10n?.female ?? 'Female';
+      case 'everyone':
+      default:
+        return l10n?.everyone ?? 'Everyone';
+    }
+  }
+
+  String _getCountryLabel(String country) {
+    if (country == 'worldwide') {
+       return AppLocalizations.of(context)?.worldwide ?? 'Worldwide';
+    }
+    // Return country name as is for now, or localize if possible
+    return country;
   }
 
   Widget _buildCountryFilter() {
@@ -723,7 +744,7 @@ class _RandomConnectScreenState extends ConsumerState<RandomConnectScreen>
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(_selectedCountry, style: AppTypography.body(color: context.colors.textColor)),
+                    child: Text(_getCountryLabel(_selectedCountry), style: AppTypography.body(color: context.colors.textColor)),
                   ),
                   Icon(Icons.keyboard_arrow_down_rounded, color: context.colors.textSecondaryColor, size: 20),
                 ],

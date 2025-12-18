@@ -5,8 +5,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_it.dart';
 import 'app_localizations_tr.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -94,8 +99,13 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('de'),
     Locale('en'),
-    Locale('tr')
+    Locale('fr'),
+    Locale('it'),
+    Locale('tr'),
+    Locale('zh')
   ];
 
   /// Application name
@@ -175,6 +185,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Turkish'**
   String get turkish;
+
+  /// No description provided for @french.
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get french;
+
+  /// No description provided for @italian.
+  ///
+  /// In en, this message translates to:
+  /// **'Italian'**
+  String get italian;
+
+  /// No description provided for @german.
+  ///
+  /// In en, this message translates to:
+  /// **'German'**
+  String get german;
+
+  /// No description provided for @chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get chinese;
+
+  /// No description provided for @arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabic;
 
   /// No description provided for @login.
   ///
@@ -725,7 +765,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumFeatures.
   ///
   /// In en, this message translates to:
-  /// **'Premium Features'**
+  /// **'PREMIUM FEATURES'**
   String get premiumFeatures;
 
   /// No description provided for @unlockPremium.
@@ -1237,6 +1277,810 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Someone is looking...'**
   String get someoneLooking;
+
+  /// No description provided for @readyToConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to\nConnect?'**
+  String get readyToConnect;
+
+  /// No description provided for @peopleOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} people online'**
+  String peopleOnline(Object count);
+
+  /// No description provided for @start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// No description provided for @fast.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get fast;
+
+  /// No description provided for @instantMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Instant match'**
+  String get instantMatch;
+
+  /// No description provided for @fastMatching.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast Matching'**
+  String get fastMatching;
+
+  /// No description provided for @fastMatchingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Our advanced algorithm lets you meet new people in seconds. Wait time is kept to a minimum.'**
+  String get fastMatchingDesc;
+
+  /// No description provided for @safe.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe'**
+  String get safe;
+
+  /// No description provided for @moderation.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderation'**
+  String get moderation;
+
+  /// No description provided for @safetyRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety & Rules'**
+  String get safetyRules;
+
+  /// No description provided for @safetyRulesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'We provide a safe environment with our community rules and active moderation team. Inappropriate behavior can be reported immediately.'**
+  String get safetyRulesDesc;
+
+  /// No description provided for @global.
+  ///
+  /// In en, this message translates to:
+  /// **'Global'**
+  String get global;
+
+  /// No description provided for @worldwide.
+  ///
+  /// In en, this message translates to:
+  /// **'Worldwide'**
+  String get worldwide;
+
+  /// No description provided for @globalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with users from all over the world. Opportunity to meet people from different cultures.'**
+  String get globalDesc;
+
+  /// No description provided for @statistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statistics;
+
+  /// No description provided for @chats.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get chats;
+
+  /// No description provided for @meetings.
+  ///
+  /// In en, this message translates to:
+  /// **'Meetings'**
+  String get meetings;
+
+  /// No description provided for @chatCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat Count'**
+  String get chatCount;
+
+  /// No description provided for @chatCountDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Total number of chats you have completed. Each new match counts.'**
+  String get chatCountDesc;
+
+  /// No description provided for @totalTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Time'**
+  String get totalTime;
+
+  /// No description provided for @totalTimeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your total chat time in minutes. Active connections count.'**
+  String get totalTimeDesc;
+
+  /// No description provided for @meetingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting Count'**
+  String get meetingCount;
+
+  /// No description provided for @meetingCountDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of people you have met so far.'**
+  String get meetingCountDesc;
+
+  /// No description provided for @achievements.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievements;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get comingSoon;
+
+  /// No description provided for @achievementsComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'We are working on the achievements system'**
+  String get achievementsComingSoon;
+
+  /// No description provided for @registered.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered'**
+  String get registered;
+
+  /// No description provided for @upgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get upgrade;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get profileUpdated;
+
+  /// No description provided for @tapToChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap photo to change'**
+  String get tapToChangePhoto;
+
+  /// No description provided for @tellAboutYourself.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about yourself...'**
+  String get tellAboutYourself;
+
+  /// No description provided for @notSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Photo'**
+  String get removePhoto;
+
+  /// No description provided for @errorSelectingPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Error selecting photo'**
+  String get errorSelectingPhoto;
+
+  /// No description provided for @earnPointsChatting.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn points by chatting!'**
+  String get earnPointsChatting;
+
+  /// No description provided for @howToEarnPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'How to Earn Points?'**
+  String get howToEarnPoints;
+
+  /// No description provided for @recentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get recentActivity;
+
+  /// No description provided for @failedToLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load'**
+  String get failedToLoad;
+
+  /// No description provided for @level.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get level;
+
+  /// No description provided for @toNextLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'To next level'**
+  String get toNextLevel;
+
+  /// No description provided for @pointsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'points'**
+  String get pointsLabel;
+
+  /// No description provided for @totalPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Points'**
+  String get totalPoints;
+
+  /// No description provided for @noActivityYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity yet'**
+  String get noActivityYet;
+
+  /// No description provided for @startChatToEarn.
+  ///
+  /// In en, this message translates to:
+  /// **'Start chatting to earn points!'**
+  String get startChatToEarn;
+
+  /// No description provided for @maxInterests.
+  ///
+  /// In en, this message translates to:
+  /// **'Max 5 interests allowed'**
+  String get maxInterests;
+
+  /// No description provided for @matchingBasedOnInterests.
+  ///
+  /// In en, this message translates to:
+  /// **'Matching based on selected interests'**
+  String get matchingBasedOnInterests;
+
+  /// No description provided for @goPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Go Premium'**
+  String get goPremium;
+
+  /// No description provided for @restorePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchases'**
+  String get restorePurchases;
+
+  /// No description provided for @subscriptionAutoRenews.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription auto-renews. Cancel anytime.'**
+  String get subscriptionAutoRenews;
+
+  /// No description provided for @unlockUnlimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock unlimited experience'**
+  String get unlockUnlimited;
+
+  /// No description provided for @adFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad-Free'**
+  String get adFree;
+
+  /// No description provided for @noAdsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'No watching ads'**
+  String get noAdsDesc;
+
+  /// No description provided for @genderSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender Selection'**
+  String get genderSelect;
+
+  /// No description provided for @freeGenderFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Free gender filter'**
+  String get freeGenderFilter;
+
+  /// No description provided for @countrySelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Country Selection'**
+  String get countrySelect;
+
+  /// No description provided for @selectAnyCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Select any country'**
+  String get selectAnyCountry;
+
+  /// No description provided for @hdVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'HD Video'**
+  String get hdVideo;
+
+  /// No description provided for @highQualityVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'High quality video'**
+  String get highQualityVideo;
+
+  /// No description provided for @highlighted.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlighted'**
+  String get highlighted;
+
+  /// No description provided for @priorityInMatching.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority in matching'**
+  String get priorityInMatching;
+
+  /// No description provided for @vipBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'VIP Badge'**
+  String get vipBadge;
+
+  /// No description provided for @weeklyVipBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly special badge'**
+  String get weeklyVipBadge;
+
+  /// No description provided for @unlimitedReconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited Reconnect'**
+  String get unlimitedReconnect;
+
+  /// No description provided for @reconnectSamePerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect with same person'**
+  String get reconnectSamePerson;
+
+  /// No description provided for @customTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Theme'**
+  String get customTheme;
+
+  /// No description provided for @nightModeTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Night mode special theme'**
+  String get nightModeTheme;
+
+  /// No description provided for @unlimitedNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited Next'**
+  String get unlimitedNext;
+
+  /// No description provided for @noWaitTime.
+  ///
+  /// In en, this message translates to:
+  /// **'No wait time'**
+  String get noWaitTime;
+
+  /// No description provided for @selectPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'SELECT PLAN'**
+  String get selectPlan;
+
+  /// No description provided for @weekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @threeMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'3 Months'**
+  String get threeMonths;
+
+  /// No description provided for @yearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get yearly;
+
+  /// No description provided for @perWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'/week'**
+  String get perWeek;
+
+  /// No description provided for @perMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'/month'**
+  String get perMonth;
+
+  /// No description provided for @perThreeMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'/3 months'**
+  String get perThreeMonths;
+
+  /// No description provided for @perYear.
+  ///
+  /// In en, this message translates to:
+  /// **'/year'**
+  String get perYear;
+
+  /// No description provided for @bestValue.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST'**
+  String get bestValue;
+
+  /// No description provided for @selectedPlanMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You selected {plan} plan.\n\nPurchase feature coming soon!'**
+  String selectedPlanMessage(Object plan);
+
+  /// No description provided for @actionMessageSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Send message'**
+  String get actionMessageSent;
+
+  /// No description provided for @actionChatStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Start chat'**
+  String get actionChatStarted;
+
+  /// No description provided for @actionChatCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete chat'**
+  String get actionChatCompleted;
+
+  /// No description provided for @actionDailyLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily login'**
+  String get actionDailyLogin;
+
+  /// No description provided for @actionProfileCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete profile'**
+  String get actionProfileCompleted;
+
+  /// No description provided for @actionMinuteChatted.
+  ///
+  /// In en, this message translates to:
+  /// **'Each chat minute'**
+  String get actionMinuteChatted;
+
+  /// No description provided for @actionConnectionMade.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with someone new'**
+  String get actionConnectionMade;
+
+  /// No description provided for @authWelcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back'**
+  String get authWelcomeBack;
+
+  /// No description provided for @authLoginToAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Login to your account'**
+  String get authLoginToAccount;
+
+  /// No description provided for @authEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email required'**
+  String get authEmailRequired;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password required'**
+  String get authPasswordRequired;
+
+  /// No description provided for @authEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get authEmail;
+
+  /// No description provided for @authPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get authPassword;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password'**
+  String get authForgotPassword;
+
+  /// No description provided for @authFeatureComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Feature coming soon'**
+  String get authFeatureComingSoon;
+
+  /// No description provided for @authLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get authLogin;
+
+  /// No description provided for @authNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? '**
+  String get authNoAccount;
+
+  /// No description provided for @authRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get authRegister;
+
+  /// No description provided for @authUsernameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Username required'**
+  String get authUsernameRequired;
+
+  /// No description provided for @authUsernameMinLen.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be at least 3 characters'**
+  String get authUsernameMinLen;
+
+  /// No description provided for @authUsernameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Letters, numbers and underscores only'**
+  String get authUsernameInvalid;
+
+  /// No description provided for @authPasswordMinLen.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be at least 8 characters'**
+  String get authPasswordMinLen;
+
+  /// No description provided for @authPasswordsNoMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get authPasswordsNoMatch;
+
+  /// No description provided for @authTermsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'You must accept the terms'**
+  String get authTermsRequired;
+
+  /// No description provided for @authUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get authUsername;
+
+  /// No description provided for @authConfirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get authConfirmPassword;
+
+  /// No description provided for @authAcceptTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'I accept terms and privacy policy'**
+  String get authAcceptTerms;
+
+  /// No description provided for @authCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get authCreateAccount;
+
+  /// No description provided for @authCreateProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create profile and save your stats'**
+  String get authCreateProfileSubtitle;
+
+  /// No description provided for @authHasAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? '**
+  String get authHasAccount;
+
+  /// No description provided for @authReadyToMeetWorld.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to Meet the World?'**
+  String get authReadyToMeetWorld;
+
+  /// No description provided for @authAnonymousVideoChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous video chat, iOS quality experience.'**
+  String get authAnonymousVideoChat;
+
+  /// No description provided for @authContinueAsGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get authContinueAsGuest;
+
+  /// No description provided for @authConnectQuickly.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect quickly without creating an account.'**
+  String get authConnectQuickly;
+
+  /// No description provided for @authCreateProfileStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Create profile, save stats.'**
+  String get authCreateProfileStats;
+
+  /// No description provided for @authLoginContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with existing account.'**
+  String get authLoginContinue;
+
+  /// No description provided for @addByUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Add by username'**
+  String get addByUsername;
+
+  /// No description provided for @chatWithFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with Friends'**
+  String get chatWithFriends;
+
+  /// No description provided for @selectFromFriendList.
+  ///
+  /// In en, this message translates to:
+  /// **'Select from friend list'**
+  String get selectFromFriendList;
+
+  /// No description provided for @sendFriendRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a friend request by entering username.'**
+  String get sendFriendRequest;
+
+  /// No description provided for @friendRequestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend request sent!'**
+  String get friendRequestSent;
+
+  /// No description provided for @noFriendsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No friends yet.'**
+  String get noFriendsYet;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorOccurred;
+
+  /// No description provided for @meetNewPeopleDiscover.
+  ///
+  /// In en, this message translates to:
+  /// **'Meet new people from the Discover tab!'**
+  String get meetNewPeopleDiscover;
+
+  /// No description provided for @noChatYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats yet'**
+  String get noChatYet;
+
+  /// No description provided for @pleaseLoginToViewChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to view chats'**
+  String get pleaseLoginToViewChats;
+
+  /// No description provided for @sessionInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Session invalid. Please log in again.'**
+  String get sessionInvalid;
+
+  /// No description provided for @tryAgainLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get tryAgainLabel;
+
+  /// No description provided for @now.
+  ///
+  /// In en, this message translates to:
+  /// **'now'**
+  String get now;
+
+  /// No description provided for @minuteShort.
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minuteShort;
+
+  /// No description provided for @hourShort.
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hourShort;
+
+  /// No description provided for @dayShort.
+  ///
+  /// In en, this message translates to:
+  /// **'d'**
+  String get dayShort;
 }
 
 class _AppLocalizationsDelegate
@@ -1249,8 +2093,15 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'tr'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+        'ar',
+        'de',
+        'en',
+        'fr',
+        'it',
+        'tr',
+        'zh'
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1259,10 +2110,20 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'it':
+      return AppLocalizationsIt();
     case 'tr':
       return AppLocalizationsTr();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(

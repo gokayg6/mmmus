@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:omechat/l10n/app_localizations.dart';
+import '../../core/theme/app_typography.dart';
 
 /// Glassmorphic Chat List Screen - iOS-style with ultra-modern glass effects
 class GlassmorphicChatListScreen extends StatefulWidget {
@@ -123,11 +124,7 @@ class _GlassmorphicChatListScreenState extends State<GlassmorphicChatListScreen>
             children: [
               Text(
                 AppLocalizations.of(context)?.messages ?? 'Messages',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 34,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTypography.serifTitle(),
               ),
               Row(
                 children: [

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_typography.dart';
@@ -11,6 +12,7 @@ import '../../core/routing/app_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/language_provider.dart';
+import '../../services/api_client.dart';
 import 'language_settings_screen.dart';
 
 /// Settings Screen - App configuration with theme toggle and logout
@@ -55,7 +57,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   children: [
                     Text(
                       l10n?.settings ?? 'Settings', 
-                      style: AppTypography.largeTitle(
+                      style: AppTypography.serifTitle(
                         color: isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryLight,
                       ),
                     ),
@@ -206,14 +208,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           icon: Icons.shield_rounded,
                           iconColor: AppColors.success,
                           title: l10n?.privacyPolicy ?? 'Privacy Policy',
-                          onTap: () {},
+                          onTap: () => _openPrivacyPolicy(),
                         ),
                         _Divider(),
                         _SettingsTile(
                           icon: Icons.description_rounded,
                           iconColor: AppColors.textSecondary,
                           title: l10n?.termsOfService ?? 'Terms of Service',
-                          onTap: () {},
+                          onTap: () => _openTermsOfService(),
                         ),
                         _Divider(),
                         _SettingsTile(
@@ -357,6 +359,60 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    final apiClient = ref.read(apiClientProvider);
+    final url = '${apiClient.baseUrl}/static/privacypolicy.html';
+    
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not open privacy policy')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _openTermsOfService() async {
+    final apiClient = ref.read(apiClientProvider);
+    final url = '${apiClient.baseUrl}/static/termsofservice.html';
+    
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not open terms of service')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
   }
 }
 

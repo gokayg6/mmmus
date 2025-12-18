@@ -66,5 +66,5 @@ def get_db():
 def create_tables():
     """Tüm tabloları oluştur (development için)"""
     # Tüm modelleri import et ki Base.metadata dolu olsun
-    from app.models import user_session, connection, report, ban, admin, metrics, user, message, friendship
+    from app.models import user_session, connection, report, ban, admin, metrics, user, message, friendship, points
     Base.metadata.create_all(bind=get_engine())

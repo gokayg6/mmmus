@@ -94,15 +94,25 @@ class AppRouter {
       
       case AppRoutes.chatDetail:
         final args = settings.arguments as Map<String, dynamic>?;
-        final conversationId = args?['conversationId'] as String?;
-        final otherUsername = args?['otherUsername'] as String?;
-        if (conversationId != null && otherUsername != null) {
-          return _buildRoute(ChatDetailScreen(
-            conversationId: conversationId,
-            otherUsername: otherUsername,
-            otherAvatarUrl: args?['otherAvatarUrl'] as String?,
-          ), settings);
+        // Determine arguments based on what was passed
+        String? userId;
+        
+        if (args != null) {
+          if (args.containsKey('userId')) {
+             userId = args['userId'] as String?;
+          } else if (args.containsKey('otherUserId')) {
+             userId = args['otherUserId'] as String?;
+          } else if (args.containsKey('conversationId')) {
+             // Fallback for old calls, treat conversationId as userId or handle accordingly
+             // In Dummy mode, we can just use it as ID
+             userId = args['conversationId'] as String?;
+          }
         }
+        
+        if (userId != null) {
+          return _buildRoute(ChatDetailScreen(userId: userId), settings);
+        }
+        // Fallback to chat list if invalid args
         return _buildRoute(const ChatListScreen(), settings);
       
       case AppRoutes.randomConnect:
@@ -120,7 +130,6 @@ class AppRouter {
       case AppRoutes.adminPanel:
         return _buildRoute(const AdminLoginScreen(), settings);
       
-      // Legacy route - redirect to shell
       case AppRoutes.landing:
         return _buildRoute(const MainShell(), settings);
       

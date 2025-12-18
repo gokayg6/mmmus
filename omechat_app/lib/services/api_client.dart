@@ -176,6 +176,9 @@ class ApiClient {
   Future<UserProfile> updateProfile({
     String? username,
     String? avatarUrl,
+    String? bio,
+    String? gender,
+    String? location,
   }) async {
     if (_accessToken == null) throw ApiException(message: 'Oturum açılmamış');
 
@@ -185,6 +188,9 @@ class ApiClient {
         data: {
           if (username != null) 'username': username,
           if (avatarUrl != null) 'avatar_url': avatarUrl,
+          if (bio != null) 'bio': bio,
+          if (gender != null) 'gender': gender,
+          if (location != null) 'location': location,
         },
       );
       return UserProfile.fromJson(response.data);
@@ -202,6 +208,29 @@ class ApiClient {
       } else if (data != null) {
         message = data.toString();
       }
+      throw ApiException(message: message, statusCode: e.response?.statusCode);
+    }
+  }
+
+  /// Upload avatar
+  Future<String> uploadAvatar(File file) async {
+    if (_accessToken == null) throw ApiException(message: 'Oturum açılmamış');
+
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: 'avatar.jpg', // Backend handles extension, but providing one is good practice
+      ),
+    });
+
+    try {
+      final response = await _dio.post(
+        '/api/v1/upload/avatar',
+        data: formData,
+      );
+      return response.data['url'];
+    } on DioException catch (e) {
+      final message = e.response?.data?['detail'] ?? 'Yükleme başarısız';
       throw ApiException(message: message, statusCode: e.response?.statusCode);
     }
   }
@@ -303,6 +332,41 @@ class ApiClient {
       return false;
     }
   }
+
+  // =====================================
+  // POINTS / CREDITS ENDPOINTS
+  // =====================================
+
+  /// Get points history
+  Future<Map<String, dynamic>> getPointsHistory() async {
+    if (_accessToken == null) throw ApiException(message: 'Oturum açılmamış');
+    try {
+      final response = await _dio.get('/api/v1/points/history');
+      return response.data;
+    } on DioException catch (e) {
+      throw ApiException(message: 'Puan geçmişi alınamadı', statusCode: e.response?.statusCode);
+    }
+  }
+
+  /// Claim daily points
+  Future<void> claimDailyPoints() async {
+    if (_accessToken == null) throw ApiException(message: 'Oturum açılmamış');
+    try {
+      await _dio.post('/api/v1/points/daily-claim');
+    } on DioException catch (e) {
+      throw ApiException(message: 'Günlük puan alınamadı', statusCode: e.response?.statusCode);
+    }
+  }
+
+  /// Buy credits
+  Future<void> buyCredits(int amount) async {
+    if (_accessToken == null) throw ApiException(message: 'Oturum açılmamış');
+    try {
+      await _dio.post('/api/v1/points/buy', data: {'amount': amount});
+    } on DioException catch (e) {
+      throw ApiException(message: 'Kredi satın alınamadı', statusCode: e.response?.statusCode);
+    }
+  }
 }
 
 // =====================================
@@ -324,6 +388,10 @@ class UserProfile {
   final String email;
   final String username;
   final String? avatarUrl;
+  final String? bio;
+  final String? gender;
+  final DateTime? birthdate;
+  final String? location;
   final DateTime createdAt;
   final bool isActive;
   final int credits;
@@ -334,6 +402,10 @@ class UserProfile {
     required this.email,
     required this.username,
     this.avatarUrl,
+    this.bio,
+    this.gender,
+    this.birthdate,
+    this.location,
     required this.createdAt,
     required this.isActive,
     this.credits = 0,
@@ -346,6 +418,10 @@ class UserProfile {
       email: json['email'],
       username: json['username'],
       avatarUrl: json['avatar_url'],
+      bio: json['bio'],
+      gender: json['gender'],
+      birthdate: json['birthdate'] != null ? DateTime.tryParse(json['birthdate']) : null,
+      location: json['location'],
       createdAt: DateTime.parse(json['created_at']),
       isActive: json['is_active'],
       credits: json['credits'] ?? 0,
@@ -359,6 +435,10 @@ class UserProfile {
       'email': email,
       'username': username,
       'avatar_url': avatarUrl,
+      'bio': bio,
+      'gender': gender,
+      'birthdate': birthdate?.toIso8601String(),
+      'location': location,
       'created_at': createdAt.toIso8601String(),
       'is_active': isActive,
       'credits': credits,
@@ -450,7 +530,7 @@ String _getBackendBaseUrl() {
       // Emulator uses 10.0.2.2 to reach host machine
       // Real device uses local network IP (192.168.1.103)
       // For now, use local network IP for both (real device)
-      return AppConfig.developmentBackendUrl;
+      return 'http://10.0.2.2:8000';
     } else if (Platform.isIOS) {
       // iOS: Use local network IP for real devices, localhost for simulator
       // Real device needs PC's IP address (192.168.1.103)
@@ -465,18 +545,6 @@ String _getBackendBaseUrl() {
 }
 
 final apiClientProvider = Provider<ApiClient>((ref) {
-  /// Backend URL Configuration
-  /// 
-  /// REAL PHONE/DEVICE → Use your PC's local IPv4 address
-  /// Find it with: ipconfig (Windows) or ifconfig (Linux/Mac)
-  /// Common IPs: 192.168.1.x, 192.168.0.x, 10.0.0.x
-  /// 
-  /// ANDROID EMULATOR → Uses: http://10.0.2.2:8000
-  /// iOS SIMULATOR → Uses: http://localhost:8000
-  /// 
-  /// IMPORTANT: For real Android devices, edit _getBackendBaseUrl() 
-  /// and change the IP to match your PC's IP address!
-  
   final baseUrl = _getBackendBaseUrl();
   print('API Base URL: $baseUrl');
   return ApiClient(baseUrl: baseUrl);

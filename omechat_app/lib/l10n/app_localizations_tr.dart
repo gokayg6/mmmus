@@ -48,6 +48,21 @@ class AppLocalizationsTr extends AppLocalizations {
   String get turkish => 'Türkçe';
 
   @override
+  String get french => 'Fransızca';
+
+  @override
+  String get italian => 'İtalyanca';
+
+  @override
+  String get german => 'Almanca';
+
+  @override
+  String get chinese => 'Çince';
+
+  @override
+  String get arabic => 'Arapça';
+
+  @override
   String get login => 'Giriş Yap';
 
   @override
@@ -321,7 +336,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get safetyReminder => 'Güvenliğiniz önceliğimizdir';
 
   @override
-  String get premiumFeatures => 'Premium Özellikler';
+  String get premiumFeatures => 'PREMIUM ÖZELLİKLER';
 
   @override
   String get unlockPremium => 'Premium Aç';
@@ -582,4 +597,423 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get someoneLooking => 'Birisi aranıyor...';
+
+  @override
+  String get readyToConnect => 'Bağlanmaya\nHazır mısın?';
+
+  @override
+  String peopleOnline(Object count) {
+    return '$count kişi çevrimiçi';
+  }
+
+  @override
+  String get start => 'Başla';
+
+  @override
+  String get fast => 'Hızlı';
+
+  @override
+  String get instantMatch => 'Anında eşleş';
+
+  @override
+  String get fastMatching => 'Hızlı Eşleşme';
+
+  @override
+  String get fastMatchingDesc =>
+      'Gelişmiş algoritmamız sayesinde saniyeler içinde yeni insanlarla tanışabilirsiniz. Bekleme süresi minimumda tutulur.';
+
+  @override
+  String get safe => 'Güvenli';
+
+  @override
+  String get moderation => 'Moderasyon';
+
+  @override
+  String get safetyRules => 'Güvenlik & Kurallar';
+
+  @override
+  String get safetyRulesDesc =>
+      'Topluluk kurallarımız ve aktif moderasyon ekibimiz ile güvenli bir ortam sağlıyoruz. Uygunsuz davranışlar anında raporlanabilir.';
+
+  @override
+  String get global => 'Global';
+
+  @override
+  String get worldwide => 'Dünya çapında';
+
+  @override
+  String get globalDesc =>
+      'Dünyanın dört bir yanından kullanıcılarla bağlantı kurun. Farklı kültürlerden insanlarla tanışma fırsatı.';
+
+  @override
+  String get statistics => 'İstatistikler';
+
+  @override
+  String get chats => 'Sohbet';
+
+  @override
+  String get meetings => 'Buluşma';
+
+  @override
+  String get chatCount => 'Sohbet Sayısı';
+
+  @override
+  String get chatCountDesc =>
+      'Tamamladığınız toplam sohbet sayısı. Her yeni eşleşme sayılır.';
+
+  @override
+  String get totalTime => 'Toplam Süre';
+
+  @override
+  String get totalTimeDesc =>
+      'Dakika cinsinden toplam sohbet süreniz. Aktif bağlantılar sayılır.';
+
+  @override
+  String get meetingCount => 'Buluşma Sayısı';
+
+  @override
+  String get meetingCountDesc => 'Şimdiye kadar tanıştığınız kişi sayısı.';
+
+  @override
+  String get achievements => 'Başarılar';
+
+  @override
+  String get comingSoon => 'Yakında';
+
+  @override
+  String get achievementsComingSoon => 'Başarı sistemi üzerinde çalışıyoruz';
+
+  @override
+  String get registered => 'Kayıtlı';
+
+  @override
+  String get upgrade => 'Yükselt';
+
+  @override
+  String get profileUpdated => 'Profil güncellendi';
+
+  @override
+  String get tapToChangePhoto => 'Değiştirmek için fotoğrafa dokunun';
+
+  @override
+  String get tellAboutYourself => 'Kendinizden bahsedin...';
+
+  @override
+  String get notSpecified => 'Belirtilmemiş';
+
+  @override
+  String get other => 'Diğer';
+
+  @override
+  String get gallery => 'Galeri';
+
+  @override
+  String get removePhoto => 'Fotoğrafı Kaldır';
+
+  @override
+  String get errorSelectingPhoto => 'Fotoğraf seçme hatası';
+
+  @override
+  String get earnPointsChatting => 'Sohbet ederek puan kazan!';
+
+  @override
+  String get howToEarnPoints => 'Puan Nasıl Kazanılır?';
+
+  @override
+  String get recentActivity => 'Son Aktivite';
+
+  @override
+  String get failedToLoad => 'Yükleme başarısız';
+
+  @override
+  String get level => 'Seviye';
+
+  @override
+  String get toNextLevel => 'Sonraki seviyeye';
+
+  @override
+  String get pointsLabel => 'puan';
+
+  @override
+  String get totalPoints => 'Toplam Puan';
+
+  @override
+  String get noActivityYet => 'Henüz aktivite yok';
+
+  @override
+  String get startChatToEarn => 'Puan kazanmak için sohbete başla!';
+
+  @override
+  String get maxInterests => 'Maksimum 5 ilgi alanı seçilebilir';
+
+  @override
+  String get matchingBasedOnInterests =>
+      'Seçilen ilgi alanlarına göre eşleştiriliyor';
+
+  @override
+  String get goPremium => 'Premium\'a Geç';
+
+  @override
+  String get restorePurchases => 'Satın Alımları Geri Yükle';
+
+  @override
+  String get subscriptionAutoRenews =>
+      'Abonelik otomatik yenilenir. İstediğiniz zaman iptal edebilirsiniz.';
+
+  @override
+  String get unlockUnlimited => 'Sınırsız deneyimin kilidini aç';
+
+  @override
+  String get adFree => 'Reklamsız';
+
+  @override
+  String get noAdsDesc => 'Reklam izleme yok';
+
+  @override
+  String get genderSelect => 'Cinsiyet Seçme';
+
+  @override
+  String get freeGenderFilter => 'Ücretsiz cinsiyet filtresi';
+
+  @override
+  String get countrySelect => 'Ülke Seçme';
+
+  @override
+  String get selectAnyCountry => 'İstediğin ülkeyi seç';
+
+  @override
+  String get hdVideo => 'HD Görüntü';
+
+  @override
+  String get highQualityVideo => 'Yüksek kalite video';
+
+  @override
+  String get highlighted => 'Öne Çıkarılma';
+
+  @override
+  String get priorityInMatching => 'Eşleşmede öncelik';
+
+  @override
+  String get vipBadge => 'VIP Rozet';
+
+  @override
+  String get weeklyVipBadge => 'Haftalık özel rozet';
+
+  @override
+  String get unlimitedReconnect => 'Sınırsız Reconnect';
+
+  @override
+  String get reconnectSamePerson => 'Aynı kişiyle tekrar bağlan';
+
+  @override
+  String get customTheme => 'Özel Tema';
+
+  @override
+  String get nightModeTheme => 'Gece modu özel teması';
+
+  @override
+  String get unlimitedNext => 'Sınırsız Next';
+
+  @override
+  String get noWaitTime => 'Bekleme süresi yok';
+
+  @override
+  String get selectPlan => 'PLAN SEÇ';
+
+  @override
+  String get weekly => 'Haftalık';
+
+  @override
+  String get monthly => 'Aylık';
+
+  @override
+  String get threeMonths => '3 Aylık';
+
+  @override
+  String get yearly => 'Yıllık';
+
+  @override
+  String get perWeek => '/hafta';
+
+  @override
+  String get perMonth => '/ay';
+
+  @override
+  String get perThreeMonths => '/3 ay';
+
+  @override
+  String get perYear => '/yıl';
+
+  @override
+  String get bestValue => 'EN İYİ';
+
+  @override
+  String selectedPlanMessage(Object plan) {
+    return '$plan planı seçtiniz.\n\nSatın alma özelliği yakında eklenecek!';
+  }
+
+  @override
+  String get actionMessageSent => 'Mesaj gönder';
+
+  @override
+  String get actionChatStarted => 'Sohbet başlat';
+
+  @override
+  String get actionChatCompleted => 'Sohbeti tamamla';
+
+  @override
+  String get actionDailyLogin => 'Günlük giriş';
+
+  @override
+  String get actionProfileCompleted => 'Profili tamamla';
+
+  @override
+  String get actionMinuteChatted => 'Her sohbet dakikası';
+
+  @override
+  String get actionConnectionMade => 'Yeni biriyle bağlan';
+
+  @override
+  String get authWelcomeBack => 'Tekrar Hoş Geldin';
+
+  @override
+  String get authLoginToAccount => 'Hesabına giriş yap';
+
+  @override
+  String get authEmailRequired => 'E-posta gerekli';
+
+  @override
+  String get authEmailInvalid => 'Geçerli bir e-posta girin';
+
+  @override
+  String get authPasswordRequired => 'Şifre gerekli';
+
+  @override
+  String get authEmail => 'E-posta';
+
+  @override
+  String get authPassword => 'Şifre';
+
+  @override
+  String get authForgotPassword => 'Şifremi Unuttum';
+
+  @override
+  String get authFeatureComingSoon => 'Bu özellik yakında eklenecek';
+
+  @override
+  String get authLogin => 'Giriş Yap';
+
+  @override
+  String get authNoAccount => 'Hesabın yok mu? ';
+
+  @override
+  String get authRegister => 'Kayıt Ol';
+
+  @override
+  String get authUsernameRequired => 'Kullanıcı adı gerekli';
+
+  @override
+  String get authUsernameMinLen => 'En az 3 karakter olmalı';
+
+  @override
+  String get authUsernameInvalid => 'Sadece harf, rakam ve alt çizgi';
+
+  @override
+  String get authPasswordMinLen => 'En az 8 karakter olmalı';
+
+  @override
+  String get authPasswordsNoMatch => 'Şifreler eşleşmiyor';
+
+  @override
+  String get authTermsRequired => 'Kullanım koşullarını kabul etmelisiniz';
+
+  @override
+  String get authUsername => 'Kullanıcı adı';
+
+  @override
+  String get authConfirmPassword => 'Şifre tekrar';
+
+  @override
+  String get authAcceptTerms =>
+      'Kuralları ve gizlilik politikasını kabul ediyorum';
+
+  @override
+  String get authCreateAccount => 'Hesap Oluştur';
+
+  @override
+  String get authCreateProfileSubtitle =>
+      'Profilini oluştur ve istatistiklerini kaydet';
+
+  @override
+  String get authHasAccount => 'Zaten hesabın var mı? ';
+
+  @override
+  String get authReadyToMeetWorld => 'Dünyayla Tanışmaya\nHazır mısın?';
+
+  @override
+  String get authAnonymousVideoChat =>
+      'Anonim görüntülü sohbet,\niOS kalitesinde deneyim.';
+
+  @override
+  String get authContinueAsGuest => 'Misafir Olarak Devam Et';
+
+  @override
+  String get authConnectQuickly => 'Hesap oluşturmadan hızlıca bağlan.';
+
+  @override
+  String get authCreateProfileStats =>
+      'Profil oluştur, istatistiklerini kaydet.';
+
+  @override
+  String get authLoginContinue => 'Mevcut hesabınla devam et.';
+
+  @override
+  String get addByUsername => 'Kullanıcı adıyla ekle';
+
+  @override
+  String get chatWithFriends => 'Arkadaşlarla Sohbet';
+
+  @override
+  String get selectFromFriendList => 'Arkadaş listesinden seç';
+
+  @override
+  String get sendFriendRequest =>
+      'Kullanıcı adını girerek arkadaşlık isteği gönder.';
+
+  @override
+  String get friendRequestSent => 'Arkadaşlık isteği gönderildi!';
+
+  @override
+  String get noFriendsYet => 'Henüz arkadaşın yok.';
+
+  @override
+  String get errorOccurred => 'Bir hata oluştu';
+
+  @override
+  String get meetNewPeopleDiscover =>
+      'Keşfet sekmesinden yeni insanlarla tanış!';
+
+  @override
+  String get noChatYet => 'Henüz sohbet yok';
+
+  @override
+  String get pleaseLoginToViewChats => 'Sohbetleri görmek için giriş yapın';
+
+  @override
+  String get sessionInvalid => 'Oturum geçersiz. Lütfen tekrar giriş yapın.';
+
+  @override
+  String get tryAgainLabel => 'Tekrar dene';
+
+  @override
+  String get now => 'şimdi';
+
+  @override
+  String get minuteShort => 'dk';
+
+  @override
+  String get hourShort => 's';
+
+  @override
+  String get dayShort => 'g';
 }

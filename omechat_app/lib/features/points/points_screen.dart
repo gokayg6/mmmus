@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/glass_container.dart';
+import '../../core/widgets/buttons.dart';
 import '../../domain/models/points_models.dart';
 import '../../data/repositories/points_repository.dart';
 import '../../providers/data_providers.dart';
@@ -30,11 +31,11 @@ class PointsScreen extends ConsumerWidget {
               // Header
               Text(
                 AppLocalizations.of(context)?.credits ?? 'My Credits',
-                style: AppTypography.largeTitle(color: context.colors.textColor),
+                style: AppTypography.serifTitle(color: context.colors.textColor),
               ),
               const SizedBox(height: 8),
               Text(
-                'Earn points by chatting!',
+                AppLocalizations.of(context)?.earnPointsChatting ?? 'Earn points by chatting!',
                 style: AppTypography.body(color: context.colors.textSecondaryColor),
               ),
               
@@ -44,25 +45,60 @@ class PointsScreen extends ConsumerWidget {
               pointsAsync.when(
                 loading: () => _buildLoadingCard(context),
                 error: (_, __) => _buildErrorCard(context),
-                data: (points) => _PointsCard(points: points),
+                data: (points) => Column(
+                  children: [
+                    _PointsCard(points: points),
+                    const SizedBox(height: 16),
+                    SecondaryButton(
+                      text: 'Buy 500 Credits (Simulated)',
+                      icon: Icons.shopping_cart_rounded,
+                      onPressed: () async {
+                        HapticFeedback.mediumImpact();
+                        await ref.read(pointsControllerProvider.notifier).buyCredits(500);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Purchased 500 credits!'), backgroundColor: AppColors.success),
+                          );
+                        }
+                      },
+                      width: double.infinity,
+                    ),
+                  ],
+                ),
               ),
               
               const SizedBox(height: 32),
               
               // How to earn
               Text(
-                'How to Earn Points?',
+                AppLocalizations.of(context)?.howToEarnPoints ?? 'How to Earn Points?',
                 style: AppTypography.title2(color: context.colors.textColor),
               ),
               const SizedBox(height: 16),
               
-              ...availableActions.map((action) => _ActionCard(action: action)),
+              ...availableActions.map((action) => GestureDetector(
+                onTap: () async {
+                  if (action.type == PointsActionType.dailyLogin) {
+                    HapticFeedback.mediumImpact();
+                    await ref.read(pointsControllerProvider.notifier).recordAction(PointsActionType.dailyLogin);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Daily reward claimed!'), backgroundColor: AppColors.success),
+                      );
+                    }
+                  } else if (action.description.contains('message')) {
+                    // Purchase simulation logic could go here if we had a dedicated "Buy" action
+                    // For now, let's add a dedicated Buy button at the top
+                  }
+                },
+                child: _ActionCard(action: action),
+              )),
               
               const SizedBox(height: 32),
               
               // Recent activity
               Text(
-                'Recent Activity',
+                AppLocalizations.of(context)?.recentActivity ?? 'Recent Activity',
                 style: AppTypography.title2(color: context.colors.textColor),
               ),
               const SizedBox(height: 16),
@@ -111,7 +147,7 @@ class PointsScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(24),
       child: Center(
         child: Text(
-          'Failed to load',
+          AppLocalizations.of(context)?.failedToLoad ?? 'Failed to load',
           style: AppTypography.body(color: context.colors.textMutedColor),
         ),
       ),
@@ -149,7 +185,7 @@ class _PointsCard extends StatelessWidget {
               ],
             ),
             child: Text(
-              'Level ${points.level}',
+              '${AppLocalizations.of(context)?.level ?? "Level"} ${points.level}',
               style: AppTypography.headline(color: Colors.white),
             ),
           ),
@@ -163,11 +199,11 @@ class _PointsCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'To next level',
+                    AppLocalizations.of(context)?.toNextLevel ?? 'To next level',
                     style: AppTypography.caption1(color: context.colors.textSecondaryColor),
                   ),
                   Text(
-                    '${points.pointsToNextLevel} points',
+                    '${points.pointsToNextLevel} ${AppLocalizations.of(context)?.pointsLabel ?? "points"}',
                     style: AppTypography.caption1(color: AppColors.primary),
                   ),
                 ],
@@ -270,7 +306,7 @@ class _AnimatedPointsDisplayState extends State<_AnimatedPointsDisplay>
             style: AppTypography.extraLargeTitle(color: context.colors.textColor),
           ),
           Text(
-            'Total Points',
+            AppLocalizations.of(context)?.totalPoints ?? 'Total Points',
             style: AppTypography.caption1(color: context.colors.textSecondaryColor),
           ),
         ],
@@ -323,7 +359,7 @@ class _ActionCard extends StatelessWidget {
             // Description
             Expanded(
               child: Text(
-                action.description,
+                _getActionDescription(context, action.type),
                 style: AppTypography.body(color: context.colors.textColor),
               ),
             ),
@@ -366,12 +402,12 @@ class _RecentActivityList extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'No activity yet',
+                AppLocalizations.of(context)?.noActivityYet ?? 'No activity yet',
                 style: AppTypography.body(color: context.colors.textMutedColor),
               ),
               const SizedBox(height: 4),
               Text(
-                'Start chatting to earn points!',
+                AppLocalizations.of(context)?.startChatToEarn ?? 'Start chatting to earn points!',
                 style: AppTypography.caption1(color: context.colors.textMutedColor),
               ),
             ],
@@ -406,7 +442,7 @@ class _RecentActionTile extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                action.description ?? PointsConfig.getActionDescription(action.type),
+                _getActionDescription(context, action.type),
                 style: AppTypography.body(color: context.colors.textColor),
               ),
             ),
@@ -418,5 +454,25 @@ class _RecentActionTile extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+String _getActionDescription(BuildContext context, PointsActionType type) {
+  final l10n = AppLocalizations.of(context);
+  switch (type) {
+    case PointsActionType.messageSent:
+      return l10n?.actionMessageSent ?? 'Send message';
+    case PointsActionType.chatStarted:
+      return l10n?.actionChatStarted ?? 'Start chat';
+    case PointsActionType.chatCompleted:
+      return l10n?.actionChatCompleted ?? 'Complete chat';
+    case PointsActionType.dailyLogin:
+      return l10n?.actionDailyLogin ?? 'Daily login';
+    case PointsActionType.profileCompleted:
+      return l10n?.actionProfileCompleted ?? 'Complete profile';
+    case PointsActionType.minuteChatted:
+      return l10n?.actionMinuteChatted ?? 'Each chat minute';
+    case PointsActionType.connectionMade:
+      return l10n?.actionConnectionMade ?? 'Connect with someone new';
   }
 }

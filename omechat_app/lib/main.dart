@@ -85,6 +85,11 @@ class _OmeChatAppState extends ConsumerState<OmeChatApp> {
       supportedLocales: const [
         Locale('en'),
         Locale('tr'),
+        Locale('fr'),
+        Locale('it'),
+        Locale('de'),
+        Locale('zh'),
+        Locale('ar'),
       ],
       
       // Theme with light mode support

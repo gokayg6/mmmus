@@ -24,20 +24,42 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   
   void _showEditProfileSheet() {
     HapticFeedback.lightImpact();
+    
+    final authState = ref.read(authProvider);
+    
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => _EditProfileSheet(
-        onSave: (username) async {
-          // TODO: Implement profile update via API
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profile updated'),
-              backgroundColor: AppColors.success,
-            ),
+        user: authState.user,
+        onSave: (username, bio, gender, location, avatarUrl) async {
+          final success = await ref.read(authProvider.notifier).updateProfile(
+            username: username,
+            bio: bio,
+            gender: gender,
+            location: location,
+            avatarUrl: avatarUrl,
           );
+          
+          if (mounted) {
+            Navigator.pop(context);
+            if (success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)?.profileUpdated ?? 'Profile updated'),
+                  backgroundColor: AppColors.success,
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Failed to update profile'),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+          }
         },
       ),
     );
@@ -101,7 +123,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             // Title
             Text(
               AppLocalizations.of(context)?.profile ?? 'Profile',
-              style: AppTypography.largeTitle(color: context.colors.textColor),
+              style: AppTypography.serifTitle(color: context.colors.textColor),
             ),
             
             const SizedBox(height: 32),
@@ -124,12 +146,30 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                     ),
                     child: Center(
-                      child: Text(
-                        isGuest 
-                            ? '?' 
-                            : (user?.username.substring(0, 1).toUpperCase() ?? 'U'),
-                        style: AppTypography.extraLargeTitle(color: context.colors.textColor),
-                      ),
+                      child: isGuest 
+                          ? Text(
+                              '?', 
+                              style: AppTypography.extraLargeTitle(color: context.colors.textColor)
+                            )
+                          : user?.avatarUrl != null
+                              ? ClipOval(
+                                  child: Image.network(
+                                    user!.avatarUrl!.startsWith('http') 
+                                        ? user!.avatarUrl! 
+                                        : '${ref.read(apiClientProvider).baseUrl}${user!.avatarUrl}',
+                                    fit: BoxFit.cover,
+                                    width: 100,
+                                    height: 100,
+                                    errorBuilder: (_, __, ___) => Text(
+                                      user!.username.substring(0, 1).toUpperCase(),
+                                      style: AppTypography.extraLargeTitle(color: context.colors.textColor),
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  user?.username.substring(0, 1).toUpperCase() ?? 'U',
+                                  style: AppTypography.extraLargeTitle(color: context.colors.textColor),
+                                ),
                     ),
                   ),
                   
@@ -153,12 +193,60 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      isGuest ? (AppLocalizations.of(context)?.guestMode ?? 'Guest') : 'Registered',
+                      isGuest ? (AppLocalizations.of(context)?.guestMode ?? 'Guest') : (AppLocalizations.of(context)?.registered ?? 'Registered'),
                       style: AppTypography.caption1(
                         color: isGuest ? AppColors.warning : AppColors.success,
                       ),
                     ),
                   ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Bio
+                  if (user?.bio != null && user!.bio!.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        user!.bio!,
+                        style: AppTypography.body(color: context.colors.textColor),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+
+                  // Location and Gender
+                  if ((user?.location != null && user!.location!.isNotEmpty) || 
+                      (user?.gender != null && user!.gender != 'Not specified'))
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (user?.location != null && user!.location!.isNotEmpty) ...[
+                          Icon(Icons.location_on_rounded, size: 16, color: context.colors.textSecondaryColor),
+                          const SizedBox(width: 4),
+                          Text(
+                            user!.location!,
+                            style: AppTypography.caption1(color: context.colors.textSecondaryColor),
+                          ),
+                          if (user?.gender != null && user!.gender != 'Not specified')
+                            const SizedBox(width: 16),
+                        ],
+                        if (user?.gender != null && user!.gender != 'Not specified') ...[
+                          Icon(
+                            user!.gender == 'Male' ? Icons.male_rounded :
+                            user!.gender == 'Female' ? Icons.female_rounded :
+                            Icons.person_rounded,
+                            size: 16,
+                            color: context.colors.textSecondaryColor
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            user!.gender!,
+                            style: AppTypography.caption1(color: context.colors.textSecondaryColor),
+                          ),
+                        ],
+                      ],
+                    ),
                   
                   const SizedBox(height: 20),
                   
@@ -191,11 +279,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           Icon(Icons.diamond_rounded, color: AppColors.warning, size: 32),
                           const SizedBox(height: 8),
                           Text(
-                            'Premium',
+                            AppLocalizations.of(context)?.premium ?? 'Premium',
                             style: AppTypography.headline(color: context.colors.textColor),
                           ),
                           Text(
-                            'Upgrade',
+                            AppLocalizations.of(context)?.upgrade ?? 'Upgrade',
                             style: AppTypography.caption1(color: AppColors.warning),
                           ),
                         ],
@@ -221,7 +309,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             style: AppTypography.headline(color: context.colors.textColor),
                           ),
                           Text(
-                            'Buy Credits',
+                            AppLocalizations.of(context)?.buyCredits ?? 'Buy Credits',
                             style: AppTypography.caption1(color: AppColors.success),
                           ),
                         ],
@@ -236,7 +324,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             
             // Statistics
             Text(
-              'Statistics',
+              AppLocalizations.of(context)?.statistics ?? 'Statistics',
               style: AppTypography.headline(color: context.colors.textColor),
             ),
             
@@ -248,10 +336,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: _StatCard(
                     icon: Icons.chat_rounded,
                     value: '0',
-                    label: 'Chats',
+                    label: AppLocalizations.of(context)?.chats ?? 'Chats',
                     onTap: () => _showStatSheet(
-                      'Chat Count',
-                      'Total number of chats you have completed. Each new match counts.',
+                      AppLocalizations.of(context)?.chatCount ?? 'Chat Count',
+                      AppLocalizations.of(context)?.chatCountDesc ?? 'Total number of chats you have completed. Each new match counts.',
                     ),
                   ),
                 ),
@@ -260,10 +348,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: _StatCard(
                     icon: Icons.timer_rounded,
                     value: '0',
-                    label: 'Minutes',
+                    label: AppLocalizations.of(context)?.totalMinutes ?? 'Minutes',
                     onTap: () => _showStatSheet(
-                      'Total Time',
-                      'Your total chat time in minutes. Active connections count.',
+                      AppLocalizations.of(context)?.totalTime ?? 'Total Time',
+                      AppLocalizations.of(context)?.totalTimeDesc ?? 'Your total chat time in minutes. Active connections count.',
                     ),
                   ),
                 ),
@@ -272,10 +360,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: _StatCard(
                     icon: Icons.people_rounded,
                     value: '0',
-                    label: 'Meetings',
+                    label: AppLocalizations.of(context)?.meetings ?? 'Meetings',
                     onTap: () => _showStatSheet(
-                      'Meeting Count',
-                      'Number of people you have met so far.',
+                      AppLocalizations.of(context)?.meetingCount ?? 'Meeting Count',
+                      AppLocalizations.of(context)?.meetingCountDesc ?? 'Number of people you have met so far.',
                     ),
                   ),
                 ),
@@ -286,7 +374,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             
             // Achievements section
             Text(
-              'Achievements',
+              AppLocalizations.of(context)?.achievements ?? 'Achievements',
               style: AppTypography.headline(color: context.colors.textColor),
             ),
             
@@ -303,15 +391,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Coming Soon',
+                    AppLocalizations.of(context)?.comingSoon ?? 'Coming Soon',
                     style: AppTypography.headline(color: context.colors.textColor),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'We are working on the achievements system',
+                    AppLocalizations.of(context)?.achievementsComingSoon ?? 'We are working on the achievements system',
                     style: AppTypography.body(
                       color: context.colors.textSecondaryColor,
-                    ),
+                      ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -383,27 +471,47 @@ class _StatCardState extends State<_StatCard> {
   }
 }
 
-class _EditProfileSheet extends StatefulWidget {
-  final Function(String) onSave;
+class _EditProfileSheet extends ConsumerStatefulWidget {
+  final UserProfile? user;
+  final Function(String username, String bio, String gender, String location, String? avatarUrl) onSave;
   
-  const _EditProfileSheet({required this.onSave});
+  const _EditProfileSheet({
+    required this.user,
+    required this.onSave,
+  });
 
   @override
-  State<_EditProfileSheet> createState() => _EditProfileSheetState();
+  ConsumerState<_EditProfileSheet> createState() => _EditProfileSheetState();
 }
 
-class _EditProfileSheetState extends State<_EditProfileSheet> {
-  final _usernameController = TextEditingController();
-  final _bioController = TextEditingController();
+class _EditProfileSheetState extends ConsumerState<_EditProfileSheet> {
+  late final TextEditingController _usernameController;
+  late final TextEditingController _bioController;
+  late final TextEditingController _locationController;
   final ImagePicker _picker = ImagePicker();
   String _selectedGender = 'Not specified';
   File? _selectedImage;
   bool _isLoading = false;
   
   @override
+  void initState() {
+    super.initState();
+    _usernameController = TextEditingController(text: widget.user?.username ?? '');
+    _bioController = TextEditingController(text: widget.user?.bio ?? '');
+    _locationController = TextEditingController(text: widget.user?.location ?? '');
+    
+    if (widget.user?.gender != null && widget.user!.gender!.isNotEmpty) {
+      if (['Male', 'Female', 'Other'].contains(widget.user!.gender)) {
+        _selectedGender = widget.user!.gender!;
+      }
+    }
+  }
+  
+  @override
   void dispose() {
     _usernameController.dispose();
     _bioController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -421,7 +529,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error selecting photo: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context)?.errorSelectingPhoto ?? "Error selecting photo"}: $e')),
         );
       }
     }
@@ -451,7 +559,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               const SizedBox(height: 20),
               ListTile(
                 leading: Icon(Icons.camera_alt_rounded, color: AppColors.primary),
-                title: Text('Camera', style: AppTypography.body(color: context.colors.textColor)),
+                title: Text(AppLocalizations.of(context)?.camera ?? 'Camera', style: AppTypography.body(color: context.colors.textColor)),
                 onTap: () {
                   Navigator.pop(ctx);
                   _pickImage(ImageSource.camera);
@@ -459,7 +567,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               ),
               ListTile(
                 leading: Icon(Icons.photo_library_rounded, color: AppColors.primary),
-                title: Text('Gallery', style: AppTypography.body(color: context.colors.textColor)),
+                title: Text(AppLocalizations.of(context)?.gallery ?? 'Gallery', style: AppTypography.body(color: context.colors.textColor)),
                 onTap: () {
                   Navigator.pop(ctx);
                   _pickImage(ImageSource.gallery);
@@ -468,7 +576,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               if (_selectedImage != null)
                 ListTile(
                   leading: Icon(Icons.delete_outline_rounded, color: AppColors.error),
-                  title: Text('Remove Photo', style: AppTypography.body(color: AppColors.error)),
+                  title: Text(AppLocalizations.of(context)?.removePhoto ?? 'Remove Photo', style: AppTypography.body(color: AppColors.error)),
                   onTap: () {
                     Navigator.pop(ctx);
                     setState(() => _selectedImage = null);
@@ -513,7 +621,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   // Title
                   Center(
                     child: Text(
-                      'Edit Profile',
+                      AppLocalizations.of(context)?.editProfile ?? 'Edit Profile',
                       style: AppTypography.title1(color: context.colors.textColor),
                     ),
                   ),
@@ -596,7 +704,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   
                   Center(
                     child: Text(
-                      'Tap photo to change',
+                      AppLocalizations.of(context)?.tapToChangePhoto ?? 'Tap photo to change',
                       style: AppTypography.caption1(color: context.colors.textMutedColor),
                     ),
                   ),
@@ -606,7 +714,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   // Username Field
                   _buildStyledTextField(
                     controller: _usernameController,
-                    hintText: 'Username',
+                    hintText: AppLocalizations.of(context)?.username ?? 'Username',
                     icon: Icons.person_outline_rounded,
                     context: context,
                   ),
@@ -616,10 +724,20 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   // Bio Field
                   _buildStyledTextField(
                     controller: _bioController,
-                    hintText: 'Tell us about yourself...',
+                    hintText: AppLocalizations.of(context)?.tellAboutYourself ?? 'Bio',
                     icon: Icons.edit_note_rounded,
                     context: context,
                     maxLines: 3,
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                   // Location Field
+                  _buildStyledTextField(
+                    controller: _locationController,
+                    hintText: 'Location (City, Country)',
+                    icon: Icons.location_on_rounded,
+                    context: context,
                   ),
                   
                   const SizedBox(height: 16),
@@ -631,17 +749,49 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   
                   // Save Button
                   PrimaryButton(
-                    text: 'Save',
+                    text: AppLocalizations.of(context)?.save ?? 'Save',
                     icon: Icons.check_rounded,
                     isLoading: _isLoading,
                     onPressed: () async {
                       if (_usernameController.text.isNotEmpty) {
                         setState(() => _isLoading = true);
-                        // TODO: Upload image and update profile via API
-                        await Future.delayed(const Duration(seconds: 1));
-                        if (mounted) {
-                          setState(() => _isLoading = false);
-                          widget.onSave(_usernameController.text.trim());
+                        
+                        try {
+                          String? avatarUrl;
+                          
+                          // If new image selected, upload it first
+                          if (_selectedImage != null) {
+                            final api = ref.read(apiClientProvider);
+                            // Ensure we use the full URL if backend returns relative path
+                            final relativeUrl = await api.uploadAvatar(_selectedImage!);
+                            if (relativeUrl.startsWith('http')) {
+                              avatarUrl = relativeUrl;
+                            } else {
+                              // Prepend base URL if relative
+                              avatarUrl = relativeUrl; // ApiClient/Backend logic will handle full url construction if needed, 
+                              // but here we just pass what backend gave us. 
+                              // Ideally backend returns relative path and we store that.
+                            }
+                          }
+                          
+                          if (mounted) {
+                             // Now call the parent onSave which calls authProvider.updateProfile
+                             // We need to pass the avatarUrl to onSave
+                             widget.onSave(
+                               _usernameController.text.trim(),
+                               _bioController.text.trim(),
+                               _selectedGender,
+                               _locationController.text.trim(),
+                               avatarUrl, // We need to update onSave signature to accept avatarUrl
+                             );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
+                            );
+                            setState(() => _isLoading = false);
+                          }
                         }
                       }
                     },
@@ -652,7 +802,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                   
                   // Cancel Button
                   SecondaryButton(
-                    text: 'Cancel',
+                    text: AppLocalizations.of(context)?.cancel ?? 'Cancel',
                     onPressed: () => Navigator.pop(context),
                     width: double.infinity,
                   ),

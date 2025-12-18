@@ -8,7 +8,11 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/buttons.dart';
 import '../../core/routing/app_router.dart';
+import '../../core/animations/genie_transition.dart';
+import '../../core/haptics/haptic_engine.dart';
 import '../../providers/auth_provider.dart';
+import 'package:omechat/l10n/app_localizations.dart';
+import 'login_screen.dart';
 
 /// Premium Auth Gateway Screen with 3 glassmorphism cards
 class AuthGatewayScreen extends ConsumerStatefulWidget {
@@ -57,9 +61,29 @@ class _AuthGatewayScreenState extends ConsumerState<AuthGatewayScreen>
     Navigator.pushNamed(context, AppRoutes.register);
   }
   
-  void _navigateToLogin() {
-    HapticFeedback.lightImpact();
-    Navigator.pushNamed(context, AppRoutes.login);
+  void _navigateToLogin({GlobalKey? buttonKey}) {
+    HapticEngine.genieSqueeze();
+    
+    // Get button position for Genie origin
+    Offset origin = Offset(
+      MediaQuery.of(context).size.width / 2,
+      MediaQuery.of(context).size.height * 0.7, // Default center-bottom
+    );
+    
+    if (buttonKey != null) {
+      final RenderBox? box = buttonKey.currentContext?.findRenderObject() as RenderBox?;
+      if (box != null) {
+        origin = box.localToGlobal(box.size.center(Offset.zero));
+      }
+    }
+    
+    Navigator.of(context).push(
+      GenieRouteTransition(
+        page: const LoginScreen(),
+        origin: origin,
+        expansionColor: AppColors.primary,
+      ),
+    );
   }
   
   Future<void> _continueAsGuest() async {
@@ -115,7 +139,7 @@ class _AuthGatewayScreenState extends ConsumerState<AuthGatewayScreen>
                     
                     // Title
                     Text(
-                      'Dünyayla Tanışmaya\nHazır mısın?',
+                      AppLocalizations.of(context)?.authReadyToMeetWorld ?? 'Dünyayla Tanışmaya\nHazır mısın?',
                       style: AppTypography.largeTitle(),
                       textAlign: TextAlign.center,
                     ),
@@ -124,7 +148,7 @@ class _AuthGatewayScreenState extends ConsumerState<AuthGatewayScreen>
                     
                     // Subtitle
                     Text(
-                      'Anonim görüntülü sohbet,\niOS kalitesinde deneyim.',
+                      AppLocalizations.of(context)?.authAnonymousVideoChat ?? 'Anonim görüntülü sohbet,\niOS kalitesinde deneyim.',
                       style: AppTypography.body(
                         color: Colors.white.withOpacity(0.6),
                       ),
@@ -134,10 +158,11 @@ class _AuthGatewayScreenState extends ConsumerState<AuthGatewayScreen>
                     const Spacer(flex: 2),
                     
                     // Auth option cards
+                    // Auth option cards
                     _AuthOptionCard(
                       icon: Icons.person_add_rounded,
-                      title: 'Kayıt Ol',
-                      subtitle: 'Profil oluştur, istatistiklerini kaydet.',
+                      title: AppLocalizations.of(context)?.authRegister ?? 'Kayıt Ol',
+                      subtitle: AppLocalizations.of(context)?.authCreateProfileStats ?? 'Profil oluştur, istatistiklerini kaydet.',
                       gradient: AppColors.primaryGradient,
                       isPrimary: true,
                       onTap: _navigateToRegister,
@@ -147,8 +172,8 @@ class _AuthGatewayScreenState extends ConsumerState<AuthGatewayScreen>
                     
                     _AuthOptionCard(
                       icon: Icons.login_rounded,
-                      title: 'Giriş Yap',
-                      subtitle: 'Mevcut hesabınla devam et.',
+                      title: AppLocalizations.of(context)?.authLogin ?? 'Giriş Yap',
+                      subtitle: AppLocalizations.of(context)?.authLoginContinue ?? 'Mevcut hesabınla devam et.',
                       onTap: _navigateToLogin,
                     ),
                     
@@ -156,8 +181,8 @@ class _AuthGatewayScreenState extends ConsumerState<AuthGatewayScreen>
                     
                     _AuthOptionCard(
                       icon: Icons.person_outline_rounded,
-                      title: 'Misafir Olarak Devam Et',
-                      subtitle: 'Hesap oluşturmadan hızlıca bağlan.',
+                      title: AppLocalizations.of(context)?.authContinueAsGuest ?? 'Misafir Olarak Devam Et',
+                      subtitle: AppLocalizations.of(context)?.authConnectQuickly ?? 'Hesap oluşturmadan hızlıca bağlan.',
                       onTap: _continueAsGuest,
                     ),
                     

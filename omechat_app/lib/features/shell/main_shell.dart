@@ -91,25 +91,29 @@ class _MainShellState extends ConsumerState<MainShell> {
       backgroundColor: isDark ? const Color(0xFF0B0F1A) : AppColors.backgroundLight,
       body: Stack(
         children: [
-          // 1) MANDATORY: Background content FIRST (glass refracts these pixels)
-          const AnimatedBackground(
-            animate: false,
-            child: SizedBox.expand(),
-          ),
-          
-          // 2) Screen content with PageView
-          PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            allowImplicitScrolling: false,
-            onPageChanged: (index) {
-              setState(() => _currentIndex = index);
-            },
-            children: _screens,
+          // 1&2) Content to be refracted (Background + Pages)
+          // 1&2) Content (Background + Pages)
+          Stack(
+            children: [
+              const AnimatedBackground(
+                animate: false,
+                child: SizedBox.expand(),
+              ),
+              PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                allowImplicitScrolling: false,
+                onPageChanged: (index) {
+                  setState(() => _currentIndex = index);
+                },
+                children: _screens,
+              ),
+            ],
           ),
           
           // 3) iOS 26-style Liquid Glass Navbar with animated blob
           LiquidGlassNavbar(
+            key: Key('navbar_${l10n?.localeName ?? 'en'}'), // Force rebuild on locale change
             currentIndex: _currentIndex,
             onTap: _onTabTap,
             items: navbarItems,

@@ -38,6 +38,10 @@ class UserUpdate(BaseModel):
     """Schema for updating user profile"""
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     avatar_url: Optional[str] = Field(None, max_length=512)
+    bio: Optional[str] = Field(None, max_length=500)
+    gender: Optional[str] = Field(None, max_length=20)
+    birthdate: Optional[datetime] = None
+    location: Optional[str] = Field(None, max_length=100)
     
     @field_validator('username')
     @classmethod
@@ -55,6 +59,10 @@ class UserResponse(BaseModel):
     email: str
     username: str
     avatar_url: Optional[str] = None
+    bio: Optional[str] = None
+    gender: Optional[str] = None
+    birthdate: Optional[datetime] = None
+    location: Optional[str] = None
     created_at: datetime
     is_active: bool
     

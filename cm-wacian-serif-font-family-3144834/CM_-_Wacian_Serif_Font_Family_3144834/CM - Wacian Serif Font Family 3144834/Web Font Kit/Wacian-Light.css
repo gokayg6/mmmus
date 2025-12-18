@@ -1,0 +1,12 @@
+/* Webfont: Wacian-Light */@font-face {
+    font-family: 'Wacian';
+    src: url('Wacian-Light.eot'); /* IE9 Compat Modes */
+    src: url('Wacian-Light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('Wacian-Light.woff') format('woff'), /* Modern Browsers */
+         url('Wacian-Light.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('Wacian-Light.svg#Wacian-Light') format('svg'); /* Legacy iOS */
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
+}
+

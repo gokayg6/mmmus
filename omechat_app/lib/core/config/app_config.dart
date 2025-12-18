@@ -12,7 +12,7 @@ class AppConfig {
   /// IMPORTANT: Bu IP adresini bilgisayarınızın yerel IP adresiyle güncelleyin
   /// IP adresinizi öğrenmek için: ipconfig (Windows) veya ifconfig (Mac/Linux)
   /// Backend başlatıldığında gösterilen "AĞ" IP adresini buraya yazın
-  static const String developmentBackendUrl = 'http://192.168.1.103:8001';
+  static const String developmentBackendUrl = 'http://192.168.1.103:8000';
   
   /// Use production backend? (true = Railway/Render, false = local)
   static const bool useProductionBackend = false;

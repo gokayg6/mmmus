@@ -8,6 +8,7 @@ import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/buttons.dart';
 import '../../core/routing/app_router.dart';
 import '../../providers/auth_provider.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
 /// Register Screen with form validation
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -56,42 +57,42 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'E-posta gerekli';
+      return AppLocalizations.of(context)?.authEmailRequired ?? 'E-posta gerekli';
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Geçerli bir e-posta girin';
+      return AppLocalizations.of(context)?.authEmailInvalid ?? 'Geçerli bir e-posta girin';
     }
     return null;
   }
   
   String? _validateUsername(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Kullanıcı adı gerekli';
+      return AppLocalizations.of(context)?.authUsernameRequired ?? 'Kullanıcı adı gerekli';
     }
     if (value.length < 3) {
-      return 'En az 3 karakter olmalı';
+      return AppLocalizations.of(context)?.authUsernameMinLen ?? 'En az 3 karakter olmalı';
     }
     final usernameRegex = RegExp(r'^[a-zA-Z0-9_]+$');
     if (!usernameRegex.hasMatch(value)) {
-      return 'Sadece harf, rakam ve alt çizgi';
+      return AppLocalizations.of(context)?.authUsernameInvalid ?? 'Sadece harf, rakam ve alt çizgi';
     }
     return null;
   }
   
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Şifre gerekli';
+      return AppLocalizations.of(context)?.authPasswordRequired ?? 'Şifre gerekli';
     }
     if (value.length < 8) {
-      return 'En az 8 karakter olmalı';
+      return AppLocalizations.of(context)?.authPasswordMinLen ?? 'En az 8 karakter olmalı';
     }
     return null;
   }
   
   String? _validateConfirmPassword(String? value) {
     if (value != _passwordController.text) {
-      return 'Şifreler eşleşmiyor';
+      return AppLocalizations.of(context)?.authPasswordsNoMatch ?? 'Şifreler eşleşmiyor';
     }
     return null;
   }
@@ -101,8 +102,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     
     if (!_acceptedTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Kullanım koşullarını kabul etmelisiniz'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)?.authTermsRequired ?? 'Kullanım koşullarını kabul etmelisiniz'),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -125,6 +126,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
+    final l10n = AppLocalizations.of(context);
     
     return Scaffold(
       backgroundColor: context.colors.backgroundColor,
@@ -198,14 +200,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       
                       // Title
                       Text(
-                        'Hesap Oluştur',
-                        style: AppTypography.largeTitle(),
+                        l10n?.authCreateAccount ?? 'Hesap Oluştur',
+                        style: AppTypography.serifTitle(),
                       ),
                       
                       const SizedBox(height: 8),
                       
                       Text(
-                        'Profilini oluştur ve istatistiklerini kaydet',
+                        l10n?.authCreateProfileSubtitle ?? 'Profilini oluştur ve istatistiklerini kaydet',
                         style: AppTypography.body(
                           color: Colors.white.withOpacity(0.6),
                         ),
@@ -221,7 +223,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             // Email
                             _buildTextField(
                               controller: _emailController,
-                              hintText: 'E-posta',
+                              hintText: l10n?.authEmail ?? 'E-posta',
                               prefixIcon: Icons.email_outlined,
                               keyboardType: TextInputType.emailAddress,
                               validator: _validateEmail,
@@ -232,7 +234,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             // Username
                             _buildTextField(
                               controller: _usernameController,
-                              hintText: 'Kullanıcı adı',
+                              hintText: l10n?.authUsername ?? 'Kullanıcı adı',
                               prefixIcon: Icons.person_outline_rounded,
                               validator: _validateUsername,
                             ),
@@ -242,7 +244,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             // Password
                             _buildTextField(
                               controller: _passwordController,
-                              hintText: 'Şifre',
+                              hintText: l10n?.authPassword ?? 'Şifre',
                               prefixIcon: Icons.lock_outline_rounded,
                               obscureText: _obscurePassword,
                               validator: _validatePassword,
@@ -264,7 +266,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             // Confirm Password
                             _buildTextField(
                               controller: _confirmPasswordController,
-                              hintText: 'Şifre tekrar',
+                              hintText: l10n?.authConfirmPassword ?? 'Şifre tekrar',
                               prefixIcon: Icons.lock_outline_rounded,
                               obscureText: _obscureConfirmPassword,
                               validator: _validateConfirmPassword,
@@ -317,7 +319,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      'Kuralları ve gizlilik politikasını kabul ediyorum',
+                                      l10n?.authAcceptTerms ?? 'Kuralları ve gizlilik politikasını kabul ediyorum',
                                       style: AppTypography.footnote(),
                                     ),
                                   ),
@@ -343,7 +345,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       
                       // Register button
                       PrimaryButton(
-                        text: 'Kayıt Ol',
+                        text: l10n?.authRegister ?? 'Kayıt Ol',
                         icon: Icons.person_add_rounded,
                         onPressed: authState.isLoading ? null : _handleRegister,
                         isLoading: authState.isLoading,
@@ -357,11 +359,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Zaten hesabın var mı? ',
+                            l10n?.authHasAccount ?? 'Zaten hesabın var mı? ',
                             style: AppTypography.footnote(),
                           ),
                           TextLinkButton(
-                            text: 'Giriş Yap',
+                            text: l10n?.authLogin ?? 'Giriş Yap',
                             onPressed: () {
                               Navigator.pushReplacementNamed(context, AppRoutes.login);
                             },

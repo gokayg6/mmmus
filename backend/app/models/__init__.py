@@ -9,6 +9,7 @@ from app.models.ban import Ban
 from app.models.admin import Admin, AdminRole
 from app.models.metrics import DailyMetrics
 from app.models.user import User
+from app.models.points import PointsHistory
 
 __all__ = [
     "UserSession", "DeviceType", "Gender",
@@ -18,4 +19,5 @@ __all__ = [
     "Admin", "AdminRole",
     "DailyMetrics",
     "User",
+    "PointsHistory",
 ]

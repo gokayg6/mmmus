@@ -174,31 +174,25 @@ def update_me(
     - **username**: New username (optional, must be unique)
     - **avatar_url**: New avatar URL (optional)
     """
-    # Check username uniqueness if being updated
-    if update_data.username and update_data.username != current_user.username:
-        existing_username = get_user_by_username(db, update_data.username)
-        if existing_username:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Bu kullanıcı adı zaten kullanılıyor"
-            )
-        current_user.username = update_data.username.lower()
+    # Update all provided fields
+    update_data_dict = update_data.model_dump(exclude_unset=True)
     
-    # Update avatar URL if provided
-    if update_data.avatar_url is not None:
-        current_user.avatar_url = update_data.avatar_url
+    if 'username' in update_data_dict:
+        new_username = update_data_dict['username']
+        if new_username != current_user.username:
+            existing_username = get_user_by_username(db, new_username)
+            if existing_username:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Bu kullanıcı adı zaten kullanılıyor"
+                )
+            current_user.username = new_username.lower()
+        del update_data_dict['username']
+        
+    for field, value in update_data_dict.items():
+        setattr(current_user, field, value)
     
     db.commit()
     db.refresh(current_user)
     
-    return UserResponse(
-        id=str(current_user.id),
-        email=current_user.email,
-        username=current_user.username,
-        avatar_url=current_user.avatar_url,
-        created_at=current_user.created_at,
-        is_active=current_user.is_active,
-        is_premium=current_user.is_premium,
-        premium_until=current_user.premium_until,
-        credits=current_user.credits,
-    )
+    return current_user

@@ -8,6 +8,7 @@ import '../domain/models/points_models.dart';
 import '../core/network/network_result.dart';
 import '../data/repositories/offline_chat_repository.dart';
 import '../data/repositories/chat_stream_repository.dart';
+import '../data/repositories/api_points_repository.dart';
 import '../providers/database_providers.dart';
 import '../providers/auth_provider.dart';
 import 'dart:async';
@@ -148,7 +149,7 @@ final chatControllerProvider = StateNotifierProvider.family<
 
 /// Points repository provider
 final pointsRepositoryProvider = Provider<PointsRepository>((ref) {
-  return MockPointsRepository();
+  return ref.watch(apiPointsRepositoryProvider);
 });
 
 
@@ -178,6 +179,13 @@ class PointsController extends StateNotifier<AsyncValue<UserPoints>> {
   Future<void> recordAction(PointsActionType type) async {
     await _repo.recordAction(type);
     await _loadPoints(); // Refresh after recording
+  }
+
+  Future<void> buyCredits(int amount) async {
+    if (_repo is ApiPointsRepository) {
+      await (_repo as ApiPointsRepository).buyCredits(amount);
+      await _loadPoints();
+    }
   }
 
   List<PointsActionInfo> getAvailableActions() {

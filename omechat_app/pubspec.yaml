@@ -39,6 +39,7 @@ dependencies:
   permission_handler: ^11.1.0
   connectivity_plus: ^5.0.2
   image_picker: ^1.0.7
+  url_launcher: ^6.2.2
   
   # Liquid Glass Effect (Impeller only - iOS/Android)
   liquid_glass_renderer: ^0.2.0-dev.4
@@ -58,6 +59,15 @@ flutter:
   
   assets:
     - assets/images/
+
+  fonts:
+    - family: WacianSerif
+      fonts:
+        - asset: assets/fonts/Wacian-regular.ttf
+        - asset: assets/fonts/Wacian-Bold.ttf
+          weight: 700
+
+
 
 # Native Splash Screen Configuration
 flutter_native_splash:

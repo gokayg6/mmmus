@@ -7,6 +7,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/glass_container.dart';
 import '../../core/widgets/glowing_button.dart';
+import 'package:omechat/l10n/app_localizations.dart';
 
 /// Subscription Screen - Premium plans
 class SubscriptionScreen extends StatefulWidget {
@@ -108,7 +109,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                         const Icon(Icons.workspace_premium_rounded, color: Colors.white),
                         const SizedBox(width: 8),
                         Text(
-                          'Premium\'a Geç',
+                          AppLocalizations.of(context)?.goPremium ?? 'Premium\'a Geç',
                           style: AppTypography.buttonLarge(color: Colors.white),
                         ),
                       ],
@@ -124,7 +125,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                       // TODO: Restore purchases
                     },
                     child: Text(
-                      'Satın Alımları Geri Yükle',
+                      AppLocalizations.of(context)?.restorePurchases ?? 'Satın Alımları Geri Yükle',
                       style: AppTypography.footnote(color: AppColors.textSecondary),
                     ),
                   ),
@@ -133,7 +134,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                   
                   // Terms
                   Text(
-                    'Abonelik otomatik olarak yenilenir. İstediğiniz zaman iptal edebilirsiniz.',
+                    AppLocalizations.of(context)?.subscriptionAutoRenews ?? 'Abonelik otomatik olarak yenilenir. İstediğiniz zaman iptal edebilirsiniz.',
                     style: AppTypography.caption2(color: AppColors.textMuted),
                     textAlign: TextAlign.center,
                   ),
@@ -158,7 +159,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
         ),
         const SizedBox(height: 4),
         Text(
-          'Sınırsız deneyimin kilidini aç',
+          AppLocalizations.of(context)?.unlockUnlimited ?? 'Sınırsız deneyimin kilidini aç',
           style: AppTypography.body(color: AppColors.textSecondary),
         ),
       ],
@@ -199,15 +200,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
 
   Widget _buildFeaturesList() {
     final features = [
-      _FeatureItem(Icons.block_rounded, 'Reklamsız Kullanım', 'Hiç reklam görme'),
-      _FeatureItem(Icons.wc_rounded, 'Cinsiyet Seçme', 'Ücretsiz cinsiyet filtresi'),
-      _FeatureItem(Icons.public_rounded, 'Ülke Seçme', 'İstediğin ülkeyi seç'),
-      _FeatureItem(Icons.hd_rounded, 'HD Görüntü', 'Yüksek kalite video'),
-      _FeatureItem(Icons.star_rounded, 'Öne Çıkarılma', 'Eşleşmede öncelik'),
-      _FeatureItem(Icons.verified_rounded, 'VIP Rozet', 'Haftalık özel rozet'),
-      _FeatureItem(Icons.replay_rounded, 'Sınırsız Reconnect', 'Aynı kişiyle tekrar bağlan'),
-      _FeatureItem(Icons.palette_rounded, 'Özel Tema', 'Gece modu özel teması'),
-      _FeatureItem(Icons.speed_rounded, 'Sınırsız Next', 'Bekleme süresi yok'),
+      _FeatureItem(Icons.block_rounded, AppLocalizations.of(context)?.adFree ?? 'Reklamsız Kullanım', AppLocalizations.of(context)?.noAdsDesc ?? 'Hiç reklam görme'),
+      _FeatureItem(Icons.wc_rounded, AppLocalizations.of(context)?.genderSelect ?? 'Cinsiyet Seçme', AppLocalizations.of(context)?.freeGenderFilter ?? 'Ücretsiz cinsiyet filtresi'),
+      _FeatureItem(Icons.public_rounded, AppLocalizations.of(context)?.countrySelect ?? 'Ülke Seçme', AppLocalizations.of(context)?.selectAnyCountry ?? 'İstediğin ülkeyi seç'),
+      _FeatureItem(Icons.hd_rounded, AppLocalizations.of(context)?.hdVideo ?? 'HD Görüntü', AppLocalizations.of(context)?.highQualityVideo ?? 'Yüksek kalite video'),
+      _FeatureItem(Icons.star_rounded, AppLocalizations.of(context)?.highlighted ?? 'Öne Çıkarılma', AppLocalizations.of(context)?.priorityInMatching ?? 'Eşleşmede öncelik'),
+      _FeatureItem(Icons.verified_rounded, AppLocalizations.of(context)?.vipBadge ?? 'VIP Rozet', AppLocalizations.of(context)?.weeklyVipBadge ?? 'Haftalık özel rozet'),
+      _FeatureItem(Icons.replay_rounded, AppLocalizations.of(context)?.unlimitedReconnect ?? 'Sınırsız Reconnect', AppLocalizations.of(context)?.reconnectSamePerson ?? 'Aynı kişiyle tekrar bağlan'),
+      _FeatureItem(Icons.palette_rounded, AppLocalizations.of(context)?.customTheme ?? 'Özel Tema', AppLocalizations.of(context)?.nightModeTheme ?? 'Gece modu özel teması'),
+      _FeatureItem(Icons.speed_rounded, AppLocalizations.of(context)?.unlimitedNext ?? 'Sınırsız Next', AppLocalizations.of(context)?.noWaitTime ?? 'Bekleme süresi yok'),
     ];
     
     return GlassContainer(
@@ -220,7 +221,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
               Icon(Icons.diamond_rounded, color: AppColors.warning, size: 20),
               const SizedBox(width: 8),
               Text(
-                'PREMIUM ÖZELLİKLER',
+                AppLocalizations.of(context)?.premiumFeatures ?? 'PREMIUM ÖZELLİKLER',
                 style: AppTypography.caption1(color: AppColors.warning),
               ),
             ],
@@ -265,25 +266,25 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
-            'PLAN SEÇ',
+            AppLocalizations.of(context)?.selectPlan ?? 'PLAN SEÇ',
             style: AppTypography.caption1(color: AppColors.textMuted),
           ),
         ),
         // First row - Weekly & Monthly
         Row(
           children: [
-            Expanded(child: _buildPlanCard(0, 'Haftalık', '₺69,99', '/hafta')),
+            Expanded(child: _buildPlanCard(0, AppLocalizations.of(context)?.weekly ?? 'Haftalık', '₺69,99', AppLocalizations.of(context)?.perWeek ?? '/hafta')),
             const SizedBox(width: 8),
-            Expanded(child: _buildPlanCard(1, 'Aylık', '₺129,99', '/ay', isBestValue: true)),
+            Expanded(child: _buildPlanCard(1, AppLocalizations.of(context)?.monthly ?? 'Aylık', '₺129,99', AppLocalizations.of(context)?.perMonth ?? '/ay', isBestValue: true)),
           ],
         ),
         const SizedBox(height: 8),
         // Second row - 3 Month & Yearly
         Row(
           children: [
-            Expanded(child: _buildPlanCard(2, '3 Aylık', '₺229,99', '/3 ay', savings: '%40')),
+            Expanded(child: _buildPlanCard(2, AppLocalizations.of(context)?.threeMonths ?? '3 Aylık', '₺229,99', AppLocalizations.of(context)?.perThreeMonths ?? '/3 ay', savings: '%40')),
             const SizedBox(width: 8),
-            Expanded(child: _buildPlanCard(3, 'Yıllık', '₺599,99', '/yıl', savings: '%60')),
+            Expanded(child: _buildPlanCard(3, AppLocalizations.of(context)?.yearly ?? 'Yıllık', '₺599,99', AppLocalizations.of(context)?.perYear ?? '/yıl', savings: '%60')),
           ],
         ),
       ],
@@ -329,7 +330,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  isBestValue ? 'EN İYİ' : savings!,
+                  isBestValue ? (AppLocalizations.of(context)?.bestValue ?? 'EN İYİ') : savings!,
                   style: AppTypography.caption2(
                     color: isSelected ? Colors.white : AppColors.primary,
                   ),

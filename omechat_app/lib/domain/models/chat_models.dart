@@ -36,6 +36,7 @@ class Message {
 /// Conversation model for chat list
 class Conversation {
   final String id; // Friend ID usually, or Friendship ID? Backend returns friend details
+  final String otherUserId; // NEW FIELD
   final String otherUsername;
   final String? otherAvatarUrl;
   final String lastMessage;
@@ -45,6 +46,7 @@ class Conversation {
 
   const Conversation({
     required this.id,
+    required this.otherUserId,
     required this.otherUsername,
     this.otherAvatarUrl,
     required this.lastMessage,
@@ -59,6 +61,7 @@ class Conversation {
     
     return Conversation(
       id: friend['id'],
+      otherUserId: friend['id'], // Assuming friend.id is the user ID
       otherUsername: friend['username'],
       otherAvatarUrl: friend['avatar_url'],
       lastMessage: lastMsg != null ? lastMsg['content'] : '',

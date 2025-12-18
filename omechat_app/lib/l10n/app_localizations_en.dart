@@ -48,6 +48,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get turkish => 'Turkish';
 
   @override
+  String get french => 'French';
+
+  @override
+  String get italian => 'Italian';
+
+  @override
+  String get german => 'German';
+
+  @override
+  String get chinese => 'Chinese';
+
+  @override
+  String get arabic => 'Arabic';
+
+  @override
   String get login => 'Login';
 
   @override
@@ -321,7 +336,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get safetyReminder => 'Your safety is our priority';
 
   @override
-  String get premiumFeatures => 'Premium Features';
+  String get premiumFeatures => 'PREMIUM FEATURES';
 
   @override
   String get unlockPremium => 'Unlock Premium';
@@ -582,4 +597,419 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get someoneLooking => 'Someone is looking...';
+
+  @override
+  String get readyToConnect => 'Ready to\nConnect?';
+
+  @override
+  String peopleOnline(Object count) {
+    return '$count people online';
+  }
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get fast => 'Fast';
+
+  @override
+  String get instantMatch => 'Instant match';
+
+  @override
+  String get fastMatching => 'Fast Matching';
+
+  @override
+  String get fastMatchingDesc =>
+      'Our advanced algorithm lets you meet new people in seconds. Wait time is kept to a minimum.';
+
+  @override
+  String get safe => 'Safe';
+
+  @override
+  String get moderation => 'Moderation';
+
+  @override
+  String get safetyRules => 'Safety & Rules';
+
+  @override
+  String get safetyRulesDesc =>
+      'We provide a safe environment with our community rules and active moderation team. Inappropriate behavior can be reported immediately.';
+
+  @override
+  String get global => 'Global';
+
+  @override
+  String get worldwide => 'Worldwide';
+
+  @override
+  String get globalDesc =>
+      'Connect with users from all over the world. Opportunity to meet people from different cultures.';
+
+  @override
+  String get statistics => 'Statistics';
+
+  @override
+  String get chats => 'Chats';
+
+  @override
+  String get meetings => 'Meetings';
+
+  @override
+  String get chatCount => 'Chat Count';
+
+  @override
+  String get chatCountDesc =>
+      'Total number of chats you have completed. Each new match counts.';
+
+  @override
+  String get totalTime => 'Total Time';
+
+  @override
+  String get totalTimeDesc =>
+      'Your total chat time in minutes. Active connections count.';
+
+  @override
+  String get meetingCount => 'Meeting Count';
+
+  @override
+  String get meetingCountDesc => 'Number of people you have met so far.';
+
+  @override
+  String get achievements => 'Achievements';
+
+  @override
+  String get comingSoon => 'Coming Soon';
+
+  @override
+  String get achievementsComingSoon =>
+      'We are working on the achievements system';
+
+  @override
+  String get registered => 'Registered';
+
+  @override
+  String get upgrade => 'Upgrade';
+
+  @override
+  String get profileUpdated => 'Profile updated';
+
+  @override
+  String get tapToChangePhoto => 'Tap photo to change';
+
+  @override
+  String get tellAboutYourself => 'Tell us about yourself...';
+
+  @override
+  String get notSpecified => 'Not specified';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get removePhoto => 'Remove Photo';
+
+  @override
+  String get errorSelectingPhoto => 'Error selecting photo';
+
+  @override
+  String get earnPointsChatting => 'Earn points by chatting!';
+
+  @override
+  String get howToEarnPoints => 'How to Earn Points?';
+
+  @override
+  String get recentActivity => 'Recent Activity';
+
+  @override
+  String get failedToLoad => 'Failed to load';
+
+  @override
+  String get level => 'Level';
+
+  @override
+  String get toNextLevel => 'To next level';
+
+  @override
+  String get pointsLabel => 'points';
+
+  @override
+  String get totalPoints => 'Total Points';
+
+  @override
+  String get noActivityYet => 'No activity yet';
+
+  @override
+  String get startChatToEarn => 'Start chatting to earn points!';
+
+  @override
+  String get maxInterests => 'Max 5 interests allowed';
+
+  @override
+  String get matchingBasedOnInterests => 'Matching based on selected interests';
+
+  @override
+  String get goPremium => 'Go Premium';
+
+  @override
+  String get restorePurchases => 'Restore Purchases';
+
+  @override
+  String get subscriptionAutoRenews =>
+      'Subscription auto-renews. Cancel anytime.';
+
+  @override
+  String get unlockUnlimited => 'Unlock unlimited experience';
+
+  @override
+  String get adFree => 'Ad-Free';
+
+  @override
+  String get noAdsDesc => 'No watching ads';
+
+  @override
+  String get genderSelect => 'Gender Selection';
+
+  @override
+  String get freeGenderFilter => 'Free gender filter';
+
+  @override
+  String get countrySelect => 'Country Selection';
+
+  @override
+  String get selectAnyCountry => 'Select any country';
+
+  @override
+  String get hdVideo => 'HD Video';
+
+  @override
+  String get highQualityVideo => 'High quality video';
+
+  @override
+  String get highlighted => 'Highlighted';
+
+  @override
+  String get priorityInMatching => 'Priority in matching';
+
+  @override
+  String get vipBadge => 'VIP Badge';
+
+  @override
+  String get weeklyVipBadge => 'Weekly special badge';
+
+  @override
+  String get unlimitedReconnect => 'Unlimited Reconnect';
+
+  @override
+  String get reconnectSamePerson => 'Reconnect with same person';
+
+  @override
+  String get customTheme => 'Custom Theme';
+
+  @override
+  String get nightModeTheme => 'Night mode special theme';
+
+  @override
+  String get unlimitedNext => 'Unlimited Next';
+
+  @override
+  String get noWaitTime => 'No wait time';
+
+  @override
+  String get selectPlan => 'SELECT PLAN';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get threeMonths => '3 Months';
+
+  @override
+  String get yearly => 'Yearly';
+
+  @override
+  String get perWeek => '/week';
+
+  @override
+  String get perMonth => '/month';
+
+  @override
+  String get perThreeMonths => '/3 months';
+
+  @override
+  String get perYear => '/year';
+
+  @override
+  String get bestValue => 'BEST';
+
+  @override
+  String selectedPlanMessage(Object plan) {
+    return 'You selected $plan plan.\n\nPurchase feature coming soon!';
+  }
+
+  @override
+  String get actionMessageSent => 'Send message';
+
+  @override
+  String get actionChatStarted => 'Start chat';
+
+  @override
+  String get actionChatCompleted => 'Complete chat';
+
+  @override
+  String get actionDailyLogin => 'Daily login';
+
+  @override
+  String get actionProfileCompleted => 'Complete profile';
+
+  @override
+  String get actionMinuteChatted => 'Each chat minute';
+
+  @override
+  String get actionConnectionMade => 'Connect with someone new';
+
+  @override
+  String get authWelcomeBack => 'Welcome Back';
+
+  @override
+  String get authLoginToAccount => 'Login to your account';
+
+  @override
+  String get authEmailRequired => 'Email required';
+
+  @override
+  String get authEmailInvalid => 'Enter a valid email';
+
+  @override
+  String get authPasswordRequired => 'Password required';
+
+  @override
+  String get authEmail => 'Email';
+
+  @override
+  String get authPassword => 'Password';
+
+  @override
+  String get authForgotPassword => 'Forgot Password';
+
+  @override
+  String get authFeatureComingSoon => 'Feature coming soon';
+
+  @override
+  String get authLogin => 'Login';
+
+  @override
+  String get authNoAccount => 'Don\'t have an account? ';
+
+  @override
+  String get authRegister => 'Register';
+
+  @override
+  String get authUsernameRequired => 'Username required';
+
+  @override
+  String get authUsernameMinLen => 'Must be at least 3 characters';
+
+  @override
+  String get authUsernameInvalid => 'Letters, numbers and underscores only';
+
+  @override
+  String get authPasswordMinLen => 'Must be at least 8 characters';
+
+  @override
+  String get authPasswordsNoMatch => 'Passwords do not match';
+
+  @override
+  String get authTermsRequired => 'You must accept the terms';
+
+  @override
+  String get authUsername => 'Username';
+
+  @override
+  String get authConfirmPassword => 'Confirm Password';
+
+  @override
+  String get authAcceptTerms => 'I accept terms and privacy policy';
+
+  @override
+  String get authCreateAccount => 'Create Account';
+
+  @override
+  String get authCreateProfileSubtitle => 'Create profile and save your stats';
+
+  @override
+  String get authHasAccount => 'Already have an account? ';
+
+  @override
+  String get authReadyToMeetWorld => 'Ready to Meet the World?';
+
+  @override
+  String get authAnonymousVideoChat =>
+      'Anonymous video chat, iOS quality experience.';
+
+  @override
+  String get authContinueAsGuest => 'Continue as Guest';
+
+  @override
+  String get authConnectQuickly =>
+      'Connect quickly without creating an account.';
+
+  @override
+  String get authCreateProfileStats => 'Create profile, save stats.';
+
+  @override
+  String get authLoginContinue => 'Continue with existing account.';
+
+  @override
+  String get addByUsername => 'Add by username';
+
+  @override
+  String get chatWithFriends => 'Chat with Friends';
+
+  @override
+  String get selectFromFriendList => 'Select from friend list';
+
+  @override
+  String get sendFriendRequest => 'Send a friend request by entering username.';
+
+  @override
+  String get friendRequestSent => 'Friend request sent!';
+
+  @override
+  String get noFriendsYet => 'No friends yet.';
+
+  @override
+  String get errorOccurred => 'An error occurred';
+
+  @override
+  String get meetNewPeopleDiscover => 'Meet new people from the Discover tab!';
+
+  @override
+  String get noChatYet => 'No chats yet';
+
+  @override
+  String get pleaseLoginToViewChats => 'Please log in to view chats';
+
+  @override
+  String get sessionInvalid => 'Session invalid. Please log in again.';
+
+  @override
+  String get tryAgainLabel => 'Try again';
+
+  @override
+  String get now => 'now';
+
+  @override
+  String get minuteShort => 'm';
+
+  @override
+  String get hourShort => 'h';
+
+  @override
+  String get dayShort => 'd';
 }

@@ -7,7 +7,12 @@ import 'auth_provider.dart';
 /// Supported languages
 enum SupportedLanguage {
   english('en', 'English'),
-  turkish('tr', 'Türkçe');
+  turkish('tr', 'Türkçe'),
+  french('fr', 'Français'),
+  italian('it', 'Italiano'),
+  german('de', 'Deutsch'),
+  chinese('zh', '中文'),
+  arabic('ar', 'العربية');
 
   final String code;
   final String displayName;

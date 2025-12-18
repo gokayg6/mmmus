@@ -6,6 +6,19 @@ import 'package:google_fonts/google_fonts.dart';
 class AppTypography {
   /// Primary font family - Inter (closest to SF Pro)
   static String get fontFamily => GoogleFonts.inter().fontFamily!;
+  static const String serifFont = 'WacianSerif';
+
+  // === SERIF TITLES ===
+  
+  /// Serif Title - Wacian Serif (Custom)
+  static TextStyle serifTitle({double fontSize = 34, Color? color, FontWeight fontWeight = FontWeight.w700}) => TextStyle(
+    fontFamily: serifFont,
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    letterSpacing: 0.37,
+    height: 1.2,
+    color: color ?? Colors.white,
+  );
   
   // === LARGE TITLES ===
   
